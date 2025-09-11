@@ -3,7 +3,7 @@ import Header from '../../components/common/Header';
 
 const Main = () => {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-main via-main to-secondary">
+        <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
             <Header showLogoutButton={true} />
             <>Main</>
         </div>
