@@ -2,10 +2,12 @@ import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import RootLayout from "../components/layout/RootLayout";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
+import ErrorPage from "../components/common/ErrorPage";
 
 const Main = lazy(() => import("../features/main/Main"));
 const Alarm = lazy(() => import("../features/alarm/Alarm"));
 const Group = lazy(() => import("../features/group/Group"));
+const GroupList = lazy(() => import("../features/group/GroupList"));
 const Account = lazy(() => import("../features/account/Account"));
 const Travel = lazy(() => import("../features/travel/Travel"));
 const Stat = lazy(() => import("../features/stat/Stat"));
@@ -29,6 +31,11 @@ export default function AppRoutes() {
             <Alarm />
           </ProtectedRoute>
         } />
+        <Route path="/group" element={
+          <ProtectedRoute>
+            <GroupList />
+          </ProtectedRoute>
+        }></Route>
         <Route path="/group/:groupid" element={
           <ProtectedRoute>
             <RootLayout><Group /></RootLayout>
@@ -38,6 +45,9 @@ export default function AppRoutes() {
           <Route path="travel" element={<Travel />} />
           <Route path="stat" element={<Stat />} />
         </Route>
+        
+        {/* 에러 페이지 라우트 */}
+        <Route path="/error" element={<ErrorPage />} />
       </Routes>
     </Suspense>
   );

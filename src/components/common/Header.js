@@ -55,7 +55,7 @@ const Header = ({
   };
 
   return (
-    <header className={`app-header bg-main h-100 flex items-center justify-between px-4 ${className}`}>
+    <header className={`app-header bg-main h-100 flex items-center justify-between px-4`}>
       <div className="flex items-center space-x-2">
         {showBackButton && (
           <button 
@@ -80,7 +80,7 @@ const Header = ({
               <img 
                 src={logo} 
                 alt="SOLcation" 
-                className="h-12 mb-4 mt-2" 
+                className="h-12 mb-2 mt-2" 
               />
             </button>
           </h1>

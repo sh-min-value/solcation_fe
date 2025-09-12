@@ -20,8 +20,9 @@ class ApiClient {
 
     // 토큰이 있으면 헤더에 추가
     const token = localStorage.getItem('accessToken');
+    const tokenType = localStorage.getItem('tokenType') || 'Bearer';
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${tokenType} ${token}`;
     }
 
     const response = await fetch(url, config);
@@ -59,6 +60,11 @@ const apiClient = new ApiClient(API_BASE_URL);
 // 인증 관련 API
 export const authAPI = {
   login: (credentials) => apiClient.post('/auth/login', credentials),
+};
+
+// 그룹 관련 API
+export const groupAPI = {
+  getGroup: (groupId) => apiClient.get(`/group/${groupId}/get`),
 };
 
 export default apiClient;
