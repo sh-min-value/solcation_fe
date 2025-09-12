@@ -65,6 +65,10 @@ export const authAPI = {
 // 그룹 관련 API
 export const groupAPI = {
   getGroup: (groupId) => apiClient.get(`/group/${groupId}/get`),
+  getGroupList: (searchTerm = '') => {
+    const params = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
+    return apiClient.get(`/group/list${params}`);
+  },
 };
 
 export default apiClient;

@@ -6,9 +6,12 @@ export default function RootLayout({ children }) {
   return (
     <div className="app-layout relative">
         <Header 
+        showBackButton={true}
         showHomeButton={true} 
         /> 
-        <main className="app-main">{children}</main>
+        <div className="bg-main m-0">
+        <main className="app-main rounded-t-3xl">{children}</main>
+        </div>
         <NavigationBar />
     </div>
   );
