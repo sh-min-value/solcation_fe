@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { authAPI } from '../services/api';
 
 // 초기 상태
@@ -92,18 +93,20 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // 토큰 저장
-  const saveTokens = (accessToken, tokenType, expiresIn) => {
+  // 토큰 및 사용자 정보 저장
+  const saveTokens = (accessToken, tokenType, expiresIn, user) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('tokenType', tokenType);
     localStorage.setItem('expiresIn', expiresIn);
+    localStorage.setItem('user', JSON.stringify(user));
   };
 
-  // 토큰 제거
+  // 토큰 및 사용자 정보 제거
   const clearTokens = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('tokenType');
     localStorage.removeItem('expiresIn');
+    localStorage.removeItem('user');
   };
 
   // 로그인
@@ -121,7 +124,7 @@ export const AuthProvider = ({ children }) => {
         tel
       };
       
-      saveTokens(accessToken, tokenType, expiresIn);
+      saveTokens(accessToken, tokenType, expiresIn, user);
       
       dispatch({
         type: AuthActionTypes.LOGIN_SUCCESS,
@@ -135,7 +138,20 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      const errorMessage = error.message || '로그인에 실패했습니다.';
+      let errorMessage = '로그인에 실패했습니다.';
+      
+      // API 응답 에러 처리
+      if (error.response) {
+        const responseData = error.response;
+        if (responseData.error && responseData.error.message) {
+          errorMessage = responseData.error.message;
+        } else if (responseData.message) {
+          errorMessage = responseData.message;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       dispatch({
         type: AuthActionTypes.LOGIN_FAILURE,
         payload: errorMessage
@@ -158,21 +174,25 @@ export const AuthProvider = ({ children }) => {
   // 초기 인증 상태 확인
   useEffect(() => {
     if (state.accessToken) {
-      // 토큰이 있으면 로그인 상태로 설정
-      dispatch({
-        type: AuthActionTypes.LOGIN_SUCCESS,
-        payload: {
-          user: {
-            userId: 'admin',
-            userName: '관리자',
-            email: 'admin@example.com',
-            tel: '010-1234-5678'
-          },
-          accessToken: state.accessToken,
-          tokenType: state.tokenType,
-          expiresIn: state.expiresIn
-        }
-      });
+      // 토큰이 있으면 로그인 상태로 설정 (사용자 정보는 로컬 스토리지에서 복원)
+      const savedUser = localStorage.getItem('user');
+      const user = savedUser ? JSON.parse(savedUser) : null;
+      
+      if (user) {
+        dispatch({
+          type: AuthActionTypes.LOGIN_SUCCESS,
+          payload: {
+            user,
+            accessToken: state.accessToken,
+            tokenType: state.tokenType,
+            expiresIn: state.expiresIn
+          }
+        });
+      } else {
+        // 사용자 정보가 없으면 로그아웃
+        clearTokens();
+        dispatch({ type: AuthActionTypes.LOGOUT });
+      }
     } else {
       dispatch({ type: AuthActionTypes.SET_LOADING, payload: false });
     }
@@ -199,4 +219,9 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+// PropTypes 추가
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
 };

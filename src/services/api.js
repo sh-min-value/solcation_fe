@@ -27,7 +27,11 @@ class ApiClient {
     const response = await fetch(url, config);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // 에러 응답도 JSON으로 파싱해서 전달
+      const errorData = await response.json().catch(() => ({}));
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      error.response = errorData;
+      throw error;
     }
     
     const data = await response.json();
