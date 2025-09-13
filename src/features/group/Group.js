@@ -8,6 +8,7 @@ const Group = () => {
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [groupData, setGroupData] = useState(null);
     
     // 그룹 유효성 검사
     useEffect(() => {
@@ -16,9 +17,9 @@ const Group = () => {
                 setIsLoading(true);
                 setError(null);
                 
-                // 실제 API 호출로 그룹 존재 여부 확인
-                const groupData = await groupAPI.getGroup(groupid);
-                console.log('그룹 데이터:', groupData);
+                const data = await groupAPI.getGroup(groupid);
+                console.log('그룹 데이터:', data);
+                setGroupData(data);
                 
                 setIsLoading(false);
             } catch (err) {
@@ -36,22 +37,16 @@ const Group = () => {
         validateGroup();
     }, [groupid]);
     
-    // 그룹 메인 페이지 콘텐츠
     const GroupMainContent = () => (
-        <>GROUP {groupid}</>
+        <div className="bg-white">GROUP {groupid}</div>
     );
     
     // 현재 경로가 /group/:groupid 인지 확인
     const isGroupMain = location.pathname === `/group/${groupid}`;
     
-    // 로딩 중
     if (isLoading) {
         return (
-            <div className="p-6">
-                <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-                    <div className="text-xl text-gray-600">그룹 정보를 불러오는 중...</div>
-                </div>
-            </div>
+            <p>로딩중...</p>
         );
     }
     
