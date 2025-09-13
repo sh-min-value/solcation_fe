@@ -73,7 +73,7 @@ const GroupProfileCard = ({ group }) => {
                             <div className="flex items-center justify-center">
                                 <FaSuitcase className="w-3 h-3 mr-1 text-white" />
                                 <div className="text-white text-md font-bold">
-                                    {group.completedTrips || 0}
+                                    {group.finished || 0}
                                 </div>
                             </div>
                         </div>
@@ -84,7 +84,7 @@ const GroupProfileCard = ({ group }) => {
                             <div className="flex items-center justify-center">
                                 <FaPlane className="w-3 h-3 mr-1 text-white" />
                                 <div className="text-white text-md font-bold">
-                                    {group.scheduledTrips || 0}
+                                    {group.scheduled || 0}
                                 </div>
                             </div>
                         </div>
@@ -95,7 +95,7 @@ const GroupProfileCard = ({ group }) => {
                             <div className="flex items-center justify-center">
                                 <FaEnvelope className="w-3 h-3 mr-1 text-white" />
                                 <div className="text-white text-md font-bold">
-                                    {group.pendingInvitations || 0}
+                                    {group.pending || 0}
                                 </div>
                             </div>
                         </div>
