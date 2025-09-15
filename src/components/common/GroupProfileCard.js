@@ -27,7 +27,7 @@ const GroupProfileCard = ({ group }) => {
     }, [group.profileImg]);
 
     return (
-        <div className="bg-main p-2 w-full flex items-center justify-center">
+        <div className="bg-main p-2 pr-4 w-full flex items-center justify-center">
             <div className="flex space-x-2 items-center justify-center">
                 {/* 그룹 프로필 이미지 */}
                 <div className="w-24 h-24 bg-gray-600 rounded-xl flex-shrink-0 m-2">
@@ -66,7 +66,7 @@ const GroupProfileCard = ({ group }) => {
                     </div>
 
                     {/* 통계 카드들 */}
-                    <div className="grid grid-cols-3 gap-1 w-90%">
+                    <div className="grid grid-cols-3 gap-1.5 w-90%">
                         {/* 완료된 여정 */}
                         <div className="bg-white bg-opacity-30 rounded-lg pt-2 pb-1 text-center items-center justify-center">
                             <div className="text-white text-[10px] font-medium">완료된 여정</div>
