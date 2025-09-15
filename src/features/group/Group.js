@@ -6,20 +6,15 @@ const Group = () => {
     const location = useLocation();
     const { groupid } = useParams();
     const navigate = useNavigate();
-    const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [groupData, setGroupData] = useState(null);
     
     // 그룹 유효성 검사
     useEffect(() => {
         const validateGroup = async () => {
             try {
                 setIsLoading(true);
-                setError(null);
                 
-                const data = await groupAPI.getGroup(groupid);
-                console.log('그룹 데이터:', data);
-                setGroupData(data);
+                await groupAPI.getGroup(groupid);
                 
                 setIsLoading(false);
             } catch (err) {
@@ -35,7 +30,7 @@ const Group = () => {
         };
         
         validateGroup();
-    }, [groupid]);
+    }, [groupid, navigate, location.pathname]);
     
     const GroupMainContent = () => (
         <div className="bg-white">GROUP {groupid}</div>

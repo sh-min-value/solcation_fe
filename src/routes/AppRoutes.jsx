@@ -4,14 +4,20 @@ import RootLayout from "../components/layout/RootLayout";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import ErrorPage from "../components/common/ErrorPage";
 
+const LoginForm = lazy(() => import("../components/auth/LoginForm"));
 const Main = lazy(() => import("../features/main/Main"));
 const Alarm = lazy(() => import("../features/alarm/Alarm"));
+
 const Group = lazy(() => import("../features/group/Group"));
 const GroupList = lazy(() => import("../features/group/GroupList"));
 const Account = lazy(() => import("../features/account/Account"));
-const Travel = lazy(() => import("../features/travel/Travel"));
 const Stat = lazy(() => import("../features/stat/Stat"));
-const LoginForm = lazy(() => import("../components/auth/LoginForm"));
+
+const Travel = lazy(() => import("../features/travel/Travel"));
+const PlanDetail = lazy(() => import("../features/travel/PlanDetail"));
+const PlanDetailEdit = lazy(() => import("../features/travel/PlanDetailEdit"));
+const TravelCreate = lazy(() => import("../features/travel/TravelCreate"));
+
 
 export default function AppRoutes() {
   return (
@@ -45,6 +51,9 @@ export default function AppRoutes() {
         }>
           <Route path="account" element={<Account />} />
           <Route path="travel" element={<Travel />} />
+          <Route path="travel/:travelid" element={<PlanDetail />} />
+          <Route path="travel/:travelid/edit" element={<PlanDetailEdit />} />
+          <Route path="travel/new" element={<TravelCreate />} />
           <Route path="stat" element={<Stat />} />
         </Route>
         
