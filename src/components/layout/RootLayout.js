@@ -9,7 +9,6 @@ export default function RootLayout({ children, title }) {
   const location = useLocation();
   const { groupid } = useParams();
   const [groupData, setGroupData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const isGroupRoute = location.pathname.startsWith('/group/');
 
@@ -17,14 +16,11 @@ export default function RootLayout({ children, title }) {
     if (isGroupRoute && groupid) {
       const loadGroupData = async () => {
         try {
-          setIsLoading(true);
           const data = await groupAPI.getGroup(groupid);
           setGroupData(data);
         } catch (error) {
           console.error('그룹 데이터 로드 실패:', error);
           setGroupData(null);
-        } finally {
-          setIsLoading(false);
         }
       };
       loadGroupData();

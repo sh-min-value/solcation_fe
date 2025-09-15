@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserGroup } from "react-icons/fa6";
-import FamilyIcon from '../../assets/categoryIcons/family.svg';
-import FriendIcon from '../../assets/categoryIcons/friend.svg';
-import LoveIcon from '../../assets/categoryIcons/love.svg';
-import PeerIcon from '../../assets/categoryIcons/peer.svg';
 import { getGroupProfileImage } from '../../services/s3';
+import { getGroupCategoryIcon, getGroupCategoryName } from '../../utils/CategoryIcons';
 
 // 그룹 카드 컴포넌트
 const GroupCard = ({ group, onClick }) => {
@@ -15,22 +12,6 @@ const GroupCard = ({ group, onClick }) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             onClick();
-        }
-    };
-
-    // 카테고리 아이콘 선택 함수
-    const getCategoryIcon = (categoryCode) => {
-        switch (categoryCode) {
-            case 'FAMILY':
-                return FamilyIcon;
-            case 'FRIEND':
-                return FriendIcon;
-            case 'LOVE':
-                return LoveIcon;
-            case 'PEER':
-                return PeerIcon;
-            default:
-                return FriendIcon; // 기본값
         }
     };
 
@@ -121,7 +102,7 @@ const GroupCard = ({ group, onClick }) => {
                         {group.gcPk && (
                             <div className="flex items-center px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-600">
                                 <img 
-                                    src={getCategoryIcon(group.gcPk.gcCode)} 
+                                    src={getGroupCategoryIcon(group.gcPk.gcCode)} 
                                     alt={group.gcPk.gcName}
                                     className="w-3 h-3 mr-1"
                                 />
