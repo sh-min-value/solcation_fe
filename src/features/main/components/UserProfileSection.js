@@ -1,0 +1,123 @@
+import React, { useState } from 'react';
+import profilePic from '../../../assets/images/mainUserProfilePic.svg';
+
+const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
+  const [isProfileExpanded, setIsProfileExpanded] = useState(false);
+
+  return (
+    <>
+      {/* 사용자 프로필 헤더 상자 */}
+      <div className="relative z-20 bg-white rounded-[20px] p-4 shadow-sm mb-[-26px]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {/* 프로필 사진 */}
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center text-3xl">
+              <img
+                src={profilePic}
+                alt="profile"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+
+            {/* 사용자 정보 */}
+            <div className="flex flex-col">
+              <h2 className="text-xl font-bold text-gray-800">
+                {isProfileLoading ? (
+                  <div className="animate-pulse bg-gray-200 h-6 w-24 rounded"></div>
+                ) : userProfile?.userName || user?.name ? (
+                  userProfile?.userName || user?.name
+                ) : (
+                  <div className="text-gray-400">사용자 정보 없음</div>
+                )}
+              </h2>
+              <div className="text-sm text-gray-600">
+                {isProfileLoading ? (
+                  <div className="animate-pulse bg-gray-200 h-4 w-32 rounded mt-1"></div>
+                ) : userProfile?.email || user?.email ? (
+                  userProfile?.email || user?.email
+                ) : (
+                  <div className="text-gray-400">이메일 정보 없음</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 확장/축소 꺽쇠 */}
+          <button
+            onClick={() => setIsProfileExpanded(!isProfileExpanded)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <svg
+              className="w-5 h-5 text-gray-600 transform transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={isProfileExpanded ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* 사용자 프로필 상세 정보 섹션 */}
+      <div
+        className={`relative z-10 bg-white rounded-xl px-6 py-4 pt-12 overflow-hidden transition-all duration-300 ease-in-out ${
+          isProfileExpanded
+            ? 'max-h-96 opacity-100 py-4 mb-6'
+            : 'max-h-0 opacity-0 py-0 mb-0'
+        }`}
+      >
+        <div className="space-y-4">
+          {/* 아이디 */}
+          <div className="flex justify-between items-center">
+            <span className="text-gray-700 font-medium">아이디</span>
+            <span className="text-gray-800 font-semibold">
+              {isProfileLoading ? (
+                <div className="animate-pulse bg-gray-200 h-4 w-20 rounded"></div>
+              ) : userProfile?.userId || user?.id ? (
+                userProfile?.userId || user?.id
+              ) : (
+                <span className="text-gray-400">아이디 정보 없음</span>
+              )}
+            </span>
+          </div>
+
+          {/* 이메일 */}
+          <div className="flex justify-between items-center">
+            <span className="text-gray-700 font-medium">이메일</span>
+            <span className="text-gray-800 font-semibold">
+              {isProfileLoading ? (
+                <div className="animate-pulse bg-gray-200 h-4 w-32 rounded"></div>
+              ) : userProfile?.email || user?.email ? (
+                userProfile?.email || user?.email
+              ) : (
+                <span className="text-gray-400">이메일 정보 없음</span>
+              )}
+            </span>
+          </div>
+
+          {/* 전화번호 */}
+          <div className="flex justify-between items-center">
+            <span className="text-gray-700 font-medium">전화번호</span>
+            <span className="text-gray-800 font-semibold">
+              {isProfileLoading ? (
+                <div className="animate-pulse bg-gray-200 h-4 w-24 rounded"></div>
+              ) : userProfile?.tel || user?.phone ? (
+                userProfile?.tel || user?.phone
+              ) : (
+                <span className="text-gray-400">전화번호 정보 없음</span>
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default UserProfileSection;
