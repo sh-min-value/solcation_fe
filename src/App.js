@@ -1,11 +1,12 @@
-import { Routes, Route } from "react-router-dom";
-import Main from "./features/main/Main.js";
-function App() {
+import React from "react";
+import AppRoutes from "./routes/AppRoutes";
+import { AuthProvider } from "./context/AuthContext";
+import "./index.css";
+
+export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Main />} />
-    </Routes>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
-
-export default App;
