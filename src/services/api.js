@@ -26,7 +26,7 @@ class ApiClient {
     }
 
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       // 에러 응답도 JSON으로 파싱해서 전달
       const errorData = await response.json().catch(() => ({}));
@@ -34,7 +34,7 @@ class ApiClient {
       error.response = errorData;
       throw error;
     }
-    
+
     const data = await response.json();
     return data;
   }
@@ -59,16 +59,7 @@ const apiClient = new ApiClient(API_BASE_URL);
 
 // 인증 관련 API
 export const authAPI = {
-  login: (credentials) => apiClient.post('/auth/login', credentials),
-};
-
-// 그룹 관련 API
-export const groupAPI = {
-  getGroup: (groupId) => apiClient.get(`/group/${groupId}/get`),
-  getGroupList: (searchTerm = '') => {
-    const params = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
-    return apiClient.get(`/group/list${params}`);
-  },
+  login: credentials => apiClient.post('/auth/login', credentials),
 };
 
 export default apiClient;

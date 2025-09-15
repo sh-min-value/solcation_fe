@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import Header from "../common/Header.js";
-import NavigationBar from "../common/NavigationBar.js";
-import GroupProfileCard from "../common/GroupProfileCard.js";
-import { groupAPI } from "../../services/api";
+import React, { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import Header from '../common/Header.js';
+import NavigationBar from '../common/NavigationBar.js';
+import GroupProfileCard from '../common/GroupProfileCard.js';
+import { groupAPI } from '../../services/groupAPI.js';
 
 export default function RootLayout({ children }) {
   const location = useLocation();
@@ -37,17 +37,12 @@ export default function RootLayout({ children }) {
 
   return (
     <div className="app-layout relative">
-        <Header 
-        showBackButton={true}
-        showHomeButton={true} 
-        /> 
-        <div className="bg-main m-0">
-          {isGroupRoute && groupData && (
-            <GroupProfileCard group={groupData} />
-          )}
-          <main className="app-main rounded-t-3xl bg-white">{children}</main>
-        </div>
-        <NavigationBar />
+      <Header showBackButton={true} showHomeButton={true} />
+      <div className="bg-main m-0">
+        {isGroupRoute && groupData && <GroupProfileCard group={groupData} />}
+        <main className="app-main rounded-t-3xl bg-white">{children}</main>
+      </div>
+      <NavigationBar />
     </div>
   );
 }
