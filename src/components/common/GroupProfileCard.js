@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaSuitcase, FaPlane, FaEnvelope } from 'react-icons/fa';
+import { FaSuitcase, FaPlane, FaEnvelope } from 'react-icons/fa';
 import { getGroupProfileImage } from '../../services/s3';
 
 const GroupProfileCard = ({ group }) => {

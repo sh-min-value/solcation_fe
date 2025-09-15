@@ -85,7 +85,7 @@ const Header = ({
             </button>
           </h1>
         ) : (
-          <h1 className="text-xl font-bold text-secondary">
+          <h1 className="text-2xl font-bold text-secondary my-5">
             {title}
           </h1>
         )}

@@ -5,28 +5,22 @@ import NavigationBar from '../common/NavigationBar.js';
 import GroupProfileCard from '../common/GroupProfileCard.js';
 import { groupAPI } from '../../services/groupAPI.js';
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, title }) {
   const location = useLocation();
   const { groupid } = useParams();
   const [groupData, setGroupData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // 그룹 경로인지 확인
   const isGroupRoute = location.pathname.startsWith('/group/');
 
-  // 그룹 데이터 로드
   useEffect(() => {
     if (isGroupRoute && groupid) {
       const loadGroupData = async () => {
         try {
-          setIsLoading(true);
           const data = await groupAPI.getGroup(groupid);
           setGroupData(data);
         } catch (error) {
           console.error('그룹 데이터 로드 실패:', error);
           setGroupData(null);
-        } finally {
-          setIsLoading(false);
         }
       };
       loadGroupData();
@@ -35,14 +29,22 @@ export default function RootLayout({ children }) {
     }
   }, [isGroupRoute, groupid]);
 
+  const showGroupUI = isGroupRoute && groupData;
+
   return (
     <div className="app-layout relative">
-      <Header showBackButton={true} showHomeButton={true} />
+      <Header
+        showBackButton={true}
+        showHomeButton={showGroupUI}
+        title={title}
+      />
+
       <div className="bg-main m-0">
-        {isGroupRoute && groupData && <GroupProfileCard group={groupData} />}
+        {showGroupUI && <GroupProfileCard group={groupData} />}
         <main className="app-main rounded-t-3xl bg-white">{children}</main>
       </div>
-      <NavigationBar />
+
+      {showGroupUI && <NavigationBar />}
     </div>
   );
 }
