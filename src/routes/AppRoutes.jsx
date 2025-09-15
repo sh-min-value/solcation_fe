@@ -28,7 +28,9 @@ export default function AppRoutes() {
         } />
         <Route path="/alarm" element={
           <ProtectedRoute>
+            <RootLayout  title="알림">
             <Alarm />
+            </RootLayout>
           </ProtectedRoute>
         } />
         <Route path="/group" element={
