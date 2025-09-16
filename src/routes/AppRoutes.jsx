@@ -68,6 +68,7 @@ export default function AppRoutes() {
           <Route path="travel/:travelid/edit" element={<PlanDetailEdit />} />
           <Route path="travel/new" element={<TravelCreate />} />
           <Route path="stats" element={<Stat />} />
+          <Route path="stats/:travelid" element={<Stat />} />
         </Route>
 
         {/* 에러 페이지 라우트 */}

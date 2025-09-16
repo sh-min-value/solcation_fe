@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import TravelCard from '../../components/common/TravelCard';
 import { statAPI } from '../../services/StatAPI';
 import emptySol from '../../assets/images/empty_sol.svg';
@@ -14,27 +14,25 @@ const LoadingSpinner = () => (
 );
 
 const Stat = () => {
+  const { groupid, travelid } = useParams();
   const navigate = useNavigate();
-  const { groupid } = useParams();
   const [finishedTravels, setFinishedTravels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTravel, setSelectedTravel] = useState(null);
 
-  // 여행 데이터를 TravelCard 형식으로 변환
-  const convertTravelToTravelCardFormat = travel => {
-    return {
-      title: travel.tpTitle || '여행',
-      thumbnail: travel.tpImage,
-      location: travel.tpLocation,
-      startDate: travel.tpStart,
-      endDate: travel.tpEnd,
-      state: 'FINISH',
-      categoryCode: travel.tpcCode || 'TRAVEL',
-      tpPk: travel.tpPk,
-    };
-  };
+  // 데이터 변환
+  const convertTravelToTravelCardFormat = travel => ({
+    title: travel.tpTitle,
+    thumbnail: travel.tpImage,
+    location: travel.tpLocation,
+    startDate: travel.tpStart,
+    endDate: travel.tpEnd,
+    state: 'FINISH',
+    categoryCode: travel.tpcCode,
+    tpPk: travel.tpPk,
+  });
 
-  // 완료한 여행 데이터 로드
+  // 여행 목록 로드
   useEffect(() => {
     const fetchFinishedTravels = async () => {
       if (!groupid) {
@@ -50,7 +48,6 @@ const Stat = () => {
           : [];
         setFinishedTravels(convertedTravels);
       } catch (error) {
-        console.error('완료한 여행 조회 실패 :', error);
         setFinishedTravels([]);
       } finally {
         setIsLoading(false);
@@ -60,18 +57,23 @@ const Stat = () => {
     fetchFinishedTravels();
   }, [groupid]);
 
+  // URL에서 travelid가 있으면 해당 여행 찾기
+  useEffect(() => {
+    if (travelid && finishedTravels.length > 0) {
+      const travel = finishedTravels.find(t => t.tpPk === parseInt(travelid));
+      if (travel) {
+        setSelectedTravel(travel);
+      }
+    }
+  }, [travelid, finishedTravels]);
+
   if (selectedTravel) {
-    return (
-      <TravelStatsView
-        travel={selectedTravel}
-        onBack={() => setSelectedTravel(null)}
-      />
-    );
+    return <TravelStatsView travel={{ ...selectedTravel, groupid }} />;
   }
 
   return (
     <div className="h-full overflow-y-auto">
-      {/* 완료한 여행 목록 */}
+      {/* 여행 목록 */}
       <div className="space-y-4">
         {isLoading ? (
           <LoadingSpinner />
@@ -95,10 +97,7 @@ const Stat = () => {
               key={index}
               travel={travel}
               groupid={groupid}
-              onClick={() => {
-                // 여행 통계 상세
-                setSelectedTravel(travel);
-              }}
+              onClick={() => navigate(`/group/${groupid}/stats/${travel.tpPk}`)}
             />
           ))
         )}
