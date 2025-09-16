@@ -2,8 +2,18 @@ import apiClient from './api';
 
 // 여행 관련 API
 export const travelAPI = {
-    getTravelList: (searchTerm = '', groupId) => {
-      const params = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
+    getTravelList: (searchTerm = '', groupId, status = null) => {
+      const queryParams = new URLSearchParams();
+      
+      if (searchTerm) {
+        queryParams.append('searchTerm', searchTerm);
+      }
+      
+      if (status) {
+        queryParams.append('status', status);
+      }
+      
+      const params = queryParams.toString() ? `?${queryParams.toString()}` : '';
       return apiClient.get(`/group/${groupId}/travel/list${params}`);
     },
     getTravel: (travelId, groupId) => apiClient.get(`/group/${groupId}/travel/${travelId}`),
@@ -15,6 +25,18 @@ export const planDetailAPI = {
     joinPlanEdit: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/join`, data),
     leavePlanEdit: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/leave`, data),
     savePlanEdit: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/save`, data),
+};
+
+export const travelCreateAPI = {
+    createPlan: (groupId, data) => apiClient.post(`/group/${groupId}/travel/new`, data),
+};
+
+export const planDetailEditAPI = {
+    updatePlan: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/op`, data),
+};
+
+export const planDetailCreateAPI = {
+    createPlanDetail: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/plan/new`, data),
 };
 
   export default travelAPI;

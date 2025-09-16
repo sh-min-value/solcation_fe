@@ -207,11 +207,11 @@ export const getGroupCategoryIcon = categoryCode => {
   switch (categoryCode) {
     case 'FAMILY':
       return FamilyIcon;
-    case 'FRIEND':
+    case 'FRIENDS':
       return FriendIcon;
-    case 'LOVE':
+    case 'COUPLE':
       return LoveIcon;
-    case 'PEER':
+    case 'COLLEAGUE':
       return PeerIcon;
     default:
       return FriendIcon; // 기본값

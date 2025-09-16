@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { getTravelProfileImage } from '../../services/s3';
-import { getStateIcon, getTravelCategoryIcon, getStateName } from '../../utils/CategoryIcons';
+import { getStateIcon, getTravelCategoryIcon } from '../../utils/CategoryIcons';
 
-const TravelCard = ({ travel, groupid }) => {
+const TravelCard = ({ travel, groupid, onClick }) => {
     const [imageUrl, setImageUrl] = useState(null);
     const [imageLoading, setImageLoading] = useState(false);
-    const navigate = useNavigate();
+
     // 날짜 형식을 2025-09-01에서 2025.09.01로 변경
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -23,21 +22,19 @@ const TravelCard = ({ travel, groupid }) => {
         loadImage();
     }, [travel.thumbnail]);
 
-    const handleTravelClick = () => {
-        navigate(`/group/${groupid}/travel/${travel.pk}`);
-    };
-
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            handleTravelClick();
+            onClick();
         }
     };
+
+    console.log('travel', travel);
 
     return (
         <div 
             className='w-full bg-white p-3 my-4 rounded-xl shadow-lg flex items-center space-x-2 justify-between cursor-pointer' 
-            onClick={handleTravelClick}
+            onClick={onClick}
             onKeyDown={handleKeyDown}
             role="button"
             tabIndex={0}
@@ -57,7 +54,7 @@ const TravelCard = ({ travel, groupid }) => {
                                     {getStateIcon(travel.state)}
                                 </div>
                                 <div className='bg-gray-200 rounded-lg px-2 py-1 text-xs flex items-center space-x-1'>
-                                    {getTravelCategoryIcon(travel.categoryId)}
+                                    {getTravelCategoryIcon(travel.categoryCode)}
                                 </div>
                             </div>
                     
