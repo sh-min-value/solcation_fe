@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { getGroupProfileImage } from '../../../services/s3';
 
-// 그룹 이미지 컴포넌트
+// 로딩 스피너
+const LoadingSpinner = ({ size = 'h-4 w-4' }) => (
+  <div
+    className={`animate-spin rounded-full ${size} border-b-2 border-gray-600`}
+  ></div>
+);
+
+// 그룹 이미지
 const GroupImage = ({ imagePath, groupName }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,14 +26,13 @@ const GroupImage = ({ imagePath, groupName }) => {
       }
       setLoading(false);
     };
-
     loadImage();
   }, [imagePath]);
 
   if (loading) {
     return (
       <div className="w-[55px] h-[55px] bg-gray-200 rounded-[10px] mb-1 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -50,7 +57,7 @@ const GroupImage = ({ imagePath, groupName }) => {
 const MyGroupsSection = ({ myGroups, navigate }) => {
   return (
     <>
-      {/* 내 그룹 헤더 상자 */}
+      {/* 헤더 */}
       <div className="relative z-10 bg-white rounded-[20px] p-4 shadow-sm mb-[-26px]">
         <div className="flex justify-between items-center">
           <h2 className="text-[18px] font-bold text-gray-800">
@@ -73,7 +80,7 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
         </div>
       </div>
 
-      {/* 내 그룹 목록 상자 */}
+      {/* 그룹 목록 */}
       <div className="relative z-0 bg-white rounded-xl px-6 py-4 pt-12 mb-6">
         <div className="grid grid-cols-4 gap-3">
           {myGroups.map(group => (
@@ -94,6 +101,11 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
       </div>
     </>
   );
+};
+
+MyGroupsSection.propTypes = {
+  myGroups: PropTypes.array.isRequired,
+  navigate: PropTypes.func.isRequired,
 };
 
 export default MyGroupsSection;

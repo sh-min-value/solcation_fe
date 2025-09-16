@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { getGroupCategoryIcon } from '../../../utils/CategoryIcons';
 
-// 색상 배열
-const colors = [
+// 색상 팔레트
+const COLOR_PALETTE = [
   '#F08676',
   '#FBAA68',
   '#ECC369',
@@ -11,78 +12,66 @@ const colors = [
   '#7AA5E9',
 ];
 
-// 인덱스에 따라 색상 반환
-const getColorByIndex = index => {
-  return colors[index % colors.length];
+// 그룹별 색상 캐시
+const groupColorCache = {};
+
+// 그룹 색상 반환 (동적 할당)
+const getGroupColor = groupPk => {
+  if (!groupPk) return COLOR_PALETTE[0];
+
+  // 캐시에 있으면 반환
+  if (groupColorCache[groupPk]) {
+    return groupColorCache[groupPk];
+  }
+
+  // 새로운 그룹에 색상 할당
+  const colorIndex = Object.keys(groupColorCache).length % COLOR_PALETTE.length;
+  groupColorCache[groupPk] = COLOR_PALETTE[colorIndex];
+
+  return groupColorCache[groupPk];
 };
 
-// 그룹 아이콘 컴포넌트
+// 로딩 스피너
+const LoadingSpinner = ({
+  size = 'h-6 w-6',
+  text = '일정을 불러오는 중...',
+}) => (
+  <div className="text-center py-8">
+    <div
+      className={`animate-spin rounded-full ${size} border-b-2 border-gray-600 mx-auto mb-2`}
+    ></div>
+    <p className="text-gray-600">{text}</p>
+  </div>
+);
+
+// 날짜 범위 포맷팅
+const formatDateRange = (tpStart, tpEnd) => {
+  const startDate = new Date(tpStart);
+  const endDate = new Date(tpEnd);
+  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0');
+  const startDay = String(startDate.getDate()).padStart(2, '0');
+  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+  const endDay = String(endDate.getDate()).padStart(2, '0');
+
+  return startMonth === endMonth
+    ? `${startMonth}/${startDay} ~ ${startMonth}/${endDay}`
+    : `${startMonth}/${startDay} ~ ${endMonth}/${endDay}`;
+};
+
+// 그룹 아이콘
 const GroupIcon = ({ gcCode }) => {
-  const [iconSrc, setIconSrc] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadIcon = async () => {
-      try {
-        if (gcCode) {
-          const iconModule = await import(
-            `../../assets/categoryIcons/${gcCode}.svg`
-          );
-          setIconSrc(iconModule.default);
-        }
-      } catch (error) {
-        // 파일이 없으면 아무것도 표시하지 않음
-        setIconSrc(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadIcon();
-  }, [gcCode]);
-
-  if (loading) {
-    return <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>;
-  }
-
-  if (iconSrc) {
-    return <img src={iconSrc} alt={gcCode} className="w-4 h-4" />;
-  }
-
-  // 파일이 없으면 아무것도 표시하지 않음
-  return null;
-};
-
-GroupIcon.propTypes = {
-  gcCode: PropTypes.string,
+  const iconSrc = getGroupCategoryIcon(gcCode);
+  return iconSrc ? (
+    <img src={iconSrc} alt={gcCode} className="w-4 h-4 opacity-50" />
+  ) : null;
 };
 
 const EventSection = ({ events = [], isLoading = false }) => {
-  // 날짜 형식 변환 함수
-  const formatDateRange = (tpStart, tpEnd) => {
-    const startDate = new Date(tpStart);
-    const endDate = new Date(tpEnd);
-
-    const startMonth = startDate.getMonth() + 1;
-    const startDay = startDate.getDate();
-    const endMonth = endDate.getMonth() + 1;
-    const endDay = endDate.getDate();
-
-    if (startMonth === endMonth) {
-      return `${startMonth}/${startDay} ~ ${startMonth}/${endDay}`;
-    } else {
-      return `${startMonth}/${startDay} ~ ${endMonth}/${endDay}`;
-    }
-  };
-
   return (
     <div className="bg-white rounded-xl px-[19px] py-4">
       <div className="space-y-3">
         {isLoading ? (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-600 mx-auto mb-2"></div>
-            <p className="text-gray-600">일정을 불러오는 중...</p>
-          </div>
+          <LoadingSpinner />
         ) : events.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600">일정이 없습니다</p>
@@ -91,14 +80,14 @@ const EventSection = ({ events = [], isLoading = false }) => {
           events.map((event, index) => (
             <div
               key={index}
-              className="flex items-center space-x-3 p-3 bg-white rounded-lg"
+              className="flex items-center p-3 bg-white rounded-lg"
             >
-              <div className="text-sm font-medium text-gray-800">
+              <div className="w-24 text-sm font-bold text-gray-800 flex-shrink-0">
                 {formatDateRange(event.tpStart, event.tpEnd)}
               </div>
               <div
-                className="w-1 h-8 rounded"
-                style={{ backgroundColor: getColorByIndex(index) }}
+                className="w-1 h-8 rounded mx-3 flex-shrink-0"
+                style={{ backgroundColor: getGroupColor(event.groupPk) }}
               ></div>
               <div className="flex-1">
                 <div className="font-semibold text-gray-800">

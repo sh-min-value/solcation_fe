@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import profilePic from '../../../assets/images/mainUserProfilePic.svg';
+
+// 로딩 스켈레톤
+const LoadingSkeleton = ({ width, height, className = '' }) => (
+  <div
+    className={`animate-pulse bg-gray-200 rounded ${className}`}
+    style={{ width, height }}
+  ></div>
+);
 
 const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
   const [isProfileExpanded, setIsProfileExpanded] = useState(false);
 
   return (
     <>
-      {/* 사용자 프로필 헤더 상자 */}
+      {/* 헤더 */}
       <div className="relative z-20 bg-white rounded-[20px] p-4 shadow-sm mb-[-26px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -23,7 +32,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             <div className="flex flex-col">
               <h2 className="text-xl font-bold text-gray-800">
                 {isProfileLoading ? (
-                  <div className="animate-pulse bg-gray-200 h-6 w-24 rounded"></div>
+                  <LoadingSkeleton width="96px" height="24px" />
                 ) : userProfile?.userName || user?.name ? (
                   userProfile?.userName || user?.name
                 ) : (
@@ -32,7 +41,11 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
               </h2>
               <div className="text-sm text-gray-600">
                 {isProfileLoading ? (
-                  <div className="animate-pulse bg-gray-200 h-4 w-32 rounded mt-1"></div>
+                  <LoadingSkeleton
+                    width="128px"
+                    height="16px"
+                    className="mt-1"
+                  />
                 ) : userProfile?.email || user?.email ? (
                   userProfile?.email || user?.email
                 ) : (
@@ -42,7 +55,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             </div>
           </div>
 
-          {/* 확장/축소 꺽쇠 */}
+          {/* 토글 버튼 */}
           <button
             onClick={() => setIsProfileExpanded(!isProfileExpanded)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -64,12 +77,12 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
         </div>
       </div>
 
-      {/* 사용자 프로필 상세 정보 섹션 */}
+      {/* 상세 정보 */}
       <div
-        className={`relative z-10 bg-white rounded-xl px-6 py-4 pt-12 overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`relative z-10 bg-white rounded-xl px-6 pt-12 overflow-hidden transition-all duration-300 ease-in-out ${
           isProfileExpanded
-            ? 'max-h-96 opacity-100 py-4 mb-6'
-            : 'max-h-0 opacity-0 py-0 mb-0'
+            ? 'h-44 opacity-100 py-4 mb-6'
+            : 'h-0 opacity-0 py-0 mb-0'
         }`}
       >
         <div className="space-y-4">
@@ -78,7 +91,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             <span className="text-gray-700 font-medium">아이디</span>
             <span className="text-gray-800 font-semibold">
               {isProfileLoading ? (
-                <div className="animate-pulse bg-gray-200 h-4 w-20 rounded"></div>
+                <LoadingSkeleton width="80px" height="16px" />
               ) : userProfile?.userId || user?.id ? (
                 userProfile?.userId || user?.id
               ) : (
@@ -92,7 +105,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             <span className="text-gray-700 font-medium">이메일</span>
             <span className="text-gray-800 font-semibold">
               {isProfileLoading ? (
-                <div className="animate-pulse bg-gray-200 h-4 w-32 rounded"></div>
+                <LoadingSkeleton width="128px" height="16px" />
               ) : userProfile?.email || user?.email ? (
                 userProfile?.email || user?.email
               ) : (
@@ -106,7 +119,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             <span className="text-gray-700 font-medium">전화번호</span>
             <span className="text-gray-800 font-semibold">
               {isProfileLoading ? (
-                <div className="animate-pulse bg-gray-200 h-4 w-24 rounded"></div>
+                <LoadingSkeleton width="96px" height="16px" />
               ) : userProfile?.tel || user?.phone ? (
                 userProfile?.tel || user?.phone
               ) : (
@@ -118,6 +131,12 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
       </div>
     </>
   );
+};
+
+UserProfileSection.propTypes = {
+  userProfile: PropTypes.object,
+  isProfileLoading: PropTypes.bool.isRequired,
+  user: PropTypes.object,
 };
 
 export default UserProfileSection;

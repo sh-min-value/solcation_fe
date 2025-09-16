@@ -13,63 +13,72 @@ const Main = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // 그룹 상태 관리
+  // 상태 관리
   const [myGroups, setMyGroups] = useState([]);
-
-  // 사용자 프로필 상태 관리
   const [userProfile, setUserProfile] = useState(null);
-
-  // 사용자 프로필 로딩 상태
   const [isProfileLoading, setIsProfileLoading] = useState(true);
-
-  // 알림 상태 관리
   const [notifications, setNotifications] = useState([]);
-
-  // 이벤트 상태 관리
   const [events, setEvents] = useState([]);
   const [isEventsLoading, setIsEventsLoading] = useState(true);
 
-  // API call
+  // API 함수
+  const fetchGroups = async () => {
+    try {
+      const groupsResponse = await mainAPI.getMyGroups();
+      setMyGroups(groupsResponse);
+    } catch (error) {
+      console.error('그룹 목록 조회 실패 :', error);
+      setMyGroups([]);
+    }
+  };
+
+  const fetchUserProfile = async () => {
+    try {
+      const profileResponse = await mainAPI.getUserProfile();
+      setUserProfile(profileResponse);
+    } catch (error) {
+      console.error('사용자 프로필 조회 실패 :', error);
+      setUserProfile(null);
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const notificationsResponse = await mainAPI.getUserNotifications();
+      setNotifications(notificationsResponse);
+    } catch (error) {
+      console.error('알림 조회 실패 :', error);
+      setNotifications([]);
+    }
+  };
+
+  const fetchMonthlyPlans = async () => {
+    try {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+
+      const eventsResponse = await mainAPI.getMonthlyPlans(year, month);
+      setEvents(eventsResponse);
+    } catch (error) {
+      console.error('월간 계획 조회 실패 :', error);
+      setEvents([]);
+    } finally {
+      setIsEventsLoading(false);
+    }
+  };
+
+  // 초기 데이터 로드
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // 그룹 목록 조회
-        const groupsResponse = await mainAPI.getMyGroups();
-        setMyGroups(groupsResponse);
-
-        // 사용자 프로필 조회
-        const profileResponse = await mainAPI.getUserProfile();
-        setUserProfile(profileResponse);
-        setIsProfileLoading(false);
-
-        // 사용자 알림 조회
-        try {
-          const notificationsResponse = await mainAPI.getUserNotifications();
-          setNotifications(notificationsResponse);
-        } catch (notificationError) {
-          // 알림 API 실패 시 빈 배열로 설정
-          setNotifications([]);
-        }
-
-        // 월간 계획 조회
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1; // JavaScript는 0부터 시작하므로 +1
-
-        try {
-          const eventsResponse = await mainAPI.getMonthlyPlans(year, month);
-          setEvents(eventsResponse);
-        } catch (eventsError) {
-          console.error('월간 계획 API 에러:', eventsError);
-          console.error('에러 응답:', eventsError.response);
-          // 월간 계획 API 실패 시 빈 배열로 설정
-          setEvents([]);
-        }
-
-        setIsEventsLoading(false);
-      } catch (error) {
-        console.error('API 호출 실패:', error);
-      }
+      await Promise.all([
+        fetchGroups(),
+        fetchUserProfile(),
+        fetchNotifications(),
+        fetchMonthlyPlans(),
+      ]);
     };
 
     fetchData();
@@ -90,7 +99,7 @@ const Main = () => {
           notifications={notifications}
           navigate={navigate}
         />
-        <CalendarSection />
+        <CalendarSection events={events} />
         <EventSection events={events} isLoading={isEventsLoading} />
       </div>
     </div>

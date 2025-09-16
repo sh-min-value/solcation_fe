@@ -1,24 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// 알림 스타일 반환
+const getNotificationStyle = acCode => {
+  switch (acCode) {
+    case 'GROUP_INVITE':
+      return { backgroundColor: 'rgba(57, 167, 255, 0.2)' };
+    case 'DEPOSIT_REMINDER':
+    case 'TRAVEL_CREATED':
+    case 'ACCOUNT_CREATED':
+      return { backgroundColor: '#FFEED9' };
+    default:
+      return { backgroundColor: '#FFEED9' };
+  }
+};
+
 const NotificationSection = ({ notifications = [], navigate }) => {
-  // 알림 타입별 스타일링
-  const getNotificationStyle = acCode => {
-    switch (acCode) {
-      case 'GROUP_INVITE':
-        return 'bg-blue-50';
-      case 'DEPOSIT_REMINDER':
-      case 'TRAVEL_CREATED':
-      case 'ACCOUNT_CREATED':
-        return 'bg-orange-50';
-      default:
-        return 'bg-orange-50';
-    }
-  };
-
-  // 최대 2개까지만 표시
-  const displayedNotifications = notifications.slice(0, 2);
-
   return (
     <div className="bg-white rounded-xl px-[19px] py-4 mb-6">
       <div className="flex justify-between items-center mb-4">
@@ -45,17 +42,16 @@ const NotificationSection = ({ notifications = [], navigate }) => {
       </div>
 
       <div className="space-y-[10px]">
-        {displayedNotifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600">새로운 알림이 없습니다</p>
           </div>
         ) : (
-          displayedNotifications.map((notification, index) => (
+          notifications.map((notification, index) => (
             <div
               key={`${notification.acCode}-${notification.groupName}-${index}`}
-              className={`rounded-lg p-[19px] ${getNotificationStyle(
-                notification.acCode
-              )}`}
+              className="rounded-lg p-[19px]"
+              style={getNotificationStyle(notification.acCode)}
             >
               <h3 className="font-bold text-gray-800 mb-1">
                 {notification.pnTitle}
