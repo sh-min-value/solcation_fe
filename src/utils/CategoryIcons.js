@@ -233,3 +233,17 @@ export const getGroupCategoryName = categoryCode => {
       return '친구';
   }
 };
+
+//그룹 카테고리 아이콘 이모지 이름 반환
+export const getGroupCategoryEmojiName = categoryCode => {
+  switch (categoryCode) {
+    case 'FRIENDS':
+      return 'handshake';
+    case 'COUPLE':
+      return 'pink-heart';
+    case 'FAMILY':
+      return 'couple-with-heart-man-woman';
+    case 'COLLEAGUE':
+      return 'briefcase';
+  }
+};

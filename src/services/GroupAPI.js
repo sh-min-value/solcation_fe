@@ -15,4 +15,12 @@ export const GroupAPI = {
     ),
   inviteMember: (groupId, tel) =>
     apiClient.post(`/group/${groupId}/invite?tel=${tel}`),
+  createGroup: data => {
+    const formData = new FormData();
+    formData.append('gcPk', data.gcPk);
+    formData.append('groupName', data.groupName);
+    formData.append('profileImg', data.profileImg);
+
+    return apiClient.postMultipart(`/group/new`, formData);
+  },
 };
