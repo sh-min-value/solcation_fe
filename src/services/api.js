@@ -32,10 +32,11 @@ class ApiClient {
       const errorData = await response.json().catch(() => ({}));
       console.log(response);
       //인증 실패 처리
-      if (response.status == 401) {
+      if (response.status === 401 && !endpoint.includes('/auth/login')) {
         localStorage.clear();
         alert('로그인이 필요합니다.');
         window.location.href = '/login';
+        return;
       }
 
       const error = new Error(`HTTP error! status: ${response.status}`);
