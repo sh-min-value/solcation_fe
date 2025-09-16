@@ -30,6 +30,14 @@ class ApiClient {
     if (!response.ok) {
       // 에러 응답도 JSON으로 파싱해서 전달
       const errorData = await response.json().catch(() => ({}));
+      console.log(response);
+      //인증 실패 처리
+      if (response.status == 401) {
+        localStorage.clear();
+        alert('로그인이 필요합니다.');
+        window.location.href = '/login';
+      }
+
       const error = new Error(`HTTP error! status: ${response.status}`);
       error.response = errorData;
       throw error;
