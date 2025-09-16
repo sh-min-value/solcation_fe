@@ -18,22 +18,12 @@ const MONTH_NAMES = [
 ];
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// 색상 팔레트
-const COLOR_PALETTE = [
-  '#F08676',
-  '#FBAA68',
-  '#ECC369',
-  '#A7C972',
-  '#7DD1C1',
-  '#7AA5E9',
-];
-
 // 그룹별 색상 캐시
 const groupColorCache = {};
 
 // 그룹 색상 반환
 const getGroupColor = groupPk => {
-  if (!groupPk) return COLOR_PALETTE[0];
+  if (!groupPk) return 'bg-group-1';
 
   // 캐시에 있으면 반환
   if (groupColorCache[groupPk]) {
@@ -41,8 +31,9 @@ const getGroupColor = groupPk => {
   }
 
   // 새로운 그룹에 색상 할당
-  const colorIndex = Object.keys(groupColorCache).length % COLOR_PALETTE.length;
-  groupColorCache[groupPk] = COLOR_PALETTE[colorIndex];
+  const colorIndex = Object.keys(groupColorCache).length % 6;
+  const colorClass = `bg-group-${colorIndex + 1}`;
+  groupColorCache[groupPk] = colorClass;
 
   return groupColorCache[groupPk];
 };
@@ -162,7 +153,7 @@ const CalendarSection = ({ events = [] }) => {
     <div className="bg-white rounded-xl px-[19px] py-4 mb-[14px]">
       {/* 헤더 */}
       <div className="text-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">
+        <h2 className="text-xl font-bold text-gray-1">
           {year} {MONTH_NAMES[month]}
         </h2>
       </div>
@@ -172,7 +163,7 @@ const CalendarSection = ({ events = [] }) => {
         {WEEK_DAYS.map(day => (
           <div
             key={day}
-            className="text-center text-sm font-medium text-gray-600 py-2"
+            className="text-center text-sm font-medium text-gray-2 py-2"
           >
             {day}
           </div>
@@ -214,23 +205,16 @@ const CalendarSection = ({ events = [] }) => {
               key={index}
               className={`
                  aspect-square flex items-center justify-center text-sm relative
-               ${dayInfo.isCurrentMonth ? 'text-gray-800' : 'text-gray-400'}
-               ${
-                 dayInfo.isToday
-                   ? 'bg-blue-100 text-blue-800 font-semibold rounded-lg'
-                   : ''
-               }
+               ${dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3'}
+               ${dayInfo.isToday ? 'font-bold' : ''}
                `}
               style={{}}
             >
               {dayInfo.events.length > 0 && (
                 <div
-                  className={`absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px] ${
-                    getEventHighlightStyle().split(' ')[1] || ''
-                  }`}
-                  style={{
-                    backgroundColor: getGroupColor(dayInfo.events[0].groupPk),
-                  }}
+                  className={`absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px] ${getGroupColor(
+                    dayInfo.events[0].groupPk
+                  )} ${getEventHighlightStyle().split(' ')[1] || ''}`}
                 />
               )}
               <span className="relative z-10">{dayInfo.date}</span>

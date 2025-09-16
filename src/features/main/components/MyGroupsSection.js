@@ -5,7 +5,7 @@ import { getGroupProfileImage } from '../../../services/s3';
 // 로딩 스피너
 const LoadingSpinner = ({ size = 'h-4 w-4' }) => (
   <div
-    className={`animate-spin rounded-full ${size} border-b-2 border-gray-600`}
+    className={`animate-spin rounded-full ${size} border-b-2 border-gray-2`}
   ></div>
 );
 
@@ -31,14 +31,14 @@ const GroupImage = ({ imagePath, groupName }) => {
 
   if (loading) {
     return (
-      <div className="w-[55px] h-[55px] bg-gray-200 rounded-[10px] mb-1 flex items-center justify-center">
+      <div className="w-[55px] h-[55px] bg-gray-5 rounded-[10px] mb-1 flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="w-[50px] h-[50px] bg-gray-100 rounded-lg mb-1 flex items-center justify-center text-xl overflow-hidden">
+    <div className="w-[50px] h-[50px] bg-gray-6 rounded-lg mb-1 flex items-center justify-center text-xl overflow-hidden">
       {imageUrl ? (
         <img
           src={imageUrl}
@@ -46,7 +46,7 @@ const GroupImage = ({ imagePath, groupName }) => {
           className="w-full h-full object-cover rounded-lg"
         />
       ) : (
-        <span className="text-gray-600 font-medium">
+        <span className="text-gray-2 font-medium">
           {groupName ? groupName.charAt(0).toUpperCase() : '?'}
         </span>
       )}
@@ -60,11 +60,11 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
       {/* 헤더 */}
       <div className="relative z-10 bg-white rounded-[20px] p-4 shadow-sm mb-[-26px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-[18px] font-bold text-gray-800">
+          <h2 className="text-[18px] font-bold text-gray-1">
             내 그룹 보러가기
           </h2>
           <svg
-            className="w-5 h-5 text-gray-600 cursor-pointer"
+            className="w-5 h-5 text-gray-2 cursor-pointer"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -92,7 +92,7 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
                 imagePath={group.groupImage}
                 groupName={group.groupName}
               />
-              <p className="text-xs text-gray-700 truncate w-60">
+              <p className="text-xs text-gray-2 truncate w-60">
                 {group.groupName}
               </p>
             </div>

@@ -2,22 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getGroupCategoryIcon } from '../../../utils/CategoryIcons';
 
-// 색상 팔레트
-const COLOR_PALETTE = [
-  '#F08676',
-  '#FBAA68',
-  '#ECC369',
-  '#A7C972',
-  '#7DD1C1',
-  '#7AA5E9',
-];
-
 // 그룹별 색상 캐시
 const groupColorCache = {};
 
 // 그룹 색상 반환 (동적 할당)
 const getGroupColor = groupPk => {
-  if (!groupPk) return COLOR_PALETTE[0];
+  if (!groupPk) return 'bg-group-1';
 
   // 캐시에 있으면 반환
   if (groupColorCache[groupPk]) {
@@ -25,8 +15,9 @@ const getGroupColor = groupPk => {
   }
 
   // 새로운 그룹에 색상 할당
-  const colorIndex = Object.keys(groupColorCache).length % COLOR_PALETTE.length;
-  groupColorCache[groupPk] = COLOR_PALETTE[colorIndex];
+  const colorIndex = Object.keys(groupColorCache).length % 6;
+  const colorClass = `bg-group-${colorIndex + 1}`;
+  groupColorCache[groupPk] = colorClass;
 
   return groupColorCache[groupPk];
 };
@@ -38,11 +29,16 @@ const LoadingSpinner = ({
 }) => (
   <div className="text-center py-8">
     <div
-      className={`animate-spin rounded-full ${size} border-b-2 border-gray-600 mx-auto mb-2`}
+      className={`animate-spin rounded-full ${size} border-b-2 border-gray-2 mx-auto mb-2`}
     ></div>
-    <p className="text-gray-600">{text}</p>
+    <p className="text-gray-2">{text}</p>
   </div>
 );
+
+LoadingSpinner.propTypes = {
+  size: PropTypes.string,
+  text: PropTypes.string,
+};
 
 // 날짜 범위 포맷팅
 const formatDateRange = (tpStart, tpEnd) => {
@@ -66,6 +62,10 @@ const GroupIcon = ({ gcCode }) => {
   ) : null;
 };
 
+GroupIcon.propTypes = {
+  gcCode: PropTypes.string,
+};
+
 const EventSection = ({ events = [], isLoading = false }) => {
   return (
     <div className="bg-white rounded-xl px-[19px] py-4">
@@ -74,7 +74,7 @@ const EventSection = ({ events = [], isLoading = false }) => {
           <LoadingSpinner />
         ) : events.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-600">일정이 없습니다</p>
+            <p className="text-gray-2">일정이 없습니다</p>
           </div>
         ) : (
           events.map((event, index) => (
@@ -82,18 +82,17 @@ const EventSection = ({ events = [], isLoading = false }) => {
               key={index}
               className="flex items-center p-3 bg-white rounded-lg"
             >
-              <div className="w-24 text-sm font-bold text-gray-800 flex-shrink-0">
+              <div className="w-24 text-sm font-bold text-gray-1 flex-shrink-0">
                 {formatDateRange(event.tpStart, event.tpEnd)}
               </div>
               <div
-                className="w-1 h-8 rounded mx-3 flex-shrink-0"
-                style={{ backgroundColor: getGroupColor(event.groupPk) }}
+                className={`w-1 h-8 rounded mx-3 flex-shrink-0 ${getGroupColor(
+                  event.groupPk
+                )}`}
               ></div>
               <div className="flex-1">
-                <div className="font-semibold text-gray-800">
-                  {event.tpTitle}
-                </div>
-                <div className="text-sm text-gray-600 flex items-center space-x-1">
+                <div className="font-semibold text-gray-1">{event.tpTitle}</div>
+                <div className="text-sm text-gray-2 flex items-center space-x-1">
                   <GroupIcon gcCode={event.gcCode} />
                   <span>{event.groupName}</span>
                 </div>
