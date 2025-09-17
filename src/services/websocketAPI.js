@@ -61,6 +61,7 @@ export const websocketAPI = {
         pdPlace: planData.pdPlace,
         pdAddress: planData.pdAddress,
         pdCost: planData.pdCost,
+        tcCode: planData.tcCode,
         prevCrdtId: prevCrdtId,
         nextCrdtId: nextCrdtId
       }

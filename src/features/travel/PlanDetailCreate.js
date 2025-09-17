@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { travelAPI } from '../../services/TravelAPI';
 import { useAuth } from '../../context/AuthContext';
 import { BiSearch } from 'react-icons/bi';
 import { IoLocationSharp } from "react-icons/io5";
@@ -9,7 +8,7 @@ import SelectPurpose from '../../components/common/SelectPurpose';
 import MapComponent from '../../components/common/MapComponent';
 import { formatAddress, getCleanPlaceName, getCountryInfo } from '../../utils/addressUtils';
 import useStomp from '../../hooks/useStomp';
-import { websocketAPI } from '../../services/websocketAPI';
+import { websocketAPI } from '../../services/WebsocketAPI';
 
 const PlanDetailCreate = (data) => {
     const navigate = useNavigate();
@@ -28,7 +27,7 @@ const PlanDetailCreate = (data) => {
         place: data?.place || '',
         address: data?.address || '',
         cost: data?.cost || '',
-        categoryCode: data?.categoryCode || 'FOOD',
+        tcCode: data?.tcCode || 'FOOD',
         day: data?.day || 1
     });
     const [searchResults, setSearchResults] = useState([]);
@@ -102,7 +101,7 @@ const PlanDetailCreate = (data) => {
                 pdCost: parseInt(formData.cost) || 0,
                 pdDay: formData.day,
                 position: `${selectedPlace.lat},${selectedPlace.lon}`,
-                tcCode: formData.categoryCode
+                tcCode: formData.tcCode
             };
             console.log('요청 데이터:', planData);
             console.log('travelid:', travelid, 'groupid:', groupid);
@@ -117,7 +116,8 @@ const PlanDetailCreate = (data) => {
                 {
                     pdPlace: formData.place,
                     pdAddress: formData.address,
-                    pdCost: parseInt(formData.cost) || 0
+                    pdCost: parseInt(formData.cost) || 0,
+                    tcCode: formData.tcCode
                 }
             );
             console.log('일정 생성 WebSocket 메시지 전송');
@@ -237,8 +237,8 @@ const PlanDetailCreate = (data) => {
                         <label htmlFor='category-select' className="block text-sm font-medium text-gray-700 mb-3">카테고리</label>
                         <SelectPurpose
                             id='category-select'
-                            value={formData.categoryCode}
-                            onChange={(value) => setFormData(prev => ({ ...prev, categoryCode: value }))}
+                            value={formData.tcCode}
+                            onChange={(value) => setFormData(prev => ({ ...prev, tcCode: value }))}
                         />
                     </div>
 

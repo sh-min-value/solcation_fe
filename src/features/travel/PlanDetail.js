@@ -79,7 +79,7 @@ const PlanDetail = () => {
                                             <div className="flex justify-between items-start">
                                                 <div className="flex-1">
                                                     <div className="font-semibold text-gray-800">{plan.pdPlace}</div>
-                                                    <div className="text-sm text-gray-500 mt-1">{plan.pdAddress}</div>
+                                                    <div className="text-xs text-gray-500 mt-1 line-clamp-1">{plan.pdAddress}</div>
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="font-semibold text-gray-800">{plan.pdCost?.toLocaleString()}원</div>
