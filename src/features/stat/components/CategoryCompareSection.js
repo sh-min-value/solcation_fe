@@ -135,7 +135,7 @@ const CategoryCompareSection = ({ travel, groupid }) => {
   return (
     <div className="mb-6">
       <div className="text-left">
-        <h2 className="text-4 font-normal text-black mb-1">
+        <h2 className="text-sm font-normal text-black mb-4">
           카테고리 별로 비교해 드릴게요
         </h2>
       </div>
@@ -181,7 +181,7 @@ const CategoryCompareSection = ({ travel, groupid }) => {
                       {myAmount.toLocaleString()}원
                     </div>
                     <div
-                      className="bg-yellow-300 rounded min-w-[40px] px-1"
+                      className="bg-group-3 rounded min-w-[40px] px-1"
                       style={{ height: `${myHeight}px` }}
                     />
                   </div>

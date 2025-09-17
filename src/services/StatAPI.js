@@ -25,4 +25,12 @@ export const statAPI = {
   // AI 여행 인사이트 조회
   getInsight: (groupId, travelId) =>
     apiClient.get(`/groups/${groupId}/stats/api/${travelId}/insight`),
+
+  // 여행 계획 상 소비와 실제 소비 비교 조회
+  getComparePlanActual: (groupId, travelId) =>
+    apiClient.get(`/groups/${groupId}/stats/${travelId}/plan-actual-compare`),
+
+  // 여행 계획 총 경비 조회
+  getTotalPlanSpent: (groupId, travelId) =>
+    apiClient.get(`/groups/${groupId}/stats/${travelId}/plan-spent`),
 };

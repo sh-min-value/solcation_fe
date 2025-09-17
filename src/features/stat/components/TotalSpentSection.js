@@ -6,16 +6,16 @@ import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
 // 카테고리별 고정 색상 매핑
 const getCategoryColor = tcCode => {
   const colorMap = {
-    FOOD: 'bg-group-1', // 식비
-    CAFE_AND_SNACK: 'bg-group-2', // 카페, 간식
-    STORE: 'bg-group-3', // 편의점, 마트
-    PLEASURE: 'bg-group-4', // 술, 유흥
-    SHOPPING: 'bg-group-5', // 쇼핑
-    MEDICAL_TREATMENT: 'bg-group-6', // 의료
-    LODGMENT: 'bg-main', // 숙박
-    TRANSPORTATION: 'bg-blue', // 교통
-    TRANSFER: 'bg-logo-orange', // 이체
-    ETC: 'bg-gray-3', // 기타
+    FOOD: 'bg-group-1',
+    CAFE_AND_SNACK: 'bg-group-2',
+    STORE: 'bg-group-3',
+    PLEASURE: 'bg-group-4',
+    SHOPPING: 'bg-group-5',
+    MEDICAL_TREATMENT: 'bg-group-6',
+    LODGMENT: 'bg-main',
+    TRANSPORTATION: 'bg-blue',
+    TRANSFER: 'bg-logo-orange',
+    ETC: 'bg-gray-3',
   };
   return colorMap[tcCode] || 'bg-gray-3';
 };
@@ -53,19 +53,19 @@ const TotalSpentSection = ({ travel, groupid }) => {
           statAPI.getCategorySpent(groupid, travel.tpPk),
         ]);
 
-        // 총 경비 추출
+        // 총 경비
         const totalExpense =
           typeof totalSpentResponse === 'number'
             ? totalSpentResponse
             : totalSpentResponse?.data;
 
-        // 카테고리별 데이터 처리
+        // 카테고리별 데이터
         const categoryData = Array.isArray(categorySpentResponse)
           ? categorySpentResponse
           : categorySpentResponse?.data || [];
 
         if (totalExpense && categoryData.length > 0) {
-          // 소비 금액이 0인 카테고리 제외하고 비율 계산 및 고정 색상 매핑
+          // 소비 금액이 0인 카테고리 제외하고 비율 계산, 색상 매핑
           const categories = categoryData
             // 0원인 카테고리 제외
             .filter(category => category.totalAmount > 0)

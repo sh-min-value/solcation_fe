@@ -53,7 +53,7 @@ const ComparePerPersonSection = ({ travel, groupid }) => {
   const { ourPayPerDay, averagePayPerDay, difference } = data;
   const maxValue = Math.max(ourPayPerDay, averagePayPerDay);
   const maxHeight = 80;
-  const minHeight = 15;
+  const minHeight = 3;
   const ourHeight = Math.max((ourPayPerDay / maxValue) * maxHeight, minHeight);
   const averageHeight = Math.max(
     (averagePayPerDay / maxValue) * maxHeight,
@@ -68,14 +68,14 @@ const ComparePerPersonSection = ({ travel, groupid }) => {
   return (
     <div className="mb-6">
       <div className="text-left mb-4">
-        <p className="text-gray-1 text-base mb-1">
+        <h2 className="text-sm font-normal text-black mb-1">
           이번 여행에서 인당 하루에{' '}
-          <span className="font-bold text-third">
+          <span className="text-lg font-bold text-third">
             {ourPayPerDay.toLocaleString()}
           </span>
           원 썼어요
-        </p>
-        <p className="text-gray-2 text-xs">{differenceText}</p>
+        </h2>
+        <p className="text-gray-2 text-xs mb-6">{differenceText}</p>
       </div>
 
       {/* 막대 그래프 */}
