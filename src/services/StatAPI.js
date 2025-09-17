@@ -14,7 +14,15 @@ export const statAPI = {
   getCategorySpent: (groupId, travelId) =>
     apiClient.get(`/groups/${groupId}/stats/${travelId}/category-spent`),
 
-  // 여행 인당 소비 통계 비교교
+  // 여행 인당 소비 통계 비교
   getCompareSpentPerPerson: (groupId, travelId) =>
     apiClient.get(`/groups/${groupId}/stats/${travelId}/compare`),
+
+  // 여행 카테고리별 소비 통계 비교
+  getCompareSpentCategory: (groupId, travelId) =>
+    apiClient.get(`/groups/${groupId}/stats/${travelId}/category-compare`),
+
+  // AI 여행 인사이트 조회
+  getInsight: (groupId, travelId) =>
+    apiClient.get(`/groups/${groupId}/stats/api/${travelId}/insight`),
 };

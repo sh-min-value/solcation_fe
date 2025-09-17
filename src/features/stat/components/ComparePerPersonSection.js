@@ -37,13 +37,13 @@ const ComparePerPersonSection = ({ travel, groupid }) => {
     );
   }
 
-  if (!data) {
+  if (!data || (data.ourPayPerDay === 0 && data.averagePayPerDay === 0)) {
     return (
       <div className="mb-6">
         <div className="text-center py-8">
-          <p className="text-gray-2 text-lg">비교 데이터가 없습니다</p>
+          <p className="text-gray-2 text-lg">데이터가 없습니다</p>
           <p className="text-gray-3 text-sm mt-2">
-            이 여행의 비교 정보를 불러올 수 없어요
+            이 여행의 소비 기록이 없어요
           </p>
         </div>
       </div>
@@ -82,26 +82,26 @@ const ComparePerPersonSection = ({ travel, groupid }) => {
       <div className="flex justify-center items-end space-x-8 h-32">
         {/* 우리 그룹룹 막대 */}
         <div className="flex flex-col items-center">
-          <div className="text-[10px] text-gray-1 mb-1 font-medium">
+          <div className="text-[13px] text-gray-1 mb-1 font-medium">
             {ourPayPerDay.toLocaleString()}원
           </div>
           <div
             className="w-12 bg-group-3 rounded"
             style={{ height: `${ourHeight}px` }}
           />
-          <div className="text-xs text-gray-2 mt-1">우리 그룹</div>
+          <div className="text-sm text-gray-2 mt-1">우리 그룹</div>
         </div>
 
         {/* 평균 막대 */}
         <div className="flex flex-col items-center">
-          <div className="text-[10px] text-gray-1 mb-1 font-medium">
+          <div className="text-[13px] text-gray-1 mb-1 font-medium">
             {averagePayPerDay.toLocaleString()}원
           </div>
           <div
             className="w-12 bg-blue rounded"
             style={{ height: `${averageHeight}px` }}
           />
-          <div className="text-xs text-gray-2 mt-1">평균</div>
+          <div className="text-sm text-gray-2 mt-1">평균</div>
         </div>
       </div>
     </div>
