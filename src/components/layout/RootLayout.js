@@ -44,7 +44,7 @@ export default function RootLayout({ children, title }) {
 
       <div className="bg-main m-0">
         {showGroupUI && <GroupProfileCard group={groupData} />}
-        <div className="app-main rounded-t-3xl bg-white">
+        <div className="app-main rounded-t-3xl bg-white relative">
           {React.cloneElement(children, { triggerRefresh })}
         </div>
         {/* <main className="app-main rounded-t-3xl bg-white">{children}</main> */}
