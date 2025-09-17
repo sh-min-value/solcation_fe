@@ -63,16 +63,16 @@ const PlanDetailEdit = () => {
                 break;
             case 'presence-join':
                 console.log(`사용자 ${message.userId} 입장`);
-                break;
+                    break;
             case 'presence-leave':
                 console.log(`사용자 ${message.userId} 퇴장`);
-                break;
+                    break;
             case 'join-response':
                 console.log(`스냅샷`, message.snapshot);
                 setPlanData(message.snapshot);
                 setIsLoading(false); // 로딩 상태 해제
-                break;
-            default:
+                    break;
+                default:
                 console.log('알 수 없는 메시지 타입:', message.type, message);
         }
     }
@@ -258,7 +258,7 @@ const PlanDetailEdit = () => {
         // prev/next 계산을 위한 플랫한 데이터
         const flatData = isSnapshotData ? flattenSnapshotData(planData) : planData;
         const dayPlansAfter = flatData
-            .filter(p => p.pdDay === targetDay)
+            .filter(p => p.pdDay === targetDay && (p.crdtId ?? String(p.pdPk)) !== (draggedPlan.crdtId ?? String(draggedPlan.pdPk)))
             .sort((a, b) => {
                 const pa = parseFloat(a.position ?? '0'); const pb = parseFloat(b.position ?? '0');
                 if (pa !== pb) return pa - pb;
@@ -266,14 +266,17 @@ const PlanDetailEdit = () => {
                 return (a.clientId ?? '').localeCompare(b.clientId ?? '');
             });
 
-        const keyOf = (p) => p.crdtId ?? String(p.pdPk);
-        const insertedKey = keyOf(draggedPlan);
-        const insertedIndex = dayPlansAfter.findIndex(p => keyOf(p) === insertedKey);
+        // targetIndex를 기준으로 prev/next 계산
+        const prevCrdtId = targetIndex > 0 ? (dayPlansAfter[targetIndex - 1]?.crdtId ?? null) : null;
+        const nextCrdtId = targetIndex < dayPlansAfter.length ? (dayPlansAfter[targetIndex]?.crdtId ?? null) : null;
 
-        const prevCrdtId = insertedIndex > 0 ? (dayPlansAfter[insertedIndex - 1]?.crdtId ?? null) : null;
-        const nextCrdtId = (insertedIndex >= 0 && insertedIndex < dayPlansAfter.length - 1)
-            ? (dayPlansAfter[insertedIndex + 1]?.crdtId ?? null)
-            : null;
+        console.log('prev/next 계산:', { 
+            targetIndex, 
+            dayPlansAfterLength: dayPlansAfter.length,
+            prevCrdtId, 
+            nextCrdtId,
+            dayPlansAfter: dayPlansAfter.map(p => ({ place: p.pdPlace, crdtId: p.crdtId }))
+        });
 
         // Op 생성
         const crdtIdToSend = draggedPlan.crdtId ?? String(draggedPlan.pdPk);
@@ -429,10 +432,10 @@ const PlanDetailEdit = () => {
                                                         <div className="h-3 -mt-3 -mx-3 cursor-move" onDragOver={(e) => handleDragOverItemTop(e, day, index)} onDrop={(e) => handleDrop(e, day, index)} />
 
                                                         <div className="flex justify-between items-center">
-                                                            <div className="flex-1">
-                                                                <div className="font-semibold text-gray-800">{plan.pdPlace}</div>
+                                                <div className="flex-1">
+                                                    <div className="font-semibold text-gray-800">{plan.pdPlace}</div>
                                                                             <div className="text-xs text-gray-500 mt-1 line-clamp-1">{plan.pdAddress}</div>                                                                
-                                                            </div>
+                                                </div>
                                                              <div 
                                                                  className="text-right"
                                                                  role="button"
@@ -446,7 +449,7 @@ const PlanDetailEdit = () => {
                                                                      }
                                                                  }}
                                                              >
-                                                                <div className="font-semibold text-gray-800">{plan.pdCost?.toLocaleString()}원</div>
+                                                    <div className="font-semibold text-gray-800">{plan.pdCost?.toLocaleString()}원</div>
                                                                 <div className="text-sm text-gray-500 mt-1 flex items-center justify-end">
                                                                     {getTransactionCategoryIcon(plan.tcCode)}
                                                                 </div>
@@ -550,8 +553,8 @@ const PlanDetailEdit = () => {
                                         저장
                                     </button>
                                 </div>
-                            </div>
-                        </div>
+                    </div>
+                </div>
                     )}
                 </>
             )}

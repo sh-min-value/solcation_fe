@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CategoryEmoji from './CategoryEmoji';
+import CategoryEmoji from '../../utils/CategoryEmoji';
 
 const categories = [
   { id: 1, name: '식비', code: 'FOOD' },
@@ -55,7 +55,7 @@ const SelectPurpose = ({ id, value, onChange }) => {
         aria-label="카테고리 선택"
       >
         <div className="flex items-center gap-1">
-          <CategoryEmoji categoryCode={selectedCategory.code} size={16} />
+          <CategoryEmoji categoryCode={selectedCategory.code} size={8} />
           <div className="text-lg font-medium">{selectedCategory.name}</div>
         </div>
         <svg
@@ -86,7 +86,7 @@ const SelectPurpose = ({ id, value, onChange }) => {
               onKeyDown={e => handleOptionKeyDown(e, category)}
               aria-selected={selectedValue === category.code}
             >
-              <CategoryEmoji categoryCode={category.code} size={16} />
+              <CategoryEmoji categoryCode={category.code} size={8} />
               <span className="text-lg font-medium">{category.name}</span>
             </div>
           ))}
