@@ -13,4 +13,8 @@ export const statAPI = {
   // 여행 카테고리별 소비 통계 조회
   getCategorySpent: (groupId, travelId) =>
     apiClient.get(`/groups/${groupId}/stats/${travelId}/category-spent`),
+
+  // 여행 인당 소비 통계 비교교
+  getCompareSpentPerPerson: (groupId, travelId) =>
+    apiClient.get(`/groups/${groupId}/stats/${travelId}/compare`),
 };

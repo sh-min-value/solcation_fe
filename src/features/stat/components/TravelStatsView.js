@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TotalSpentSection from './TotalSpentSection';
+import ComparePerPersonSection from './ComparePerPersonSection';
 
 const TravelStatsView = ({ travel }) => {
   return (
@@ -21,6 +22,14 @@ const TravelStatsView = ({ travel }) => {
 
       {/* 총 경비 및 카테고리별 지출 */}
       <TotalSpentSection travel={travel} groupid={travel?.groupid} />
+
+      {/* 구분선 */}
+      <div className="mt-5 mb-5">
+        <hr className="border-gray-5" />
+      </div>
+
+      {/* 인당 비교 */}
+      <ComparePerPersonSection travel={travel} groupid={travel?.groupid} />
 
       {/* 구분선 */}
       <div className="mt-5 mb-5">

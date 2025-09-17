@@ -46,13 +46,6 @@ const getEventsForDate = (date, events) => {
   targetDate.setHours(0, 0, 0, 0);
 
   return events
-    .filter(event => {
-      const startDate = new Date(event.tpStart);
-      const endDate = new Date(event.tpEnd);
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(0, 0, 0, 0);
-      return targetDate >= startDate && targetDate <= endDate;
-    })
     .map(event => {
       const startDate = new Date(event.tpStart);
       const endDate = new Date(event.tpEnd);
@@ -61,31 +54,17 @@ const getEventsForDate = (date, events) => {
 
       const isStartDate = targetDate.getTime() === startDate.getTime();
       const isEndDate = targetDate.getTime() === endDate.getTime();
-      const targetDayOfWeek = targetDate.getDay();
-      const isWeekStart = targetDayOfWeek === 0;
-      const isWeekEnd = targetDayOfWeek === 6;
-      const isEventContinuingFromPrevWeek =
-        !isStartDate && targetDate > startDate;
-      const isEventContinuingToNextWeek = !isEndDate && targetDate < endDate;
-      const isEventStartingInCurrentWeekAndContinuingToNext =
-        isStartDate && targetDate < endDate;
-      const isNextWeekFirstDayOfContinuingEvent =
-        !isStartDate && targetDate > startDate && isWeekStart;
-      const isStartDateAndWeekEnd = isStartDate && isWeekEnd;
+      const isInRange = targetDate >= startDate && targetDate <= endDate;
 
-      return {
-        ...event,
-        isStartDate,
-        isEndDate,
-        isWeekStart,
-        isWeekEnd,
-        isEventContinuingFromPrevWeek,
-        isEventContinuingToNextWeek,
-        isEventStartingInCurrentWeekAndContinuingToNext,
-        isNextWeekFirstDayOfContinuingEvent,
-        isStartDateAndWeekEnd,
-      };
-    });
+      return isInRange
+        ? {
+            ...event,
+            isStartDate,
+            isEndDate,
+          }
+        : null;
+    })
+    .filter(Boolean);
 };
 
 // 달력 날짜 생성
@@ -173,31 +152,15 @@ const CalendarSection = ({ events = [] }) => {
       {/* 날짜 */}
       <div className="grid grid-cols-7">
         {calendarDays.map((dayInfo, index) => {
-          // 이벤트 하이라이트 스타일
-          const getEventHighlightStyle = () => {
+          const getBorderRadiusClass = () => {
             if (dayInfo.events.length === 0) return '';
 
             const firstEvent = dayInfo.events[0];
-            let borderRadiusClass = '';
-
-            // 당일치기
-            if (firstEvent.isStartDate && firstEvent.isEndDate) {
-              borderRadiusClass = 'rounded-[20px]';
-            }
-            // 종료일
-            else if (firstEvent.isEndDate) {
-              borderRadiusClass = 'rounded-r-[20px]';
-            }
-            // 시작일
-            else if (firstEvent.isStartDate) {
-              borderRadiusClass = 'rounded-l-[20px]';
-            }
-            // 중간 날짜
-            else {
-              borderRadiusClass = 'rounded-none';
-            }
-
-            return `font-semibold ${borderRadiusClass}`;
+            if (firstEvent.isStartDate && firstEvent.isEndDate)
+              return 'rounded-[20px]';
+            if (firstEvent.isEndDate) return 'rounded-r-[20px]';
+            if (firstEvent.isStartDate) return 'rounded-l-[20px]';
+            return 'rounded-none';
           };
 
           return (
@@ -208,13 +171,12 @@ const CalendarSection = ({ events = [] }) => {
                ${dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3'}
                ${dayInfo.isToday ? 'font-bold' : ''}
                `}
-              style={{}}
             >
               {dayInfo.events.length > 0 && (
                 <div
                   className={`absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px] ${getGroupColor(
                     dayInfo.events[0].groupPk
-                  )} ${getEventHighlightStyle().split(' ')[1] || ''}`}
+                  )} ${getBorderRadiusClass()}`}
                 />
               )}
               <span className="relative z-10">{dayInfo.date}</span>
