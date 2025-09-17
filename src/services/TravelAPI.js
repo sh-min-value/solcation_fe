@@ -25,19 +25,11 @@ export const planDetailAPI = {
     joinPlanEdit: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/join`, data),
     leavePlanEdit: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/leave`, data),
     savePlanEdit: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/save`, data),
+    createPlanDetail: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/plan/new`, data),
 };
 
 export const travelCreateAPI = {
     createPlan: (groupId, data) => apiClient.post(`/group/${groupId}/travel/new`, data),
 };
-
-export const planDetailEditAPI = {
-    updatePlan: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/edit/op`, data),
-};
-
-export const planDetailCreateAPI = {
-    createPlanDetail: (travelId, groupId, data) => apiClient.post(`/group/${groupId}/travel/${travelId}/plan/new`, data),
-};
-
   export default travelAPI;
   
