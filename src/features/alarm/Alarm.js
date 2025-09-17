@@ -386,15 +386,6 @@ const Alarm = () => {
       setInviteNoti(result || []);
     } catch (err) {
       const errorData = err.response?.error || err;
-      //null 오류나 빈 응답은 성공으로 처리 (void 컨트롤러 응답)
-      if (
-        err === null ||
-        (err &&
-          err.name === 'SyntaxError' &&
-          err.message.includes('Unexpected end of JSON input'))
-      ) {
-        return;
-      }
 
       //에러 발생 시 에러 페이지로 이동
       navigate('/error', {
@@ -427,15 +418,6 @@ const Alarm = () => {
         }
       } catch (err) {
         const errorData = err.response?.error || err;
-        //null 오류나 빈 응답은 성공으로 처리 (void 컨트롤러 응답)
-        if (
-          err === null ||
-          (err &&
-            err.name === 'SyntaxError' &&
-            err.message.includes('Unexpected end of JSON input'))
-        ) {
-          return;
-        }
 
         //에러 발생 시 에러 페이지로 이동
         navigate('/error', {
@@ -471,15 +453,6 @@ const Alarm = () => {
         }
       } catch (err) {
         const errorData = err.response?.error || err;
-        //null 오류나 빈 응답은 성공으로 처리 (void 컨트롤러 응답)
-        if (
-          err === null ||
-          (err &&
-            err.name === 'SyntaxError' &&
-            err.message.includes('Unexpected end of JSON input'))
-        ) {
-          return;
-        }
 
         //에러 발생 시 에러 페이지로 이동
         navigate('/error', {
