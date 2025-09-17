@@ -66,8 +66,8 @@ const Loading = ({
   return (
     <div
       className={`
-        ${overlay ? 'absolute inset-0 z-[1000]' : 'w-full h-full'}
-        flex items-center justify-center bg-gray-2/20
+        ${overlay ? 'bg-gray-2/20' : 'w-full h-full'}
+        absolute inset-0 z-[1000] flex items-center justify-center 
       `}
       role="status"
       aria-live="polite"
