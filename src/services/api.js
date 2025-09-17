@@ -26,15 +26,24 @@ class ApiClient {
     }
 
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       // 에러 응답도 JSON으로 파싱해서 전달
       const errorData = await response.json().catch(() => ({}));
+      console.log(response);
+      //인증 실패 처리
+      if (response.status === 401 && !endpoint.includes('/auth/login')) {
+        localStorage.clear();
+        alert('로그인이 필요합니다.');
+        window.location.href = '/login';
+        return;
+      }
+
       const error = new Error(`HTTP error! status: ${response.status}`);
       error.response = errorData;
       throw error;
     }
-    
+
     const data = await response.json();
     return data;
   }
@@ -48,6 +57,65 @@ class ApiClient {
     });
   }
 
+  // Multipart POST 요청 - 파일 업로드용
+  async postMultipart(endpoint, formData, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const config = {
+      method: 'POST',
+      body: formData,
+      headers: {},
+      ...options,
+    };
+
+    // 토큰이 있으면 헤더에 추가
+    const token = localStorage.getItem('accessToken');
+    const tokenType = localStorage.getItem('tokenType') || 'Bearer';
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `${tokenType} ${token}`,
+      };
+    }
+
+    try {
+      console.log('Sending multipart request to:', url);
+      console.log('FormData contents:');
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Multipart API Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: url,
+          errorData: errorData,
+        });
+
+        if (response.status === 401) {
+          localStorage.clear();
+          alert('로그인이 필요합니다.');
+          window.location.href = '/login';
+          return;
+        }
+
+        const error = new Error(`HTTP error! status: ${response.status}`);
+        error.response = errorData;
+        error.status = response.status;
+        throw error;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Multipart request failed:', error);
+      throw error;
+    }
+  }
+
   // GET 요청
   async get(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'GET' });
@@ -59,16 +127,7 @@ const apiClient = new ApiClient(API_BASE_URL);
 
 // 인증 관련 API
 export const authAPI = {
-  login: (credentials) => apiClient.post('/auth/login', credentials),
-};
-
-// 그룹 관련 API
-export const groupAPI = {
-  getGroup: (groupId) => apiClient.get(`/group/${groupId}/get`),
-  getGroupList: (searchTerm = '') => {
-    const params = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
-    return apiClient.get(`/group/list${params}`);
-  },
+  login: credentials => apiClient.post('/auth/login', credentials),
 };
 
 export default apiClient;

@@ -9,6 +9,7 @@ const Main = lazy(() => import('../features/main/Main'));
 const Alarm = lazy(() => import('../features/alarm/Alarm'));
 
 const Group = lazy(() => import('../features/group/Group'));
+const GroupCreate = lazy(() => import('../features/group/GroupCreate'));
 const GroupList = lazy(() => import('../features/group/GroupList'));
 const Account = lazy(() => import('../features/account/Account'));
 const Stat = lazy(() => import('../features/stat/Stat'));
@@ -49,6 +50,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <GroupList />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/group/new"
+          element={
+            <ProtectedRoute>
+              <GroupCreate />
             </ProtectedRoute>
           }
         ></Route>
