@@ -79,7 +79,7 @@ const TravelStatsView = ({ travel }) => {
   );
 
   return (
-    <div className="pt-0 px-4 pb-4 h-full overflow-y-auto bg-white relative">
+    <div className="pt-0 px-4 pb-4 h-screen overflow-y-scroll bg-white relative">
       <div className="relative text-center mb-6">
         {hasPrevious && (
           <ChevronButton direction="left" onClick={handlePreviousTravel} />
