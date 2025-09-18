@@ -98,8 +98,16 @@ const GroupCard = ({ group, onClick }) => {
           <div className="flex items-center space-x-1 mt-1">
             <div className="flex items-center px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-600">
               <FaUserGroup className="w-3 h-3 mr-1" />
-              <span>
-                {group.groupLeader || '리더'} 외 {group.totalMembers - 1}명
+              <span className="inline-flex items-center">
+                <span
+                  className="max-w-12 truncate flex-1 align-bottom"
+                  title={group.groupLeader || '리더'}
+                >
+                  {group.groupLeader || '리더'}
+                </span>
+                <span className="ml-1">
+                  외 {Math.max(0, (group.totalMembers ?? 1) - 1)}명
+                </span>
               </span>
             </div>
 
@@ -110,7 +118,7 @@ const GroupCard = ({ group, onClick }) => {
                   alt={group.gcPk}
                   className="w-3 h-3 mr-1"
                 />
-                <span>{group.gcPk}</span>
+                <span>{getGroupCategoryName(group.gcPk)}</span>
               </div>
             )}
           </div>
