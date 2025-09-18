@@ -80,7 +80,7 @@ const EventSection = ({ events = [], isLoading = false }) => {
           events.map((event, index) => (
             <div
               key={index}
-              className="flex items-center p-3 bg-white rounded-lg"
+              className="flex items-center p-3 bg-white rounded-xl"
             >
               <div className="w-24 text-sm font-bold text-gray-1 flex-shrink-0">
                 {formatDateRange(event.tpStart, event.tpEnd)}

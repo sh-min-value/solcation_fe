@@ -22,7 +22,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
   return (
     <>
       {/* 헤더 */}
-      <div className="relative z-20 bg-white rounded-[20px] p-4 shadow-sm mb-[-26px]">
+      <div className="relative z-20 bg-white rounded-xl p-4 shadow-sm mb-[-26px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* 프로필 사진 */}
