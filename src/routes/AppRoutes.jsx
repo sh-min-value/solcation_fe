@@ -12,6 +12,7 @@ const Group = lazy(() => import('../features/group/Group'));
 const GroupCreate = lazy(() => import('../features/group/GroupCreate'));
 const GroupList = lazy(() => import('../features/group/GroupList'));
 const Account = lazy(() => import('../features/account/Account'));
+const AccountCreate = lazy(() => import('../features/account/AccountCreate'));
 const Stat = lazy(() => import('../features/stat/Stat'));
 
 const Travel = lazy(() => import('../features/travel/Travel'));
@@ -64,6 +65,15 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         ></Route>
+
+        <Route
+          path="/group/:groupid/account/new"
+          element={
+            <ProtectedRoute>
+              <AccountCreate />
+            </ProtectedRoute>
+          }
+        />
 
         {/* RootLayout 없이 독립적인 라우트들 */}
         <Route
