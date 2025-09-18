@@ -111,9 +111,6 @@ export default function AppRoutes() {
         >
           <Route path="account" element={<Account />} />
           <Route path="travel" element={<Travel />} />
-          {/* <Route path="travel/:travelid" element={<PlanDetail />} />
-          <Route path="travel/:travelid/edit" element={<PlanDetailEdit />} />
-          <Route path="travel/new" element={<TravelCreate />} /> */}
           <Route path="stats" element={<Stat />} />
           <Route path="stats/:travelid" element={<Stat />} />
         </Route>
