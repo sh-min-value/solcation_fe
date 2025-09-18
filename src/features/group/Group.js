@@ -5,6 +5,7 @@ import { RiSendPlaneFill } from 'react-icons/ri';
 import Member from './Member';
 import { BiSolidBellRing } from 'react-icons/bi';
 import ProfileModal from './ProfileModal';
+import Loading from '../../components/common/Loading';
 
 /* 초대 검색바 컴포넌트 */
 const SearchBar = React.memo(
@@ -331,7 +332,7 @@ const Group = ({ triggerRefresh }) => {
   const isGroupMain = location.pathname === `/group/${groupid}`;
 
   if (isLoading) {
-    return <p>로딩중...</p>;
+    return <Loading />;
   }
 
   return <>{isGroupMain ? GroupMainContent : <Outlet />}</>;
