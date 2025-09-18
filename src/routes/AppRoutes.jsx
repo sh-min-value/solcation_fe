@@ -64,24 +64,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         ></Route>
-        <Route
-          path="/group/:groupid"
-          element={
-            <ProtectedRoute>
-              <RootLayout>
-                <Group />
-              </RootLayout>
-            </ProtectedRoute>
-          }
-        >
-          <Route path="account" element={<Account />} />
-          <Route path="travel" element={<Travel />} />
-          <Route path="travel/:travelid" element={<PlanDetail />} />
-          <Route path="travel/:travelid/edit" element={<PlanDetailEdit />} />
-          <Route path="travel/new" element={<TravelCreate />} />
-          <Route path="stats" element={<Stat />} />
-          <Route path="stats/:travelid" element={<Stat />} />
-        </Route>
+
         {/* RootLayout 없이 독립적인 라우트들 */}
         <Route
           path="/group/:groupid/travel/:travelid"
@@ -115,6 +98,25 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/group/:groupid"
+          element={
+            <ProtectedRoute>
+              <RootLayout>
+                <Group />
+              </RootLayout>
+            </ProtectedRoute>
+          }
+        >
+          <Route path="account" element={<Account />} />
+          <Route path="travel" element={<Travel />} />
+          <Route path="travel/:travelid" element={<PlanDetail />} />
+          <Route path="travel/:travelid/edit" element={<PlanDetailEdit />} />
+          <Route path="travel/new" element={<TravelCreate />} />
+          <Route path="stats" element={<Stat />} />
+          <Route path="stats/:travelid" element={<Stat />} />
+        </Route>
 
         {/* 에러 페이지 라우트 */}
         <Route path="/error" element={<ErrorPage />} />

@@ -121,12 +121,26 @@ const generateCalendarDays = (year, month, events = []) => {
   return calendarDays;
 };
 
-const CalendarSection = ({ events = [] }) => {
+const CalendarSection = ({ events = [], onDateSelect, selectedDates = [] }) => {
   const currentDate = new Date();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const calendarDays = generateCalendarDays(year, month, events);
+
+  const handleDateClick = dayInfo => {
+    if (dayInfo.isCurrentMonth && onDateSelect) {
+      onDateSelect(dayInfo.fullDate);
+    }
+  };
+
+  const isDateSelected = dayInfo => {
+    if (!dayInfo.isCurrentMonth) return false;
+    return selectedDates.some(
+      selectedDate =>
+        selectedDate.toDateString() === dayInfo.fullDate.toDateString()
+    );
+  };
 
   return (
     <div className="bg-white rounded-xl px-[19px] py-4 mb-[14px]">
@@ -156,23 +170,55 @@ const CalendarSection = ({ events = [] }) => {
             if (dayInfo.events.length === 0) return '';
 
             const firstEvent = dayInfo.events[0];
-            if (firstEvent.isStartDate && firstEvent.isEndDate)
-              return 'rounded-[20px]';
-            if (firstEvent.isEndDate) return 'rounded-r-[20px]';
-            if (firstEvent.isStartDate) return 'rounded-l-[20px]';
-            return 'rounded-none';
+            let borderRadiusClass = '';
+
+            // 당일치기
+            if (firstEvent.isStartDate && firstEvent.isEndDate) {
+              borderRadiusClass = 'rounded-[20px]';
+            }
+            // 종료일
+            else if (firstEvent.isEndDate) {
+              borderRadiusClass = 'rounded-r-[20px]';
+            }
+            // 시작일
+            else if (firstEvent.isStartDate) {
+              borderRadiusClass = 'rounded-l-[20px]';
+            }
+            // 중간 날짜
+            else {
+              borderRadiusClass = 'rounded-none';
+            }
+
+            return `font-semibold ${borderRadiusClass}`;
           };
+
+          const isSelected = isDateSelected(dayInfo);
 
           return (
             <div
               key={index}
+              role="button"
+              tabIndex={dayInfo.isCurrentMonth ? 0 : -1}
               className={`
-                 aspect-square flex items-center justify-center text-sm relative
+                 aspect-square flex items-center justify-center text-sm relative cursor-pointer
                ${dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3'}
                ${dayInfo.isToday ? 'font-bold' : ''}
+               ${isSelected ? 'bg-blue-500 text-white rounded-full' : ''}
+               hover:${dayInfo.isCurrentMonth ? 'bg-gray-100' : ''}
+               focus:outline-none focus:ring-2 focus:ring-blue-500
                `}
+              onClick={() => handleDateClick(dayInfo)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDateClick(dayInfo);
+                }
+              }}
+              aria-label={`${dayInfo.date}일 ${
+                isSelected ? '선택됨' : '선택 가능'
+              }`}
             >
-              {dayInfo.events.length > 0 && (
+              {dayInfo.events.length > 0 && !isSelected && (
                 <div
                   className={`absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px] ${getGroupColor(
                     dayInfo.events[0].groupPk
@@ -190,6 +236,8 @@ const CalendarSection = ({ events = [] }) => {
 
 CalendarSection.propTypes = {
   events: PropTypes.array,
+  onDateSelect: PropTypes.func,
+  selectedDates: PropTypes.array,
 };
 
 export default CalendarSection;

@@ -35,19 +35,18 @@ export default function RootLayout({ children, title }) {
   const showGroupUI = isGroupRoute && groupData;
 
   return (
-    <div className="app-layout relative" key={refreshKey}>
+    <div className="min-h-screen flex flex-col" key={refreshKey}>
       <Header
         showBackButton={true}
         showHomeButton={showGroupUI}
         title={title}
       />
 
-      <div className="bg-main m-0">
+      <div className="bg-main flex-1 flex flex-col">
         {showGroupUI && <GroupProfileCard group={groupData} />}
-        <div className="app-main rounded-t-3xl bg-white">
+        <div className="app-main flex-1 rounded-t-3xl bg-white">
           {React.cloneElement(children, { triggerRefresh })}
         </div>
-        {/* <main className="app-main rounded-t-3xl bg-white">{children}</main> */}
       </div>
 
       {showGroupUI && <NavigationBar />}
