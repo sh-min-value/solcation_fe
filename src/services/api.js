@@ -10,9 +10,13 @@ class ApiClient {
   // 기본 요청 메서드
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
+    
+    // FormData인 경우 Content-Type을 설정하지 않음 (브라우저가 자동으로 설정)
+    const isFormData = options.body instanceof FormData;
+    
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...options.headers,
       },
       ...options,
@@ -53,7 +57,7 @@ class ApiClient {
     return this.request(endpoint, {
       ...options,
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data instanceof FormData ? data : JSON.stringify(data),
     });
   }
 
