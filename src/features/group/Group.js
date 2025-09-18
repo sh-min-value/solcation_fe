@@ -201,17 +201,6 @@ const Group = ({ triggerRefresh }) => {
       }
       await GroupAPI.inviteMember(groupId, tel);
     } catch (response) {
-      // null 오류나 빈 응답은 성공으로 처리 (void 컨트롤러 응답)
-      if (
-        error === null ||
-        (error &&
-          error.name === 'SyntaxError' &&
-          error.message.includes('Unexpected end of JSON input'))
-      ) {
-        return;
-      }
-
-      // 실제 오류인 경우
       console.log(
         `초대 중 오류 발생: ${
           error.response?.error || error.message || 'Unknown error'
