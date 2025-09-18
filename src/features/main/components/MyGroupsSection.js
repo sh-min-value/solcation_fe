@@ -92,7 +92,7 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
                 imagePath={group.groupImage}
                 groupName={group.groupName}
               />
-              <p className="text-xs text-gray-2 truncate w-60">
+              <p className="text-xs text-gray-2 truncate w-full max-w-[60px]">
                 {group.groupName}
               </p>
             </div>

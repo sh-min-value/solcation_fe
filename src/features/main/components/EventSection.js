@@ -90,11 +90,15 @@ const EventSection = ({ events = [], isLoading = false }) => {
                   event.groupPk
                 )}`}
               ></div>
-              <div className="flex-1">
-                <div className="font-semibold text-gray-1">{event.tpTitle}</div>
-                <div className="text-sm text-gray-2 flex items-center space-x-1">
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-gray-1 truncate">
+                  {event.tpTitle}
+                </div>
+                <div className="text-sm text-gray-2 flex items-center space-x-1 min-w-0">
                   <GroupIcon gcCode={event.gcCode} />
-                  <span>{event.groupName}</span>
+                  <span className="truncate flex-1 min-w-0">
+                    {event.groupName}
+                  </span>
                 </div>
               </div>
             </div>
