@@ -23,8 +23,8 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
     <>
       {/* 헤더 */}
       <div className="relative z-20 bg-white rounded-xl p-4 shadow-sm mb-[-26px]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between min-w-0">
+          <div className="flex items-center space-x-4 min-w-0 flex-1">
             {/* 프로필 사진 */}
             <div className="w-16 h-16 bg-logo-orange bg-opacity-20 rounded-full flex items-center justify-center text-3xl">
               <img
@@ -35,8 +35,8 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             </div>
 
             {/* 사용자 정보 */}
-            <div className="flex flex-col">
-              <h2 className="text-xl font-bold text-gray-1">
+            <div className="flex flex-col min-w-0 flex-1">
+              <h2 className="text-xl font-bold text-gray-1 truncate">
                 {isProfileLoading ? (
                   <LoadingSkeleton width="96px" height="24px" />
                 ) : userProfile?.userName || user?.name ? (
@@ -45,7 +45,7 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
                   <div className="text-gray-3">사용자 정보 없음</div>
                 )}
               </h2>
-              <div className="text-sm text-gray-2">
+              <div className="text-sm text-gray-2 truncate max-w-[200px]">
                 {isProfileLoading ? (
                   <LoadingSkeleton
                     width="128px"
