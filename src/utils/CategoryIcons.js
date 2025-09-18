@@ -16,8 +16,6 @@ import { MdKitesurfing, MdFestival } from 'react-icons/md';
 import { HiLibrary } from 'react-icons/hi';
 import { BsFillPiggyBankFill } from 'react-icons/bs';
 
-import { EmojiProvider, Emoji } from 'react-apple-emojis';
-import emojiData from 'react-apple-emojis/src/data.json';
 
 // 그룹 카테고리 아이콘 import
 import FamilyIcon from '../assets/categoryIcons/family.svg';
@@ -249,12 +247,4 @@ export const getGroupCategoryEmojiName = categoryCode => {
     case 'COLLEAGUE':
       return 'briefcase';
   }
-};
-
-export const getEmoji = (name, size) => {
-  return (
-    <EmojiProvider data={emojiData}>
-      <Emoji name={name} size={size}></Emoji>
-    </EmojiProvider>
-  );
 };

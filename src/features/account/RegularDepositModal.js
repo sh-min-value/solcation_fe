@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
-import { getEmoji } from '../../utils/CategoryIcons';
+// import { getEmoji } from '../../utils/CategoryIcons';
 
 const RegularDepositModal = ({ isOpen, onClose }) => {
   const [frequency, setFrequency] = useState('매달');
@@ -30,7 +30,7 @@ const RegularDepositModal = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between p-6 pb-2">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 flex items-center justify-center">
-              {getEmoji('alarm-clock', 10)}
+              {/*{getEmoji('alarm-clock', 10)}*/}
             </div>
             <h2 className="text-xl font-extrabold text-black">
               정기 입금일 설정
