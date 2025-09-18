@@ -63,20 +63,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         ></Route>
-        <Route
-          path="/group/:groupid"
-          element={
-            <ProtectedRoute>
-              <RootLayout>
-                <Group />
-              </RootLayout>
-            </ProtectedRoute>
-          }
-        >
-          <Route path="account" element={<Account />} />
-          <Route path="travel" element={<Travel />} />
-          <Route path="stat" element={<Stat />} />
-        </Route>
+        
         {/* RootLayout 없이 독립적인 라우트들 */}
         <Route path="/group/:groupid/travel/:travelid" element={
           <ProtectedRoute>
@@ -98,6 +85,22 @@ export default function AppRoutes() {
             <TravelCreate />
           </ProtectedRoute>
         } />
+
+        <Route
+          path="/group/:groupid"
+          element={
+            <ProtectedRoute>
+              <RootLayout>
+                <Group />
+              </RootLayout>
+            </ProtectedRoute>
+          }
+        >
+          <Route path="account" element={<Account />} />
+          <Route path="travel" element={<Travel />} />
+          <Route path="stat" element={<Stat />} />
+        </Route>
+        
         
         {/* 에러 페이지 라우트 */}
         <Route path="/error" element={<ErrorPage />} />
