@@ -552,7 +552,7 @@ const Alarm = () => {
         <Loading size="large" color="gray" />
       ) : (
         <div
-          className={`flex flex-col items-center min-h-screen relative ${
+          className={`flex flex-col items-center min-h-full relative ${
             isEmpty ? 'justify-center' : 'justify-start'
           }`}
         >
