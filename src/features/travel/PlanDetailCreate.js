@@ -237,6 +237,7 @@ const PlanDetailCreate = (data) => {
                         <label htmlFor='category-select' className="block text-sm font-medium text-gray-700 mb-3">카테고리</label>
                         <SelectPurpose
                             id='category-select'
+                            type='transaction'
                             value={formData.tcCode}
                             onChange={(value) => setFormData(prev => ({ ...prev, tcCode: value }))}
                         />  

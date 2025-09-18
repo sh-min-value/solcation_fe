@@ -29,7 +29,9 @@ const emojiMap = {
 const transactionCategoryEmoji = ({ categoryCode, size}) => {
   return (
     <EmojiProvider data={emojiData}>
-        <Emoji name={emojiMap[categoryCode] || 'speech_balloon'} className="w-${size} h-${size} mr-1" />
+      <span className={`w-${size} h-${size} mr-1`}>
+        <Emoji name={emojiMap[categoryCode] || 'speech_balloon'} className="w-${size} h-${size}" />
+      </span>
     </EmojiProvider>
   );
 };
