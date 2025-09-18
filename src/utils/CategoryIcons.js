@@ -16,6 +16,7 @@ import { MdKitesurfing, MdFestival } from 'react-icons/md';
 import { HiLibrary } from 'react-icons/hi';
 import { BsFillPiggyBankFill } from 'react-icons/bs';
 
+
 // 그룹 카테고리 아이콘 import
 import FamilyIcon from '../assets/categoryIcons/family.svg';
 import FriendIcon from '../assets/categoryIcons/friend.svg';

@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Header from "../common/Header.js";
-import NavigationBar from "../common/NavigationBar.js";
-import GroupProfileCard from "../common/GroupProfileCard.js";
-import { travelAPI } from "../../services/TravelAPI";
+import { TravelAPI } from "../../services/TravelAPI";
 import { getTravelProfileImage } from "../../services/s3";
 import { getStateIcon, getTravelCategoryIcon } from "../../utils/CategoryIcons";
 
 export default function TravelLayout({ children, title }) {
   const location = useLocation();
   const { groupid, travelid } = useParams();
-  const [groupData, setGroupData] = useState(null);
   const [travelInfo, setTravelInfo] = useState(null);
   const [travelImageUrl, setTravelImageUrl] = useState(null);
 
-  const isGroupRoute = location.pathname.startsWith('/group/');
   const isTravelRoute = travelid && location.pathname.includes('/travel/');
 
   // 여행 정보 로드
@@ -22,7 +18,7 @@ export default function TravelLayout({ children, title }) {
     if (isTravelRoute && travelid && groupid) {
       const loadTravelData = async () => {
         try {
-          const data = await travelAPI.getTravel(travelid, groupid);
+          const data = await TravelAPI.getTravel(travelid, groupid);
           setTravelInfo(data);
         } catch (error) {
           console.error('여행 데이터 로드 실패:', error);
@@ -50,7 +46,6 @@ export default function TravelLayout({ children, title }) {
     loadTravelImage();
   }, [travelInfo?.thumbnail]);
 
-  const showGroupUI = isGroupRoute && groupData;
   const showTravelBanner = isTravelRoute && travelInfo;
 
   // 날짜 포맷팅 함수
@@ -91,13 +86,8 @@ export default function TravelLayout({ children, title }) {
     <div className="h-screen bg-main flex flex-col">
       <Header 
         showBackButton={true}
-        showHomeButton={showGroupUI}
         title={title}
       />
-      
-      {/* 그룹 프로필 카드 */}
-      {showGroupUI && <GroupProfileCard group={groupData} />}
-      
       {/* 여행 정보 배너 */}
       {showTravelBanner && (
         <div>
@@ -145,16 +135,14 @@ export default function TravelLayout({ children, title }) {
         <div className="h-full overflow-y-auto p-6">
           {typeof children === 'function' 
             ? children({ 
+                travelInfo, 
                 travelDays: getTravelDays(), 
-                formatDate,
-                travelInfo 
+                formatDate 
               })
             : children
           }
         </div>
       </div>
-      
-      {showGroupUI && <NavigationBar />}
-    </div>
+          </div>
   );
 }

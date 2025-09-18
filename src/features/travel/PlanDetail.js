@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TravelLayout from '../../components/layout/TravelLayout';
 import EmptyBear from '../../components/common/EmptyBear';
-import { travelAPI } from '../../services/TravelAPI';
+import { TravelAPI } from '../../services/TravelAPI';
 import { getTransactionCategoryIcon } from '../../utils/CategoryIcons';
 
 const PlanDetail = () => {
@@ -15,7 +15,7 @@ const PlanDetail = () => {
         const fetchData = async () => {
             try {
                 // 일정만 가져오기 (여행 정보는 TravelLayout에서 처리)
-                const planResponse = await travelAPI.getTravelDetail(travelid, groupid);
+                const planResponse = await TravelAPI.getTravelDetail(travelid, groupid);
                 setPlanData(planResponse);
                 setIsLoading(false);
             } catch (error) {
@@ -79,7 +79,7 @@ const PlanDetail = () => {
                                             <div className="flex justify-between items-start">
                                                 <div className="flex-1">
                                                     <div className="font-semibold text-gray-800">{plan.pdPlace}</div>
-                                                    <div className="text-sm text-gray-500 mt-1">{plan.pdAddress}</div>
+                                                    <div className="text-xs text-gray-500 mt-1 line-clamp-1">{plan.pdAddress}</div>
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="font-semibold text-gray-800">{plan.pdCost?.toLocaleString()}원</div>
