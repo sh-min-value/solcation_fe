@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TravelLayout from '../../components/layout/TravelLayout';
 import useStomp from '../../hooks/useStomp';
-import { websocketAPI } from '../../services/WebsocketAPI'; 
+import { WebsocketAPI } from '../../services/WebsocketAPI'; 
 import { GoPlusCircle } from "react-icons/go";
 import { getTransactionCategoryIcon } from '../../utils/CategoryIcons';
 import { MdCancel } from "react-icons/md";
@@ -34,7 +34,7 @@ const PlanDetailEdit = () => {
         onMessage: handleStompMessage,
         onRefreshData: () => {
             if (isConnected && publish && groupid && travelid && currentUserId) {
-                websocketAPI.joinEditSession(publish, groupid, travelid, currentUserId);
+                WebsocketAPI.joinEditSession(publish, groupid, travelid, currentUserId);
             }
         },
         autoJoin: true
@@ -369,7 +369,7 @@ const PlanDetailEdit = () => {
         setIsSaving(true);
         console.log('저장 요청');
 
-        websocketAPI.publishSaveCompleted(publish, groupid, travelid, currentUserId);
+        WebsocketAPI.publishSaveCompleted(publish, groupid, travelid, currentUserId);
     };
 
     if (isLoading) return <div className="p-4">일정을 불러오는 중입니다...</div>;
@@ -535,6 +535,7 @@ const PlanDetailEdit = () => {
                                             id='categoryCode'
                                             value={editFormData.tcCode}
                                             onChange={(value) => setEditFormData(prev => ({ ...prev, tcCode: value }))}
+                                            type='transaction'
                                         />
                                     </div>
                                 </div>

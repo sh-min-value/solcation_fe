@@ -1,5 +1,5 @@
 // WebSocket API 관련 함수들 (백엔드 CRDT 구조에 맞춤)
-export const websocketAPI = {
+export const WebsocketAPI = {
   // 편집 세션 입장
   joinEditSession: (publish, groupId, travelId, userId) => {
     if (!publish) return;
@@ -67,7 +67,7 @@ export const websocketAPI = {
       }
     };
     
-    websocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
+    WebsocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
   },
 
   // 일정 이동 작업 (같은 날 내에서)
@@ -87,7 +87,7 @@ export const websocketAPI = {
       }
     };
     
-    websocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
+    WebsocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
   },
 
   // 일정 날짜 이동 작업
@@ -108,7 +108,7 @@ export const websocketAPI = {
       }
     };
     
-    websocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
+    WebsocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
   },
 
   // 일정 수정 작업
@@ -127,7 +127,7 @@ export const websocketAPI = {
       }
     };
     
-    websocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
+    WebsocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
   },
 
   // 일정 삭제 작업
@@ -145,8 +145,8 @@ export const websocketAPI = {
       }
     };
     
-    websocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
+    WebsocketAPI.publishCrdtOperation(publish, groupId, travelId, operation);
   }
 };
 
-export default websocketAPI;
+export default WebsocketAPI;

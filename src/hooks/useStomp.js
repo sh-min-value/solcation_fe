@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useAuth } from '../context/AuthContext';
-import { websocketAPI } from '../services/WebsocketAPI';
+import { WebsocketAPI } from '../services/WebsocketAPI';
 
 export default function useStomp({ url, groupId, travelId, onMessage, onJoinResponse, reconnectDelay = 5000, onRefreshData, autoJoin = true }) {
   const clientRef = useRef(null);
@@ -236,7 +236,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
     return () => {
       if (isConnected && publish && groupId && travelId) {
         console.log('편집 세션 자동 퇴장');
-        websocketAPI.leaveEditSession(publish, groupId, travelId, 'currentUser');
+        WebsocketAPI.leaveEditSession(publish, groupId, travelId, 'currentUser');
       }
       hasJoinedRef.current = false;
     };

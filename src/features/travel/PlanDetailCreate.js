@@ -8,7 +8,7 @@ import SelectPurpose from '../../components/common/SelectPurpose';
 import MapComponent from '../../components/common/MapComponent';
 import { formatAddress, getCleanPlaceName, getCountryInfo } from '../../utils/addressUtils';
 import useStomp from '../../hooks/useStomp';
-import { websocketAPI } from '../../services/WebsocketAPI';
+import { WebsocketAPI } from '../../services/WebsocketAPI';
 
 const PlanDetailCreate = (data) => {
     const navigate = useNavigate();
@@ -107,7 +107,7 @@ const PlanDetailCreate = (data) => {
             console.log('travelid:', travelid, 'groupid:', groupid);
             
             // WebSocket으로 일정 생성 (CRDT insert 작업으로 전송)
-            websocketAPI.publishInsertOperation(
+            WebsocketAPI.publishInsertOperation(
                 publish,
                 groupid,
                 travelid,
@@ -239,7 +239,7 @@ const PlanDetailCreate = (data) => {
                             id='category-select'
                             value={formData.tcCode}
                             onChange={(value) => setFormData(prev => ({ ...prev, tcCode: value }))}
-                        />
+                        />  
                     </div>
 
                     {/* 지도 표시 */}

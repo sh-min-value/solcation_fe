@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TravelLayout from '../../components/layout/TravelLayout';
 import EmptyBear from '../../components/common/EmptyBear';
-import { travelAPI } from '../../services/TravelAPI';
+import { TravelAPI } from '../../services/TravelAPI';
 import { getTransactionCategoryIcon } from '../../utils/CategoryIcons';
 
 const PlanDetail = () => {
@@ -15,7 +15,7 @@ const PlanDetail = () => {
         const fetchData = async () => {
             try {
                 // 일정만 가져오기 (여행 정보는 TravelLayout에서 처리)
-                const planResponse = await travelAPI.getTravelDetail(travelid, groupid);
+                const planResponse = await TravelAPI.getTravelDetail(travelid, groupid);
                 setPlanData(planResponse);
                 setIsLoading(false);
             } catch (error) {

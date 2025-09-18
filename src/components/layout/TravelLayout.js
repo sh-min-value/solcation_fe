@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Header from "../common/Header.js";
-import { travelAPI } from "../../services/TravelAPI";
+import { TravelAPI } from "../../services/TravelAPI";
 import { getTravelProfileImage } from "../../services/s3";
 import { getStateIcon, getTravelCategoryIcon } from "../../utils/CategoryIcons";
 
@@ -18,7 +18,7 @@ export default function TravelLayout({ children, title }) {
     if (isTravelRoute && travelid && groupid) {
       const loadTravelData = async () => {
         try {
-          const data = await travelAPI.getTravel(travelid, groupid);
+          const data = await TravelAPI.getTravel(travelid, groupid);
           setTravelInfo(data);
         } catch (error) {
           console.error('여행 데이터 로드 실패:', error);

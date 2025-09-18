@@ -12,17 +12,26 @@ const emojiMap = {
   'LODGMENT': 'bed',
   'TRANSPORTATION': 'automobile',
   'TRANSFER': 'money-with-wings',
-  'ETC': 'speech-balloon'
+  'ETC': 'speech-balloon',
+
+  'FRIENDS': 'handshake',
+  'FAMILY': 'couple-with-heart-man-woman',
+  'LOVER': 'pink-heart',
+  'COLLEAGUE': 'briefcase',
+
+  'LEISURE': 'kitesurfing',
+  'RECREATION': 'tree',
+  'CULTURE': 'building-columns',
+  'FESTIVAL': 'festival',
+  'SIGHTSEEING': 'bus',
 };
 
-const CategoryEmoji = ({ categoryCode, size}) => {
+const transactionCategoryEmoji = ({ categoryCode, size}) => {
   return (
     <EmojiProvider data={emojiData}>
-      <span className={`w-${size} h-${size} mr-1`}>
-        <Emoji name={emojiMap[categoryCode] || 'speech_balloon'} />
-      </span>
+        <Emoji name={emojiMap[categoryCode] || 'speech_balloon'} className="w-${size} h-${size} mr-1" />
     </EmojiProvider>
   );
 };
 
-export default CategoryEmoji;
+export default transactionCategoryEmoji;

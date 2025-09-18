@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CategoryEmoji from '../../utils/CategoryEmoji';
 
-const categories = [
+const transactionCategories = [
   { id: 1, name: '식비', code: 'FOOD' },
   { id: 2, name: '카페, 간식', code: 'CAFE_AND_SNACK' },
   { id: 3, name: '편의점, 마트', code: 'STORE' },
@@ -14,7 +14,37 @@ const categories = [
   { id: 10, name: '기타', code: 'ETC' }
 ];
 
-const SelectPurpose = ({ id, value, onChange }) => {
+const travelCategories = [
+  { id: 1, name: '음식 · 미식', code: 'FOOD' },
+  { id: 2, name: '카페 · 간식', code: 'CAFE_AND_SNACK' },
+  { id: 3, name: '쇼핑 · 마트', code: 'STORE' },
+  { id: 4, name: '술 · 유흥', code: 'PLEASURE' },
+  { id: 5, name: '쇼핑', code: 'SHOPPING' },
+  { id: 6, name: '의료', code: 'MEDICAL_TREATMENT' },
+  { id: 7, name: '숙박', code: 'LODGMENT' },
+  { id: 8, name: '교통', code: 'TRANSPORTATION' },
+  { id: 9, name: '이체', code: 'TRANSFER' },
+  { id: 10, name: '기타', code: 'ETC' }
+];
+
+const groupCategories = [
+  { id: 1, name: '친구', code: 'FRIENDS' },
+  { id: 2, name: '가족', code: 'FAMILY' },
+  { id: 3, name: '연인', code: 'LOVER' },
+  { id: 4, name: '기타', code: 'ETC' }
+];
+
+const SelectPurpose = ({ id, value, onChange, type }) => {
+
+  let categories = [];
+  if (type === 'transaction') {
+    categories = transactionCategories;
+  } else if (type === 'travel') {
+    categories = travelCategories;
+  } else if (type === 'group') {
+    categories = groupCategories;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const selectedValue = value || categories[0].code;
   const selectedCategory = categories.find(cat => cat.code === selectedValue) || categories[0];

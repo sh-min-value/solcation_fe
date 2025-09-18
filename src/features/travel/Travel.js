@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CiSquarePlus } from "react-icons/ci";
-import { travelAPI } from '../../services/TravelAPI.js';
+import { TravelAPI } from '../../services/TravelAPI.js';
 import TravelCard from '../../components/common/TravelCard';
 import EmptyBear from '../../components/common/EmptyBear';
 
@@ -25,7 +25,7 @@ const Travel = () => {
                 };
                 
                 const status = statusMap[selectedStatus];
-                const response = await travelAPI.getTravelList('', groupid, status);
+                const response = await TravelAPI.getTravelList('', groupid, status);
                 setTravels(response);
             } catch (error) {
                 console.error('여행 목록 로드 실패:', error);
