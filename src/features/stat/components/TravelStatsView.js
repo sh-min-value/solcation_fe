@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate, useParams } from 'react-router-dom';
 import TotalSpentSection from './TotalSpentSection';
-import PlannedVsActualSection from './PlannedVsActualSection';
+import ComparePlanActual from './ComparePlanActual';
 import ComparePerPersonSection from './ComparePerPersonSection';
 import CategoryCompareSection from './CategoryCompareSection';
 import InsightSection from './InsightSection';
@@ -106,7 +106,7 @@ const TravelStatsView = ({ travel }) => {
         <hr className="border-gray-5" />
       </div>
 
-      <PlannedVsActualSection travel={travel} groupid={groupid} />
+      <ComparePlanActual travel={travel} groupid={groupid} />
 
       <div className="my-5">
         <hr className="border-gray-5" />
