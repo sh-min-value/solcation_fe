@@ -16,7 +16,7 @@ import Loading from '../../components/common/Loading';
 const TransactionDetail = ({ triggerRefresh }) => {
   const navigate = useNavigate();
   const { groupid, satPk } = useParams();
-  const [loading, setLoading] = useState('false');
+  const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({});
   // 카테고리 상태 관리
@@ -28,7 +28,7 @@ const TransactionDetail = ({ triggerRefresh }) => {
   //모달 상태 관리
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSave = (newMemo, newCategory) => {
+  const handleSave = async (newMemo, newCategory) => {
     setLoading(true);
 
     try {
@@ -39,7 +39,7 @@ const TransactionDetail = ({ triggerRefresh }) => {
         tcPk: newCategory,
       };
 
-      TransactionAPI.updateDetail(groupid, param);
+      await TransactionAPI.updateDetail(groupid, data.satPk, param);
 
       setMemo(newMemo);
       setSelectedCategory(newCategory);
@@ -94,14 +94,14 @@ const TransactionDetail = ({ triggerRefresh }) => {
     const absAmount = Math.abs(amount);
 
     if (ttype === 'DEPOSIT') {
-      return `${absAmount.toLocaleString()}원`;
+      return `${absAmount}원`;
     } else {
-      return `-${absAmount.toLocaleString()}원`;
+      return `-${absAmount}원`;
     }
   };
 
   const formatBalance = balance => {
-    return `${balance.toLocaleString()}원`;
+    return `${balance}원`;
   };
 
   return (

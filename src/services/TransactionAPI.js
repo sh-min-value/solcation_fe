@@ -2,11 +2,20 @@ import apiClient from './api';
 
 export const TransactionAPI = {
   getDetail: (groupId, satPk) =>
-    apiClient.get(`/group/${groupId}/transaction/detail?satPk=${satPk}`),
-  updateTC: (groupId, data) =>
-    apiClient.post(`/group/${groupId}/transaction/update-category`, data),
-  updateMemo: (groupId, data) =>
-    apiClient.post(`/group/${groupId}/transaction/update-memo`, data),
-  updateDetail: (groupId, data) =>
-    apiClient.post(`/group/${groupId}/transaction/update-transaction`, data),
+    apiClient.get(`/group/${groupId}/account/transaction/${satPk}/detail`),
+  updateTC: (groupId, satPk, data) =>
+    apiClient.post(
+      `/group/${groupId}/account/transaction/${satPk}/update-category`,
+      data
+    ),
+  updateMemo: (groupId, satPk, data) =>
+    apiClient.post(
+      `/group/${groupId}/account/transaction/${satPk}/update-memo`,
+      data
+    ),
+  updateDetail: (groupId, satPk, data) =>
+    apiClient.post(
+      `/group/${groupId}/account/transaction/${satPk}/update-transaction`,
+      data
+    ),
 };
