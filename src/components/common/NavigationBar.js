@@ -21,7 +21,7 @@ export default function NavigationBar() {
       icon: <BiSolidPaperPlane />,
     },
     {
-      to: `/group/${groupid}/stat`,
+      to: `/group/${groupid}/stats`,
       label: '통계',
       icon: <TbDeviceAnalytics />,
     },

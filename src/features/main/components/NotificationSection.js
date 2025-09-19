@@ -57,7 +57,7 @@ const NotificationSection = ({ notifications = [], navigate }) => {
               <h3 className="font-bold text-gray-1 mb-1">
                 {notification.pnTitle}
               </h3>
-              <p className="text-sm text-gray-2">
+              <p className="text-sm text-gray-2 truncate">
                 &ldquo;{notification.groupName}&rdquo; from{' '}
                 {notification.groupLeader}
               </p>
