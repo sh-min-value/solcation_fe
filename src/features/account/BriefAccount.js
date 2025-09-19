@@ -1,17 +1,75 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Copy, MoreVertical } from 'lucide-react';
-import { useState } from 'react';
 import RegularDepositModal from './RegularDepositModal';
+import { AccountAPI } from '../../services/AccountAPI';
+import { GroupAPI } from '../../services/GroupAPI';
+import { useAuth } from '../../context/AuthContext';
 
-const BriefAccount = ({ balance = 248688 }) => {
+const BriefAccount = ({ groupId }) => {
+  const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
+  const [accountInfo, setAccountInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [copyMessage, setCopyMessage] = useState('');
+  const [isGroupLeader, setIsGroupLeader] = useState(false);
 
   //정기 입금일 모달
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
 
+  // 계좌 정보 조회
+  useEffect(() => {
+    const fetchAccountInfo = async () => {
+      try {
+        const response = await AccountAPI.getAccountInfo(groupId);
+        setAccountInfo(response.data || response);
+      } catch (error) {
+        console.error('계좌 정보 조회 오류:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccountInfo();
+  }, [groupId]);
+
+  // 그룹 리더 여부 확인
+  useEffect(() => {
+    const checkGroupLeader = async () => {
+      if (!groupId || !user?.userId) return;
+
+      try {
+        const membersResponse = await GroupAPI.getGroupMembers(groupId);
+        const isLeader = membersResponse.groupLeader?.userId === user.userId;
+        setIsGroupLeader(isLeader);
+      } catch (error) {
+        console.error('그룹 리더 확인 오류:', error);
+        setIsGroupLeader(false);
+      }
+    };
+
+    checkGroupLeader();
+  }, [groupId, user?.userId]);
+
   //잔액 포맷팅
   const formatBalance = amount => {
     return amount.toLocaleString('ko-KR');
+  };
+
+  // 계좌번호 포맷팅
+  const formatAccountNumber = accountNum => {
+    if (!accountNum) return '';
+    return accountNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+  };
+
+  // 계좌번호 복사 처리
+  const handleCopyAccountNumber = () => {
+    if (accountInfo?.accountNum) {
+      navigator.clipboard.writeText(accountInfo.accountNum);
+      setCopyMessage('복사되었습니다!');
+      setTimeout(() => {
+        setCopyMessage('');
+      }, 2000);
+    }
   };
 
   //잔액에 따른 폰트 크기 조정
@@ -23,11 +81,21 @@ const BriefAccount = ({ balance = 248688 }) => {
     return 'text-xl';
   };
 
+  if (loading) {
+    return (
+      <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white shadow-2xl overflow-hidden">
+        <div className="px-4 py-4 flex items-center justify-center h-32"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white shadow-2xl overflow-hidden">
       <RegularDepositModal
         isOpen={isRegularModalOpen}
         onClose={() => setIsRegularModalOpen(false)}
+        groupId={groupId}
+        isGroupLeader={isGroupLeader}
       />
       {/* 계좌 */}
       <div className="px-4 py-4 relative">
@@ -41,21 +109,30 @@ const BriefAccount = ({ balance = 248688 }) => {
             <h2 className="text-sm font-medium opacity-90">
               신한은행 모임통장
             </h2>
-            <div className="flex items-center gap-2 text-base opacity-70">
+            <div className="flex items-center gap-2 text-base opacity-70 relative">
               <span className="tracking-tight underline text-underline-offset-1">
-                111-111-111111
+                {formatAccountNumber(accountInfo?.accountNum)}
               </span>
-              <Copy className="w-4 h-4" />
+              <Copy
+                className="w-4 h-4 cursor-pointer"
+                onClick={handleCopyAccountNumber}
+              />
+              {/* 복사 완료 메시지 */}
+              {copyMessage && (
+                <div className="absolute top-5 left-11 transform -translate-x-1/2 bg-opacity-80 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                  {copyMessage}
+                </div>
+              )}
             </div>
           </div>
 
           <div className="text-right overflow-hidden w-full">
             <span
               className={`${getBalanceFontSize(
-                balance
+                accountInfo?.balance || 0
               )} font-bold break-all leading-tight text-xl`}
             >
-              {formatBalance(balance)}원
+              {formatBalance(accountInfo?.balance || 0)}원
             </span>
           </div>
         </div>
