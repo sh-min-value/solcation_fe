@@ -14,4 +14,8 @@ export const AccountAPI = {
 
   // 모임통장 정보 조회
   getAccountInfo: groupId => apiClient.get(`/group/${groupId}/account/info`),
+
+  // 전체 거래 내역 조회 (필터링 포함)
+  getTransactionHistory: groupId =>
+    apiClient.get(`/group/${groupId}/transaction/all`),
 };

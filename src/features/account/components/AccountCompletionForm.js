@@ -39,10 +39,10 @@ const AccountCompletionForm = ({ groupId }) => {
     }
   };
 
-  // 계좌번호 포맷팅팅
+  // 계좌번호 포맷팅
   const formatAccountNumber = accountNum => {
     if (!accountNum) return '';
-    return accountNum.replace(/(\d{4})(\d{2})(\d{6})/, '$1-$2-$3');
+    return accountNum.replace(/(\d{3})(\d{3})(\d{6})/, '$1-$2-$3');
   };
 
   // 그룹 홈으로 이동

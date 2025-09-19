@@ -190,7 +190,7 @@ const TermsAgreementForm = ({ formData, updateFormData, errors }) => {
 
       {/* 에러 메시지 표시 */}
       {errors.termsAgreed && (
-        <div className="text-center">
+        <div className="text-center" style={{ marginTop: '12px' }}>
           <span className="text-red-500 text-sm">{errors.termsAgreed}</span>
         </div>
       )}

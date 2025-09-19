@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BriefAccount from './BriefAccount';
+import TransactionHistory from './components/TransactionHistory';
 import { AccountAPI } from '../../services/AccountAPI';
 import { GroupAPI } from '../../services/GroupAPI';
 import { useAuth } from '../../context/AuthContext';
@@ -30,7 +31,7 @@ const Account = () => {
         setIsLoading(true);
         const response = await AccountAPI.getAccountInfo(groupid);
 
-        // 성공 응답인 경우
+        // 성공 응답
         if (response.success) {
           setAccountInfo(response.data);
           setError(null);
@@ -135,12 +136,7 @@ const Account = () => {
                 </>
               )}
             </p>
-            <button
-              onClick={() => {
-                /* 개설요청 로직 */
-              }}
-              className={buttonClass}
-            >
+            <button onClick={() => {}} className={buttonClass}>
               모임통장 개설 요청하기
             </button>
           </div>
@@ -150,7 +146,14 @@ const Account = () => {
   }
 
   // 모임통장 보유 시
-  return <BriefAccount balance={248688} />;
+  return (
+    <div className="h-screen overflow-y-auto pb-96">
+      <div className="px-4 pt-4">
+        <BriefAccount groupId={groupid} />
+      </div>
+      <TransactionHistory groupId={groupid} />
+    </div>
+  );
 };
 
 export default Account;

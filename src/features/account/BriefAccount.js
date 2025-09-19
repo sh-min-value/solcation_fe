@@ -1,17 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Copy, MoreVertical } from 'lucide-react';
-import { useState } from 'react';
 import RegularDepositModal from './RegularDepositModal';
+import { AccountAPI } from '../../services/AccountAPI';
 
-const BriefAccount = ({ balance = 248688 }) => {
+const BriefAccount = ({ groupId }) => {
   const [showModal, setShowModal] = useState(false);
+  const [accountInfo, setAccountInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   //정기 입금일 모달
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
 
+  // 계좌 정보 조회
+  useEffect(() => {
+    const fetchAccountInfo = async () => {
+      try {
+        const response = await AccountAPI.getAccountInfo(groupId);
+        setAccountInfo(response.data || response);
+      } catch (error) {
+        console.error('계좌 정보 조회 오류:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccountInfo();
+  }, [groupId]);
+
   //잔액 포맷팅
   const formatBalance = amount => {
     return amount.toLocaleString('ko-KR');
+  };
+
+  // 계좌번호 포맷팅
+  const formatAccountNumber = accountNum => {
+    if (!accountNum) return '';
+    return accountNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+  };
+
+  // 계좌번호 복사 처리
+  const handleCopyAccountNumber = () => {
+    if (accountInfo?.accountNum) {
+      navigator.clipboard.writeText(accountInfo.accountNum);
+    }
   };
 
   //잔액에 따른 폰트 크기 조정
@@ -22,6 +53,14 @@ const BriefAccount = ({ balance = 248688 }) => {
     if (formatted.length > 6) return 'text-lg';
     return 'text-xl';
   };
+
+  if (loading) {
+    return (
+      <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white shadow-2xl overflow-hidden">
+        <div className="px-4 py-4 flex items-center justify-center h-32"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white shadow-2xl overflow-hidden">
@@ -43,19 +82,22 @@ const BriefAccount = ({ balance = 248688 }) => {
             </h2>
             <div className="flex items-center gap-2 text-base opacity-70">
               <span className="tracking-tight underline text-underline-offset-1">
-                111-111-111111
+                {formatAccountNumber(accountInfo?.accountNum)}
               </span>
-              <Copy className="w-4 h-4" />
+              <Copy
+                className="w-4 h-4 cursor-pointer"
+                onClick={handleCopyAccountNumber}
+              />
             </div>
           </div>
 
           <div className="text-right overflow-hidden w-full">
             <span
               className={`${getBalanceFontSize(
-                balance
+                accountInfo?.balance || 0
               )} font-bold break-all leading-tight text-xl`}
             >
-              {formatBalance(balance)}원
+              {formatBalance(accountInfo?.balance || 0)}원
             </span>
           </div>
         </div>
