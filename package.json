@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "aws-sdk": "^2.1692.0",
     "dayjs": "^1.11.18",
+    "event-source-polyfill": "^1.0.31",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",

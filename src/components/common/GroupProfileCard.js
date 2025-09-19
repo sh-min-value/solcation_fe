@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaSuitcase, FaPlane, FaEnvelope } from 'react-icons/fa';
 import { getGroupProfileImage } from '../../services/s3';
+import { getGroupCategoryName } from '../../utils/CategoryIcons';
 
 const GroupProfileCard = ({ group }) => {
   const [imageUrl, setImageUrl] = useState(null);
@@ -53,7 +54,9 @@ const GroupProfileCard = ({ group }) => {
       {/* 그룹 정보 */}
       <div className="flex-1 min-w-0">
         {/* GROUP 라벨 */}
-        <p className="text-white text-xs font-medium my-0">#{group.gcPk}</p>
+        <p className="text-white text-xs font-medium my-0">
+          #{getGroupCategoryName(group.gcPk)}
+        </p>
 
         {/* 그룹명과 편집 버튼 */}
         <div className="flex items-center">

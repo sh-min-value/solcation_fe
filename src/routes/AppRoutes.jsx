@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
+import TransactionDetail from '../features/group/TransactionDetail';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
 const Main = lazy(() => import('../features/main/Main'));
@@ -62,6 +63,16 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <GroupCreate />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/group/:groupId/account/transaction/:transactionId"
+          element={
+            <ProtectedRoute>
+              <RootLayout title={'이용 내역 상세'}>
+                <TransactionDetail />
+              </RootLayout>
             </ProtectedRoute>
           }
         ></Route>
