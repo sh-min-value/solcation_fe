@@ -118,10 +118,10 @@ export default function TravelLayout({ children, title }) {
               </p>
               
               <div className="flex space-x-3 text-gray-500 text-xs">
-                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center">
+                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center space-x-1">
                   {getStateIcon(travelInfo?.state)}
                 </div>
-                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center">
+                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center space-x-1">
                   {getTravelCategoryIcon(travelInfo?.categoryCode)}
                 </div>
               </div>

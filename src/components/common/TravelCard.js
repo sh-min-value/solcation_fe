@@ -40,29 +40,28 @@ const TravelCard = ({ travel, groupid, onClick }) => {
             role="button"
             tabIndex={0}
         >
-            <div className='flex items-center space-x-2'>
-                <img src={imageUrl} alt={travel.title} className='w-16 h-16 m-2 object-cover rounded-lg' />
+            <div className='flex items-center space-x-1'>
+                <img src={imageUrl} alt={travel.title} className='w-16 h-16 m-1 object-cover rounded-lg' />
                 <div className='flex flex-col space-y-1'>
                     <div className='flex space-x-1 items-end'>
-                        <h3 className='text-md font-bold mr-2'>{travel.title}</h3>
+                        <h3 className='text-md font-bold mr-1'>{travel.title}</h3>
                         <p className='text-xs text-gray-500 mb-1'>  | {travel.location}</p>
                     </div>
                     <div className='text-xs flex'>
                         <p>{formatDate(travel.startDate)} ~ {formatDate(travel.endDate)}</p>
                     </div>
-                            <div className='flex items-center space-x-1 mt-8'>
-                                <div className='bg-gray-200 rounded-lg px-2 py-1 text-xs flex items-center space-x-1 '>
-                                    {getStateIcon(travel.state)}
-                                </div>
-                                <div className='bg-gray-200 rounded-lg px-2 py-1 text-xs flex items-center space-x-1'>
-                                    {getTravelCategoryIcon(travel.categoryCode)}
-                                </div>
-                                <div className='bg-gray-200 rounded-lg px-2 py-1 text-xs flex items-center space-x-1'>
-                                    <FaUserGroup className='w-3 h-3 mr-1' />
-                                    {travel.participant}
-                                </div>
-                            </div>
-                    
+                    <div className='flex items-center space-x-1 mt-8 text-[10px] w-full overflow-x-scroll'>
+                        <div className='bg-gray-200 rounded-lg px-2 py-1 flex items-center space-x-1 '>
+                            {getStateIcon(travel.state)}
+                        </div>
+                        <div className='bg-gray-200 rounded-lg px-2 py-1 flex items-center space-x-1'>
+                            {getTravelCategoryIcon(travel.categoryCode)}
+                        </div>
+                        <div className='bg-gray-200 rounded-lg px-2 py-1 flex items-center space-x-1'>
+                            <FaUserGroup className='w-3 h-3 mr-1 text-gray-500' />
+                            {travel.participant}
+                        </div>
+                    </div>
                 </div>
             </div>
             
