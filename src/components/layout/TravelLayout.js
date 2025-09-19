@@ -56,7 +56,7 @@ export default function TravelLayout({ children, title }) {
 
   // 여행 총 날짜 계산
   const getTravelDays = () => {
-    if (!travelInfo?.startDate || !travelInfo?.endDate) return 3; // 기본값
+    if (!travelInfo?.startDate || !travelInfo?.endDate) return 3;
     
     const startDate = new Date(travelInfo.startDate);
     const endDate = new Date(travelInfo.endDate);
