@@ -13,7 +13,10 @@ export default function RootLayout({ children, title }) {
 
   const triggerRefresh = () => setRefreshKey(prev => prev + 1);
 
-  const isGroupRoute = location.pathname.startsWith('/group/');
+  const isGroupRoute =
+    location.pathname.startsWith('/group/') &&
+    !/^\/group\/[^/]+\/account\/transaction\/[^/]+$/.test(location.pathname) &&
+    !/^\/group\/[^/]+\/account\/card\/[^/]+$/.test(location.pathname);
 
   useEffect(() => {
     if (isGroupRoute && groupid) {

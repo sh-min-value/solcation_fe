@@ -1,43 +1,107 @@
-import React, { useState } from 'react';
-import { ArrowLeft, ChevronRight } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
 import SelectPurpose from '../../components/common/SelectPurpose';
+import SelectTC from './SelectTC';
+import { ArrowLeft, Edit2, X } from 'lucide-react';
+import EditTransaction from './EditTransaction';
+import { TransactionAPI } from '../../services/TransactionAPI';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  getTransactionCategoryIconOnly,
+  getTransactionCategoryName,
+  getTransactionTypeName,
+} from '../../utils/CategoryIcons';
+import dayjs from 'dayjs';
+import Loading from '../../components/common/Loading';
 
-const TransactionDetail = () => {
+const TransactionDetail = ({ triggerRefresh }) => {
+  const navigate = useNavigate();
+  const { groupid, satPk } = useParams();
+  const [loading, setLoading] = useState('false');
+
+  const [data, setData] = useState({});
   // 카테고리 상태 관리
-  const [selectedCategory, setSelectedCategory] = useState('STORE'); // 기본값을 편의점, 마트로 설정
+  const [selectedCategory, setSelectedCategory] = useState();
 
-  // 거래 데이터 (실제로는 props나 API에서 받아올 데이터)
-  const transactionData = {
-    merchant: '씨유 홍대점',
-    amount: -12000,
-    category: '편의점, 마트, 잡화',
-    date: '2025년 8월 15일 14:00',
-    location: '씨유 홍대점',
-    cardNumber: '제크카드 결제',
-    approvalNumber: '제크카드 결제',
-    inputBy: '씨유 홍대점',
-    outputBy: '신한은행',
-    beforeBalance: 300,
-    afterBalance: 300,
-    memo: '',
+  //메모 상태 관리
+  const [memo, setMemo] = useState('');
+
+  //모달 상태 관리
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSave = (newMemo, newCategory) => {
+    setLoading(true);
+
+    try {
+      //저장
+      const param = {
+        satPk: satPk,
+        memo: newMemo,
+        tcPk: newCategory,
+      };
+
+      TransactionAPI.updateDetail(groupid, param);
+
+      setMemo(newMemo);
+      setSelectedCategory(newCategory);
+
+      alert('변경이 완료되었어요!');
+
+      triggerRefresh();
+    } catch (err) {
+      console.log(err);
+      alert('변경에 실패했어요!');
+
+      setMemo(data.memo);
+      setSelectedCategory(data.tcPk.tcCode);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const formatAmount = amount => {
+  //데이터
+  const fetchTransaction = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await TransactionAPI.getDetail(groupid, satPk);
+      setData(result);
+      setSelectedCategory(result.tcPk.tcCode);
+      setMemo(result.memo);
+      console.log(result);
+    } catch (err) {
+      const errorData = err.response?.error || err;
+
+      //에러 발생 시 에러 페이지로 이동
+      navigate('/error', {
+        state: {
+          error: errorData,
+          from: location.pathname,
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [groupid, satPk, navigate]);
+
+  useEffect(() => {
+    fetchTransaction();
+  }, [fetchTransaction]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  const formatAmount = (ttype, amount) => {
     const absAmount = Math.abs(amount);
-    return amount < 0
-      ? `-${absAmount.toLocaleString()}원`
-      : `${absAmount.toLocaleString()}원`;
+
+    if (ttype === 'DEPOSIT') {
+      return `${absAmount.toLocaleString()}원`;
+    } else {
+      return `-${absAmount.toLocaleString()}원`;
+    }
   };
 
   const formatBalance = balance => {
     return `${balance.toLocaleString()}원`;
-  };
-
-  // 카테고리 변경 핸들러
-  const handleCategoryChange = categoryCode => {
-    setSelectedCategory(categoryCode);
-    // 여기서 API 호출이나 다른 로직을 수행할 수 있습니다
-    console.log('카테고리가 변경되었습니다:', categoryCode);
   };
 
   return (
@@ -46,92 +110,116 @@ const TransactionDetail = () => {
       <div className="mb-4 bg-white rounded-2xl overflow-hidden">
         {/* 거래 정보 헤더 */}
         <div className="p-6">
-          <div className="flex items-center mb-3">
-            <div className="w-8 h-8 bg-logo-orange rounded-full flex items-center justify-center mr-3">
-              <span className="text-sm">🏪</span>
+          <div className="flex items-center mb-5 justify-between">
+            <div className="flex flex-row items-center ">
+              <div className="w-10 h-10 bg-group-1 rounded-full flex items-center justify-center mr-3">
+                {getTransactionCategoryIconOnly(
+                  selectedCategory,
+                  'w-6 h-6 text-white'
+                )}
+              </div>
+              <span className="text-gray-1 text-lg font-semibold truncate flex-1">
+                {data.briefs}
+              </span>
             </div>
-            <span className="text-black text-md">
-              {transactionData.merchant}
-            </span>
+            {/* 수정 버튼 */}
+            <button
+              onClick={() => setIsOpen(true)}
+              className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              <Edit2 className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-600">수정</span>
+            </button>
           </div>
 
           <div className="text-3xl font-bold text-black mb-4">
-            {formatAmount(transactionData.amount)}
-          </div>
-
-          {/* 카테고리 선택 */}
-          <div className="mb-4">
-            <SelectPurpose
-              id="transaction-category"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              type="transaction"
-            />
+            {formatAmount(data.ttype, data.satAmount)}
           </div>
         </div>
-
         {/* 구분선 */}
         <div className="h-2 bg-gray-6/60"></div>
 
         {/* 상세 정보 */}
         <div className="p-6">
           <div className="space-y-4">
+            {/* 카테고리 선택 */}
+            <div className="flex items-center justify-between">
+              <span className="text-gray-2">카테고리</span>
+              <span className="text-gray-2">
+                {getTransactionCategoryName(selectedCategory)}
+              </span>
+            </div>
             {/* 일시 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">일시</span>
-              <span className="text-gray-2">{transactionData.date}</span>
+              <span className="text-gray-2">
+                {dayjs(data.satTime).format('YYYY년 MM월 DD일 HH:mm')}
+              </span>
             </div>
 
             {/* 적요 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">적요</span>
-              <span className="text-gray-2">{transactionData.location}</span>
+              <span className="text-gray-2 max-w-36">{data.briefs}</span>
             </div>
 
             {/* 거래 유형 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">거래 유형</span>
-              <span className="text-gray-2">{transactionData.cardNumber}</span>
+              <span className="text-gray-2">
+                {getTransactionTypeName(data.ttype)}
+              </span>
             </div>
 
             {/* 거래한 모임원 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">거래한 모임원</span>
-              <span className="text-gray-2">
-                {transactionData.approvalNumber}
+              <span className="text-gray-2 truncate max-w-36">
+                {data.groupMember}
               </span>
             </div>
 
             {/* 입금자 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">입금자</span>
-              <span className="text-gray-2">{transactionData.inputBy}</span>
+              <span className="text-gray-2  max-w-36">
+                {data.depositDestination ? data.depositDestination : '--'}
+              </span>
             </div>
 
             {/* 출금자 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">출금자</span>
-              <span className="text-gray-2">{transactionData.outputBy}</span>
+              <span className="text-gray-2  max-w-36">
+                {data.withdrawDestination ? data.withdrawDestination : '--'}
+              </span>
             </div>
 
             {/* 거래 후 잔액 */}
             <div className="flex items-center justify-between">
               <span className="text-gray-2">거래 후 잔액</span>
-              <span className="text-gray-2">
-                {formatBalance(transactionData.beforeBalance)}
-              </span>
+              <span className="text-gray-2">{formatBalance(data.balance)}</span>
             </div>
 
             {/* 메모 */}
-            <div className="flex items-center justify-between">
-              <span className="text-gray-2">메모</span>
-              <span className="text-gray-2">
-                {formatBalance(transactionData.afterBalance)}
-              </span>
+            <div className="flex flex-col items-start">
+              <div className="text-gray-2 pb-3">메모</div>
+              <div className="w-full p-4 border border-gray-5 rounded text-gray-2">
+                {data.memo}
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {/* 수정 모달 */}
+      <EditTransaction
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        memo={memo}
+        category={selectedCategory}
+        data={data}
+        onSave={handleSave}
+      />
     </div>
   );
 };

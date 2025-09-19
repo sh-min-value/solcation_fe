@@ -66,7 +66,7 @@ export default function AppRoutes() {
           }
         ></Route>
         <Route
-          path="/group/:groupId/account/transaction/:transactionId"
+          path="/group/:groupid/account/transaction/:satPk"
           element={
             <ProtectedRoute>
               <RootLayout title={'이용 내역 상세'}>
