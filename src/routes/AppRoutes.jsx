@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
-import TransactionDetail from '../features/group/TransactionDetail';
+import TransactionDetail from '../features/transaction/TransactionDetail';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
 const Main = lazy(() => import('../features/main/Main'));
