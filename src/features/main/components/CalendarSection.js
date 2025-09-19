@@ -46,13 +46,6 @@ const getEventsForDate = (date, events) => {
   targetDate.setHours(0, 0, 0, 0);
 
   return events
-    .filter(event => {
-      const startDate = new Date(event.tpStart);
-      const endDate = new Date(event.tpEnd);
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(0, 0, 0, 0);
-      return targetDate >= startDate && targetDate <= endDate;
-    })
     .map(event => {
       const startDate = new Date(event.tpStart);
       const endDate = new Date(event.tpEnd);
@@ -61,31 +54,17 @@ const getEventsForDate = (date, events) => {
 
       const isStartDate = targetDate.getTime() === startDate.getTime();
       const isEndDate = targetDate.getTime() === endDate.getTime();
-      const targetDayOfWeek = targetDate.getDay();
-      const isWeekStart = targetDayOfWeek === 0;
-      const isWeekEnd = targetDayOfWeek === 6;
-      const isEventContinuingFromPrevWeek =
-        !isStartDate && targetDate > startDate;
-      const isEventContinuingToNextWeek = !isEndDate && targetDate < endDate;
-      const isEventStartingInCurrentWeekAndContinuingToNext =
-        isStartDate && targetDate < endDate;
-      const isNextWeekFirstDayOfContinuingEvent =
-        !isStartDate && targetDate > startDate && isWeekStart;
-      const isStartDateAndWeekEnd = isStartDate && isWeekEnd;
+      const isInRange = targetDate >= startDate && targetDate <= endDate;
 
-      return {
-        ...event,
-        isStartDate,
-        isEndDate,
-        isWeekStart,
-        isWeekEnd,
-        isEventContinuingFromPrevWeek,
-        isEventContinuingToNextWeek,
-        isEventStartingInCurrentWeekAndContinuingToNext,
-        isNextWeekFirstDayOfContinuingEvent,
-        isStartDateAndWeekEnd,
-      };
-    });
+      return isInRange
+        ? {
+            ...event,
+            isStartDate,
+            isEndDate,
+          }
+        : null;
+    })
+    .filter(Boolean);
 };
 
 // 달력 날짜 생성
@@ -182,8 +161,9 @@ const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd,
 
   const isDateSelected = (dayInfo) => {
     if (!dayInfo.isCurrentMonth) return false;
-    return selectedDates.some(selectedDate => 
-      selectedDate.toDateString() === dayInfo.fullDate.toDateString()
+    return selectedDates.some(
+      selectedDate =>
+        selectedDate.toDateString() === dayInfo.fullDate.toDateString()
     );
   };
 
@@ -239,8 +219,7 @@ const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd,
         aria-label={isClickable ? "달력 날짜 선택 영역" : undefined}
       >
         {calendarDays.map((dayInfo, index) => {
-          // 이벤트 하이라이트 스타일
-          const getEventHighlightStyle = () => {
+          const getBorderRadiusClass = () => {
             if (dayInfo.events.length === 0) return '';
 
             const firstEvent = dayInfo.events[0];
@@ -297,7 +276,7 @@ const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd,
                 <div
                   className={`absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px] ${getGroupColor(
                     dayInfo.events[0].groupPk
-                  )} ${getEventHighlightStyle().split(' ')[1] || ''}`}
+                  )} ${getBorderRadiusClass()}`}
                 />
               )}
               <span className="relative z-10">{dayInfo.date}</span>
