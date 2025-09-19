@@ -7,6 +7,7 @@ const BriefAccount = ({ groupId }) => {
   const [showModal, setShowModal] = useState(false);
   const [accountInfo, setAccountInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [copyMessage, setCopyMessage] = useState('');
 
   //정기 입금일 모달
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
@@ -42,6 +43,10 @@ const BriefAccount = ({ groupId }) => {
   const handleCopyAccountNumber = () => {
     if (accountInfo?.accountNum) {
       navigator.clipboard.writeText(accountInfo.accountNum);
+      setCopyMessage('복사되었습니다!');
+      setTimeout(() => {
+        setCopyMessage('');
+      }, 2000);
     }
   };
 
@@ -80,7 +85,7 @@ const BriefAccount = ({ groupId }) => {
             <h2 className="text-sm font-medium opacity-90">
               신한은행 모임통장
             </h2>
-            <div className="flex items-center gap-2 text-base opacity-70">
+            <div className="flex items-center gap-2 text-base opacity-70 relative">
               <span className="tracking-tight underline text-underline-offset-1">
                 {formatAccountNumber(accountInfo?.accountNum)}
               </span>
@@ -88,6 +93,12 @@ const BriefAccount = ({ groupId }) => {
                 className="w-4 h-4 cursor-pointer"
                 onClick={handleCopyAccountNumber}
               />
+              {/* 복사 완료 메시지 */}
+              {copyMessage && (
+                <div className="absolute top-5 left-11 transform -translate-x-1/2 bg-opacity-80 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                  {copyMessage}
+                </div>
+              )}
             </div>
           </div>
 

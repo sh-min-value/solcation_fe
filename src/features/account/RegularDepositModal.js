@@ -9,8 +9,17 @@ const RegularDepositModal = ({ isOpen, onClose }) => {
   const [showFrequencyDropdown, setShowFrequencyDropdown] = useState(false);
   const [showDayDropdown, setShowDayDropdown] = useState(false);
 
-  const frequencies = ['매달', '매주', '매년'];
-  const days = Array.from({ length: 31 }, (_, i) => `${i + 1}일`);
+  const frequencies = ['매달', '매주'];
+  const date = Array.from({ length: 31 }, (_, i) => `${i + 1}일`);
+  const days = [
+    '월요일',
+    '화요일',
+    '수요일',
+    '목요일',
+    '금요일',
+    '토요일',
+    '일요일',
+  ];
 
   if (!isOpen) return null;
 
@@ -79,6 +88,7 @@ const RegularDepositModal = ({ isOpen, onClose }) => {
                       onClick={() => {
                         setFrequency(freq);
                         setShowFrequencyDropdown(false);
+                        setDay(freq === '매달' ? '1일' : '월요일');
                       }}
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-gray-1"
                     >
@@ -111,7 +121,7 @@ const RegularDepositModal = ({ isOpen, onClose }) => {
               </button>
               {showDayDropdown && (
                 <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10 mt-1 max-h-48 overflow-y-auto">
-                  {days.map(d => (
+                  {(frequency === '매달' ? date : days).map(d => (
                     <button
                       key={d}
                       onClick={() => {
