@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BiSearch } from 'react-icons/bi';
 import { IoLocationSharp } from "react-icons/io5";
@@ -13,7 +13,11 @@ import { WebsocketAPI } from '../../services/WebsocketAPI';
 const PlanDetailCreate = (data) => {
     const navigate = useNavigate();
     const { groupid, travelid } = useParams();
+    const [searchParams] = useSearchParams();
     const { currentUserId } = useAuth();
+    
+    // URL 쿼리 파라미터에서 day 정보 가져오기
+    const dayFromUrl = parseInt(searchParams.get('day')) || 1;
     // WebSocket 연결
     const { isConnected, publish } = useStomp({
         url: 'ws://localhost:8080/ws',
@@ -28,7 +32,7 @@ const PlanDetailCreate = (data) => {
         address: data?.address || '',
         cost: data?.cost || '',
         tcCode: data?.tcCode || 'FOOD',
-        day: data?.day || 1
+        day: data?.day || dayFromUrl  // ✅ URL에서 가져온 day 사용
     });
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);

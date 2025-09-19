@@ -134,8 +134,8 @@ const PlanDetailEdit = () => {
         return grouped;
     };
 
-    const onClickAddPlan = () => {
-        navigate(`/group/${groupid}/travel/${travelid}/edit/new`);
+    const onClickAddPlan = (day) => {
+        navigate(`/group/${groupid}/travel/${travelid}/edit/new?day=${day}`);
     };
 
     // 일정 수정 핸들러 (꾹 누르기)
@@ -157,13 +157,12 @@ const PlanDetailEdit = () => {
     const handleSaveEdit = () => {
         if (!editingPlan || !isConnected || !publishOp) return;
         
-        const crdtId = editingPlan.crdtId ?? `${editingPlan.pdPk}:${currentUserId}`;
+        const crdtId = editingPlan.crdtId || `${editingPlan.pdPk}:${currentUserId}`;
         const op = {
             type: 'update',
-            travelId: travelid,
-            opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+            opId: crypto.randomUUID(),  // ✅ UUID 사용
             clientId: currentUserId,
-            opTs: Date.now().milliseconds,
+            opTs: Date.now(),
             day: editingPlan.pdDay,
             tcCode: editFormData.tcCode, 
             payload: {
@@ -266,7 +265,7 @@ const PlanDetailEdit = () => {
         // prev/next 계산을 위한 플랫한 데이터
         const flatData = isSnapshotData ? flattenSnapshotData(planData) : planData;
         const dayPlansAfter = flatData
-            .filter(p => p.pdDay === targetDay && (p.crdtId ?? `${p.pdPk}:${currentUserId}`) !== (draggedPlan.crdtId ?? `${draggedPlan.pdPk}:${currentUserId}`))
+            .filter(p => p.pdDay === targetDay && (p.crdtId || `${p.pdPk}:${currentUserId}`) !== (draggedPlan.crdtId || `${draggedPlan.pdPk}:${currentUserId}`))
             .sort((a, b) => {
                 const pa = parseFloat(a.position ?? '0'); const pb = parseFloat(b.position ?? '0');
                 if (pa !== pb) return pa - pb;
@@ -287,12 +286,11 @@ const PlanDetailEdit = () => {
         });
 
         // Op 생성 (백엔드 구조에 맞춤)
-        const crdtIdToSend = draggedPlan.crdtId ?? `${draggedPlan.pdPk}:${currentUserId}`;
+        const crdtIdToSend = draggedPlan.crdtId || `${draggedPlan.pdPk}:${currentUserId}`;
         const opCommon = {
-            opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-            travelId: travelid,
+            opId: crypto.randomUUID(),  // ✅ UUID 사용
             clientId: currentUserId,
-            opTs: Date.now().milliseconds,
+            opTs: Date.now(),  
             tcCode: draggedPlan.tcCode || null  // 최상위 레벨에 tcCode 추가
         };
 
@@ -304,8 +302,8 @@ const PlanDetailEdit = () => {
                 day: targetDay, 
                 payload: { 
                     crdtId: crdtIdToSend, 
-                    prevCrdtId, 
-                    nextCrdtId 
+                    prevCrdtId: prevCrdtId || '',  // ✅ null 대신 빈 문자열
+                    nextCrdtId: nextCrdtId || ''   // ✅ null 대신 빈 문자열
                 } 
             };
         } else {
@@ -315,8 +313,8 @@ const PlanDetailEdit = () => {
                 day: draggedPlan.pdDay, 
                 payload: { 
                     crdtId: crdtIdToSend, 
-                    prevCrdtId, 
-                    nextCrdtId, 
+                    prevCrdtId: prevCrdtId || '',  // ✅ null 대신 빈 문자열
+                    nextCrdtId: nextCrdtId || '',  // ✅ null 대신 빈 문자열
                     newDay: targetDay 
                 } 
             };
@@ -346,7 +344,7 @@ const PlanDetailEdit = () => {
     const handleDeletePlan = (plan) => {
         if (!window.confirm('이 일정을 삭제하시겠습니까?')) return;
 
-        const key = plan.crdtId ?? `${plan.pdPk}:${currentUserId}`;
+        const key = plan.crdtId || `${plan.pdPk}:${currentUserId}`;
         const isSnapshotData = planData && typeof planData === 'object' && !Array.isArray(planData) && planData[1]?.items;
         
         if (isSnapshotData) {
@@ -355,23 +353,22 @@ const PlanDetailEdit = () => {
             Object.keys(updatedSnapshot).forEach(day => {
                 if (updatedSnapshot[day]?.items) {
                     updatedSnapshot[day].items = updatedSnapshot[day].items.filter(
-                        p => (p.crdtId ?? `${p.pdPk}:${currentUserId}`) !== key
+                        p => (p.crdtId || `${p.pdPk}:${currentUserId}`) !== key
                     );
                 }
             });
             setPlanData(updatedSnapshot);
         } else {
             // 배열 형태인 경우
-            const updatedPlans = planData.filter(p => (p.crdtId ?? `${p.pdPk}:${currentUserId}`) !== key);
+            const updatedPlans = planData.filter(p => (p.crdtId || `${p.pdPk}:${currentUserId}`) !== key);
             setPlanData(updatedPlans);
         }
 
         const op = {
             type: 'delete',
-            opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-            travelId: travelid,
+            opId: crypto.randomUUID(),  // ✅ UUID 사용
             clientId: currentUserId,
-            opTs: Date.now().milliseconds,
+            opTs: Date.now(),
             day: plan.pdDay,
             tcCode: plan.tcCode || null,  // 최상위 레벨에 tcCode 추가
             payload: { 
@@ -402,7 +399,11 @@ const PlanDetailEdit = () => {
         setIsSaving(true);
         console.log('저장 요청');
 
-        WebsocketAPI.publishSaveCompleted(publish, groupid, travelid, currentUserId);
+        // ✅ 백엔드 구조에 맞춰 clientId만 전송
+        publish({
+            destination: `/app/group/${groupid}/travel/${travelid}/edit/save`,
+            body: JSON.stringify({ clientId: currentUserId })
+        });
     };
 
     if (isLoading) return <div className="p-4">일정을 불러오는 중입니다...</div>;
@@ -529,7 +530,7 @@ const PlanDetailEdit = () => {
                             </div>
 
                                 <div className="flex items-center justify-between bg-gray-100 rounded-lg p-2 w-full">
-                                    <button className="flex items-center justify-center text-gray-500 text-sm m-0 w-full" onClick={onClickAddPlan}>
+                                    <button className="flex items-center justify-center text-gray-500 text-sm m-0 w-full" onClick={() => onClickAddPlan(day)}>
                                         <GoPlusCircle className="mr-2"/>
                                         일정 추가하기
                                     </button>

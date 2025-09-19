@@ -24,25 +24,28 @@ export const WebsocketAPI = {
     });
   },
 
-  // 저장 완료 알림
-  publishSaveCompleted: (publish, groupId, travelId, clientId) => {
-    if (!publish) return;
-
-    publish({
-      destination: `/app/group/${groupId}/travel/${travelId}/edit/save`,
-      body: JSON.stringify({
-        clientId: clientId,
-      }),
-    });
-  },
+  // 저장 완료 알림 (더 이상 사용하지 않음 - 직접 publish 사용)
+  // publishSaveCompleted: (publish, groupId, travelId, clientId) => {
+  //   if (!publish) return;
+  //   publish({
+  //     destination: `/app/group/${groupId}/travel/${travelId}/edit/save`,
+  //     body: JSON.stringify({ clientId: clientId }),
+  //   });
+  // },
 
   // CRDT 작업 전송 (insert, move, moveDay, update, delete)
   publishCrdtOperation: (publish, groupId, travelId, operation) => {
     if (!publish) return;
 
+    console.log('🔍 전송할 operation:', operation);
+    console.log('🔍 opTs 타입:', typeof operation.opTs, '값:', operation.opTs);
+    
+    const jsonBody = JSON.stringify(operation);
+    console.log('🔍 JSON.stringify 결과:', jsonBody);
+
     publish({
       destination: `/app/group/${groupId}/travel/${travelId}/edit/op`,
-      body: JSON.stringify(operation),
+      body: jsonBody,
     });
   },
 
@@ -61,18 +64,19 @@ export const WebsocketAPI = {
 
     const operation = {
       type: 'insert',
-      opId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      opId: crypto.randomUUID(),  // ✅ UUID 사용
       clientId: clientId,
-      opTs: Date.now(),
+      opTs: Date.now(), 
       day: day,
+      tcCode: planData.tcCode,  // ✅ 최상위 레벨
       payload: {
         pdDay: day,
         pdPlace: planData.pdPlace,
         pdAddress: planData.pdAddress,
         pdCost: planData.pdCost,
-        tcCode: planData.tcCode,
-        prevCrdtId: prevCrdtId,
-        nextCrdtId: nextCrdtId,
+        tcCode: planData.tcCode,  // ✅ payload에도 포함
+        prevCrdtId: prevCrdtId || '',  // ✅ null 대신 빈 문자열
+        nextCrdtId: nextCrdtId || '',  // ✅ null 대신 빈 문자열
       },
     };
 
@@ -88,20 +92,22 @@ export const WebsocketAPI = {
     day,
     crdtId,
     prevCrdtId,
-    nextCrdtId
+    nextCrdtId,
+    tcCode = null
   ) => {
     if (!publish) return;
 
     const operation = {
       type: 'move',
-      opId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      opId: crypto.randomUUID(),  // ✅ UUID 사용
       clientId: clientId,
-      opTs: Date.now(),
+      opTs: Date.now(), 
       day: day,
+      tcCode: tcCode,  // ✅ 최상위 레벨
       payload: {
         crdtId: crdtId,
-        prevCrdtId: prevCrdtId,
-        nextCrdtId: nextCrdtId,
+        prevCrdtId: prevCrdtId || '',  // ✅ null 대신 빈 문자열
+        nextCrdtId: nextCrdtId || '',  // ✅ null 대신 빈 문자열
       },
     };
 
@@ -118,20 +124,22 @@ export const WebsocketAPI = {
     newDay,
     crdtId,
     prevCrdtId,
-    nextCrdtId
+    nextCrdtId,
+    tcCode = null
   ) => {
     if (!publish) return;
 
     const operation = {
       type: 'moveDay',
-      opId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      opId: crypto.randomUUID(),  // ✅ UUID 사용
       clientId: clientId,
       opTs: Date.now(),
       day: oldDay,
+      tcCode: tcCode,  // ✅ 최상위 레벨
       payload: {
         crdtId: crdtId,
-        prevCrdtId: prevCrdtId,
-        nextCrdtId: nextCrdtId,
+        prevCrdtId: prevCrdtId || '',  // ✅ null 대신 빈 문자열
+        nextCrdtId: nextCrdtId || '',  // ✅ null 대신 빈 문자열
         newDay: newDay,
       },
     };
@@ -153,10 +161,11 @@ export const WebsocketAPI = {
 
     const operation = {
       type: 'update',
-      opId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      opId: crypto.randomUUID(),  // ✅ UUID 사용
       clientId: clientId,
       opTs: Date.now(),
       day: day,
+      tcCode: updateData.tcCode || null,  // ✅ 최상위 레벨
       payload: {
         crdtId: crdtId,
         ...updateData,
@@ -173,16 +182,18 @@ export const WebsocketAPI = {
     travelId,
     clientId,
     day,
-    crdtId
+    crdtId,
+    tcCode = null
   ) => {
     if (!publish) return;
 
     const operation = {
       type: 'delete',
-      opId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      opId: crypto.randomUUID(),  // ✅ UUID 사용
       clientId: clientId,
       opTs: Date.now(),
       day: day,
+      tcCode: tcCode,  // ✅ 최상위 레벨
       payload: {
         crdtId: crdtId,
       },

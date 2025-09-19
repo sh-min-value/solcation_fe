@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useAuth } from '../context/AuthContext';
 import { WebsocketAPI } from '../services/WebsocketAPI';
+import { useNavigate } from 'react-router-dom';
 
 export default function useStomp({ url, groupId, travelId, onMessage, onJoinResponse, reconnectDelay = 5000, onRefreshData, autoJoin = true }) {
   const clientRef = useRef(null);
@@ -15,6 +16,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
   const [error, setError] = useState(null);
   const { accessToken, user } = useAuth();
   const currentUserId = user?.userId || 'anonymous';
+  const navigate = useNavigate();
   
   useEffect(() => { onMessageRef.current = onMessage; }, [onMessage]);
   useEffect(() => { onJoinResponseRef.current = onJoinResponse; }, [onJoinResponse]);
@@ -68,6 +70,9 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
                 // 그리고 일반 메시지 핸들러도 호출해서 다른 로직 처리 가능하게 함
                 console.log('[STOMP] onMessage 호출 (presence-join):', body);
                 onMessageRef.current && onMessageRef.current(body);
+              } else if (body && body.type === 'presence-leave' && body.userId === currentUserId){
+                navigate(`/group/${groupId}/travel/${travelId}`);
+
               } else {
                 console.log('[STOMP] onMessage 호출 (일반):', body);
                 onMessageRef.current && onMessageRef.current(body);
@@ -200,6 +205,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
     }
     const destination = `/app/group/${groupId}/travel/${travelId}/edit/op`;
     console.log('[STOMP] publishOp to:', destination, 'op:', opMessage);
+    console.log('[STOMP] opMessage type:', typeof opMessage);
     return publish({ destination, body: opMessage });
   }, [groupId, travelId, publish]);
 
