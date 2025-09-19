@@ -135,7 +135,7 @@ const TransactionHistory = ({ groupId }) => {
         </div>
 
         {showDropdown && (
-          <div className="absolute z-10 bg-white border border-gray-200 rounded-md shadow-lg mt-1 min-w-fit">
+          <div className="absolute z-10 bg-white border border-gray-5 rounded-md shadow-lg mt-1 min-w-fit">
             {filterOptions.map(option => (
               <div
                 key={option.value || 'all'}

@@ -18,4 +18,8 @@ export const AccountAPI = {
   // 전체 거래 내역 조회 (필터링 포함)
   getTransactionHistory: groupId =>
     apiClient.get(`/group/${groupId}/transaction/all`),
+
+  // 모임통장 정기 입금일 설정
+  setRegularDeposit: (groupId, depositData) =>
+    apiClient.post(`/group/${groupId}/account/cycle`, depositData),
 };

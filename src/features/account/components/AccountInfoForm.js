@@ -86,7 +86,7 @@ const AccountInfoForm = ({ formData, updateFormData, errors }) => {
             주민등록번호
           </label>
           {errors.residentNumber && (
-            <span className="text-red-500 text-[10px]">
+            <span className="text-group-1 text-[10px]">
               {errors.residentNumber}
             </span>
           )}
@@ -148,7 +148,7 @@ const AccountInfoForm = ({ formData, updateFormData, errors }) => {
             전화번호
           </label>
           {errors.phoneNumber && (
-            <span className="text-red-500 text-[10px]">
+            <span className="text-group-1 text-[10px]">
               {errors.phoneNumber}
             </span>
           )}
@@ -202,7 +202,7 @@ const AccountInfoForm = ({ formData, updateFormData, errors }) => {
             서명
           </label>
           {errors.signature && (
-            <span className="text-red-500 text-[10px]">{errors.signature}</span>
+            <span className="text-group-1 text-[10px]">{errors.signature}</span>
           )}
         </div>
         <SignatureCanvas

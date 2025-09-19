@@ -43,7 +43,7 @@ const PasswordSetupForm = ({ formData, updateFormData, errors }) => {
             className="absolute -top-12 left-0 right-0 text-center"
             style={{ margin: 0 }}
           >
-            <span className="text-red-500 text-xs">{errors.saPw}</span>
+            <span className="text-group-1 text-xs">{errors.saPw}</span>
           </div>
         )}
       </div>

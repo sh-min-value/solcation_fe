@@ -19,7 +19,7 @@ const InputField = ({
         <label htmlFor={id} className="text-gray04 text-base font-medium">
           {label}
         </label>
-        {error && <span className="text-red-500 text-[10px]">{error}</span>}
+        {error && <span className="text-group-1 text-[10px]">{error}</span>}
       </div>
       <div className="relative">
         <input

@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Copy, MoreVertical } from 'lucide-react';
 import RegularDepositModal from './RegularDepositModal';
 import { AccountAPI } from '../../services/AccountAPI';
+import { GroupAPI } from '../../services/GroupAPI';
+import { useAuth } from '../../context/AuthContext';
 
 const BriefAccount = ({ groupId }) => {
+  const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [accountInfo, setAccountInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [copyMessage, setCopyMessage] = useState('');
+  const [isGroupLeader, setIsGroupLeader] = useState(false);
 
   //정기 입금일 모달
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
@@ -27,6 +31,24 @@ const BriefAccount = ({ groupId }) => {
 
     fetchAccountInfo();
   }, [groupId]);
+
+  // 그룹 리더 여부 확인
+  useEffect(() => {
+    const checkGroupLeader = async () => {
+      if (!groupId || !user?.userId) return;
+
+      try {
+        const membersResponse = await GroupAPI.getGroupMembers(groupId);
+        const isLeader = membersResponse.groupLeader?.userId === user.userId;
+        setIsGroupLeader(isLeader);
+      } catch (error) {
+        console.error('그룹 리더 확인 오류:', error);
+        setIsGroupLeader(false);
+      }
+    };
+
+    checkGroupLeader();
+  }, [groupId, user?.userId]);
 
   //잔액 포맷팅
   const formatBalance = amount => {
@@ -72,6 +94,8 @@ const BriefAccount = ({ groupId }) => {
       <RegularDepositModal
         isOpen={isRegularModalOpen}
         onClose={() => setIsRegularModalOpen(false)}
+        groupId={groupId}
+        isGroupLeader={isGroupLeader}
       />
       {/* 계좌 */}
       <div className="px-4 py-4 relative">
