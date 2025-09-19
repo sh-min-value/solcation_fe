@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useAuth } from '../context/AuthContext';
 import { WebsocketAPI } from '../services/WebsocketAPI';
+import { useNavigate } from 'react-router-dom';
 
 export default function useStomp({ url, groupId, travelId, onMessage, onJoinResponse, reconnectDelay = 5000, onRefreshData, autoJoin = true }) {
   const clientRef = useRef(null);
@@ -13,7 +14,9 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
   const hasJoinedRef = useRef(false);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
+  const currentUserId = user?.userId || 'anonymous';
+  const navigate = useNavigate();
 
   useEffect(() => { onMessageRef.current = onMessage; }, [onMessage]);
   useEffect(() => { onJoinResponseRef.current = onJoinResponse; }, [onJoinResponse]);
@@ -34,7 +37,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
         setIsConnected(true);
         setError(null);
 
-        // 편집 전용 토픽 구독 (기존)
+        // 편집 전용 토픽 구독
         if (groupId && travelId && !editSubRef.current) {
           const editTopic = `/topic/travel/${travelId}/edit`;
           console.log('[STOMP] subscribe 편집 토픽:', editTopic);
@@ -49,7 +52,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
           });
         }
 
-        // 전체 presence 토픽 구독 (서버에서 snapshot을 보냄)
+        // 전체 presence 토픽 구독 
         if (travelId && !topicSubRef.current) {
           const topic = `/topic/travel/${travelId}`;
           console.log('[STOMP] subscribe 전체 토픽:', topic);
@@ -57,16 +60,15 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
             console.log('[STOMP] 전체 토픽 메시지 받음:', message.body);
             try {
               const body = message.body ? JSON.parse(message.body) : null;
-              // presence-join 등의 메시지는 onJoinResponse에 전달할 수도 있음
               if (body && body.type === 'presence-join') {
-                // 우선 onJoinResponse가 있으면 호출 (server에서 snapshot을 붙여서 보낼 때 사용)
                 if (onJoinResponseRef.current) {
                   console.log('[STOMP] onJoinResponse 호출:', body);
                   onJoinResponseRef.current(body);
                 }
-                // 그리고 일반 메시지 핸들러도 호출해서 다른 로직 처리 가능하게 함
                 console.log('[STOMP] onMessage 호출 (presence-join):', body);
                 onMessageRef.current && onMessageRef.current(body);
+              } else if (body && body.type === 'presence-leave' && body.userId === currentUserId){
+                navigate(`/group/${groupId}/travel/${travelId}`);
               } else {
                 console.log('[STOMP] onMessage 호출 (일반):', body);
                 onMessageRef.current && onMessageRef.current(body);
@@ -190,7 +192,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
       console.error('useStomp: publish error', e);
       return false;
     }
-  }, [isConnected]); // isConnected가 변경될 때만 재생성
+  }, [isConnected]);
 
   const publishOp = useCallback((opMessage) => {
     if (!groupId || !travelId) {
@@ -199,6 +201,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
     }
     const destination = `/app/group/${groupId}/travel/${travelId}/edit/op`;
     console.log('[STOMP] publishOp to:', destination, 'op:', opMessage);
+    console.log('[STOMP] opMessage type:', typeof opMessage);
     return publish({ destination, body: opMessage });
   }, [groupId, travelId, publish]);
 
@@ -226,7 +229,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
   useEffect(() => {
     if (autoJoin && isConnected && publish && groupId && travelId && !hasJoinedRef.current) {
       console.log('편집 세션 자동 입장');
-      joinEditSession('currentUser'); // userId는 컴포넌트에서 전달받아야 함
+      joinEditSession(currentUserId);
       hasJoinedRef.current = true;
     }
   }, [isConnected, publish, groupId, travelId, autoJoin, joinEditSession]);
@@ -236,7 +239,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
     return () => {
       if (isConnected && publish && groupId && travelId) {
         console.log('편집 세션 자동 퇴장');
-        WebsocketAPI.leaveEditSession(publish, groupId, travelId, 'currentUser');
+        WebsocketAPI.leaveEditSession(publish, groupId, travelId, currentUserId);
       }
       hasJoinedRef.current = false;
     };

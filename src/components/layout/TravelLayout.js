@@ -56,7 +56,7 @@ export default function TravelLayout({ children, title }) {
 
   // 여행 총 날짜 계산
   const getTravelDays = () => {
-    if (!travelInfo?.startDate || !travelInfo?.endDate) return 3; // 기본값
+    if (!travelInfo?.startDate || !travelInfo?.endDate) return 3;
     
     const startDate = new Date(travelInfo.startDate);
     const endDate = new Date(travelInfo.endDate);
@@ -118,10 +118,10 @@ export default function TravelLayout({ children, title }) {
               </p>
               
               <div className="flex space-x-3 text-gray-500 text-xs">
-                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center">
+                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center space-x-1">
                   {getStateIcon(travelInfo?.state)}
                 </div>
-                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center">
+                <div className="bg-white bg-opacity-80 rounded-lg px-3 py-1 flex items-center space-x-1">
                   {getTravelCategoryIcon(travelInfo?.categoryCode)}
                 </div>
               </div>

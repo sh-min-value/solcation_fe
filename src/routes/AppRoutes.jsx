@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
+import Loading from '../components/common/Loading';
 import TransactionDetail from '../features/transaction/TransactionDetail';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
@@ -13,6 +14,7 @@ const Group = lazy(() => import('../features/group/Group'));
 const GroupCreate = lazy(() => import('../features/group/GroupCreate'));
 const GroupList = lazy(() => import('../features/group/GroupList'));
 const Account = lazy(() => import('../features/account/Account'));
+const AccountCreate = lazy(() => import('../features/account/AccountCreate'));
 const Stat = lazy(() => import('../features/stat/Stat'));
 
 const Travel = lazy(() => import('../features/travel/Travel'));
@@ -25,7 +27,7 @@ const TravelCreate = lazy(() => import('../features/travel/TravelCreate'));
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div>로딩중...</div>}>
+    <Suspense fallback={<Loading />}>
       <Routes>
         {/* 공개 라우트 */}
         <Route path="/login" element={<LoginForm />} />
@@ -75,6 +77,15 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         ></Route>
+
+        <Route
+          path="/group/:groupid/account/new"
+          element={
+            <ProtectedRoute>
+              <AccountCreate />
+            </ProtectedRoute>
+          }
+        />
 
         {/* RootLayout 없이 독립적인 라우트들 */}
         <Route
