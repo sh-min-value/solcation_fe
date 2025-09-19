@@ -27,6 +27,7 @@ const PlanDetailEdit = () => {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
     const currentUserId = currentUser.userId || 'anonymous';
 
+    console.log(currentUserId);
     const { isConnected, error: stompError, publish, publishOp, refreshData } = useStomp({
         url: 'ws://localhost:8080/ws',
         groupId: groupid,
@@ -108,6 +109,11 @@ const PlanDetailEdit = () => {
 
     // 그룹화/정렬 로직
     const groupByDay = (plans) => {
+        // plans가 배열이 아니거나 비어있으면 빈 객체 반환
+        if (!Array.isArray(plans) || plans.length === 0) {
+            return {};
+        }
+        
         const grouped = plans.reduce((acc, plan) => {
             const day = plan.pdDay;
             if (!acc[day]) acc[day] = [];
@@ -147,24 +153,26 @@ const PlanDetailEdit = () => {
         setEditFormData({ cost: '', tcCode: 'FOOD' });
     };
 
-    // 수정 저장
+    // 수정 저장 (백엔드 구조에 맞춤)
     const handleSaveEdit = () => {
         if (!editingPlan || !isConnected || !publishOp) return;
-
-        const crdtId = editingPlan.crdtId ?? String(editingPlan.pdPk);
+        
+        const crdtId = editingPlan.crdtId ?? `${editingPlan.pdPk}:${currentUserId}`;
         const op = {
+            type: 'update',
+            travelId: travelid,
             opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
             clientId: currentUserId,
-            opTs: Date.now(),
-            type: 'update',
+            opTs: Date.now().milliseconds,
             day: editingPlan.pdDay,
+            tcCode: editFormData.tcCode, 
             payload: {
                 crdtId: crdtId,
                 pdCost: parseInt(editFormData.cost) || 0,
-                tcCode: editFormData.tcCode
+                tcCode: editFormData.tcCode  
             }
         };
-
+        
         console.log('수정 Op 전송:', op);
         const success = publishOp(op);
         if (success) {
@@ -179,7 +187,7 @@ const PlanDetailEdit = () => {
         setDraggedPlan(plan);
         e.dataTransfer.effectAllowed = 'move';
         try {
-            e.dataTransfer.setData('text/plain', plan.crdtId ?? String(plan.pdPk));
+            e.dataTransfer.setData('text/plain', plan.crdtId ?? `${plan.pdPk}:${currentUserId}`);
         } catch (e) {
             console.debug('drag setData failed:', e);
         }
@@ -190,7 +198,7 @@ const PlanDetailEdit = () => {
     const handleDragOverItemBottom = (e, day, index) => { e.preventDefault(); e.stopPropagation(); setDragOverDay(day); setDragOverIndex(index + 1); };
     const handleDragLeave = () => { setDragOverDay(null); setDragOverIndex(null); };
 
-    // 드롭 처리
+    // 드롭 처리 (백엔드 구조에 맞춤)
     const handleDrop = (e, targetDay, targetIndex = null) => {
         e.preventDefault();
         if (!draggedPlan) {
@@ -210,7 +218,7 @@ const PlanDetailEdit = () => {
             Object.keys(updatedSnapshot).forEach(day => {
                 if (updatedSnapshot[day]?.items) {
                     updatedSnapshot[day].items = updatedSnapshot[day].items.filter(
-                        plan => (plan.crdtId || plan.pdPk) !== (draggedPlan.crdtId || draggedPlan.pdPk)
+                        plan => (plan.crdtId || `${plan.pdPk}:${currentUserId}`) !== (draggedPlan.crdtId || `${draggedPlan.pdPk}:${currentUserId}`)
                     );
                 }
             });
@@ -237,7 +245,7 @@ const PlanDetailEdit = () => {
             if (draggedPlan.pdDay === targetDay) {
                 const dayPlans = planData.filter(plan => plan.pdDay === targetDay);
                 const otherPlans = planData.filter(plan => plan.pdDay !== targetDay);
-                const filteredDayPlans = dayPlans.filter(plan => (plan.crdtId || plan.pdPk) !== (draggedPlan.crdtId || draggedPlan.pdPk));
+                const filteredDayPlans = dayPlans.filter(plan => (plan.crdtId || `${plan.pdPk}:${currentUserId}`) !== (draggedPlan.crdtId || `${draggedPlan.pdPk}:${currentUserId}`));
                 const insertIndex = targetIndex !== null ? targetIndex : filteredDayPlans.length;
                 const newDayPlans = [
                     ...filteredDayPlans.slice(0, insertIndex),
@@ -247,7 +255,7 @@ const PlanDetailEdit = () => {
                 updatedPlans = [...otherPlans, ...newDayPlans];
             } else {
                 updatedPlans = planData.map(plan =>
-                    ((plan.crdtId || plan.pdPk) === (draggedPlan.crdtId || draggedPlan.pdPk))
+                    ((plan.crdtId || `${plan.pdPk}:${currentUserId}`) === (draggedPlan.crdtId || `${draggedPlan.pdPk}:${currentUserId}`))
                         ? { ...plan, pdDay: targetDay }
                         : plan
                 );
@@ -258,7 +266,7 @@ const PlanDetailEdit = () => {
         // prev/next 계산을 위한 플랫한 데이터
         const flatData = isSnapshotData ? flattenSnapshotData(planData) : planData;
         const dayPlansAfter = flatData
-            .filter(p => p.pdDay === targetDay && (p.crdtId ?? String(p.pdPk)) !== (draggedPlan.crdtId ?? String(draggedPlan.pdPk)))
+            .filter(p => p.pdDay === targetDay && (p.crdtId ?? `${p.pdPk}:${currentUserId}`) !== (draggedPlan.crdtId ?? `${draggedPlan.pdPk}:${currentUserId}`))
             .sort((a, b) => {
                 const pa = parseFloat(a.position ?? '0'); const pb = parseFloat(b.position ?? '0');
                 if (pa !== pb) return pa - pb;
@@ -278,19 +286,40 @@ const PlanDetailEdit = () => {
             dayPlansAfter: dayPlansAfter.map(p => ({ place: p.pdPlace, crdtId: p.crdtId }))
         });
 
-        // Op 생성
-        const crdtIdToSend = draggedPlan.crdtId ?? String(draggedPlan.pdPk);
+        // Op 생성 (백엔드 구조에 맞춤)
+        const crdtIdToSend = draggedPlan.crdtId ?? `${draggedPlan.pdPk}:${currentUserId}`;
         const opCommon = {
             opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+            travelId: travelid,
             clientId: currentUserId,
-            opTs: Date.now(),
+            opTs: Date.now().milliseconds,
+            tcCode: draggedPlan.tcCode || null  // 최상위 레벨에 tcCode 추가
         };
 
         let op;
         if (draggedPlan.pdDay === targetDay) {
-            op = { ...opCommon, type: 'move', day: targetDay, payload: { crdtId: crdtIdToSend, prevCrdtId, nextCrdtId } };
+            op = { 
+                ...opCommon, 
+                type: 'move', 
+                day: targetDay, 
+                payload: { 
+                    crdtId: crdtIdToSend, 
+                    prevCrdtId, 
+                    nextCrdtId 
+                } 
+            };
         } else {
-            op = { ...opCommon, type: 'moveDay', day: draggedPlan.pdDay, payload: { crdtId: crdtIdToSend, prevCrdtId, nextCrdtId, newDay: targetDay } };
+            op = { 
+                ...opCommon, 
+                type: 'moveDay', 
+                day: draggedPlan.pdDay, 
+                payload: { 
+                    crdtId: crdtIdToSend, 
+                    prevCrdtId, 
+                    nextCrdtId, 
+                    newDay: targetDay 
+                } 
+            };
         }
 
         console.log('Op 전송:', op);
@@ -313,11 +342,11 @@ const PlanDetailEdit = () => {
         setDragOverIndex(null);
     };
 
-    // 삭제 처리
+    // 삭제 처리 (백엔드 구조에 맞춤)
     const handleDeletePlan = (plan) => {
         if (!window.confirm('이 일정을 삭제하시겠습니까?')) return;
 
-        const key = plan.crdtId ?? String(plan.pdPk);
+        const key = plan.crdtId ?? `${plan.pdPk}:${currentUserId}`;
         const isSnapshotData = planData && typeof planData === 'object' && !Array.isArray(planData) && planData[1]?.items;
         
         if (isSnapshotData) {
@@ -326,26 +355,30 @@ const PlanDetailEdit = () => {
             Object.keys(updatedSnapshot).forEach(day => {
                 if (updatedSnapshot[day]?.items) {
                     updatedSnapshot[day].items = updatedSnapshot[day].items.filter(
-                        p => (p.crdtId ?? String(p.pdPk)) !== key
+                        p => (p.crdtId ?? `${p.pdPk}:${currentUserId}`) !== key
                     );
                 }
             });
             setPlanData(updatedSnapshot);
         } else {
             // 배열 형태인 경우
-            const updatedPlans = planData.filter(p => (p.crdtId ?? String(p.pdPk)) !== key);
+            const updatedPlans = planData.filter(p => (p.crdtId ?? `${p.pdPk}:${currentUserId}`) !== key);
             setPlanData(updatedPlans);
         }
 
         const op = {
-            opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-            clientId: currentUserId,
-            opTs: Date.now(),
             type: 'delete',
+            opId: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+            travelId: travelid,
+            clientId: currentUserId,
+            opTs: Date.now().milliseconds,
             day: plan.pdDay,
-            payload: { crdtId: key }
+            tcCode: plan.tcCode || null,  // 최상위 레벨에 tcCode 추가
+            payload: { 
+                crdtId: key 
+            }
         };
-
+        
         console.log('삭제 Op 전송:', op);
         if (publishOp) {
             const success = publishOp(op);
@@ -376,7 +409,7 @@ const PlanDetailEdit = () => {
     
     // planData가 스냅샷 형태인지 배열 형태인지 확인
     const isSnapshotData = planData && typeof planData === 'object' && !Array.isArray(planData) && planData[1]?.items;
-    const displayData = isSnapshotData ? flattenSnapshotData(planData) : planData;
+    const displayData = isSnapshotData ? flattenSnapshotData(planData) : (Array.isArray(planData) ? planData : []);
     const groupedPlans = groupByDay(displayData);
 
     return (
@@ -552,7 +585,7 @@ const PlanDetailEdit = () => {
                                         className="flex-1 py-3 bg-light-blue text-third rounded-lg font-medium hover:bg-blue shadow-lg"
                                     >
                                         저장
-                                    </button>
+                        </button>
                                 </div>
                     </div>
                 </div>

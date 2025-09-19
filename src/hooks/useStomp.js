@@ -13,8 +13,9 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
   const hasJoinedRef = useRef(false);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
-  const { accessToken } = useAuth();
-
+  const { accessToken, user } = useAuth();
+  const currentUserId = user?.userId || 'anonymous';
+  
   useEffect(() => { onMessageRef.current = onMessage; }, [onMessage]);
   useEffect(() => { onJoinResponseRef.current = onJoinResponse; }, [onJoinResponse]);
   useEffect(() => { onRefreshDataRef.current = onRefreshData; }, [onRefreshData]);
@@ -226,7 +227,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
   useEffect(() => {
     if (autoJoin && isConnected && publish && groupId && travelId && !hasJoinedRef.current) {
       console.log('편집 세션 자동 입장');
-      joinEditSession('currentUser'); // userId는 컴포넌트에서 전달받아야 함
+      joinEditSession(currentUserId);
       hasJoinedRef.current = true;
     }
   }, [isConnected, publish, groupId, travelId, autoJoin, joinEditSession]);
@@ -236,7 +237,7 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
     return () => {
       if (isConnected && publish && groupId && travelId) {
         console.log('편집 세션 자동 퇴장');
-        WebsocketAPI.leaveEditSession(publish, groupId, travelId, 'currentUser');
+        WebsocketAPI.leaveEditSession(publish, groupId, travelId, currentUserId);
       }
       hasJoinedRef.current = false;
     };
