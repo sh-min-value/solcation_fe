@@ -45,6 +45,7 @@ export const WebsocketAPI = {
     publish({
       destination: `/app/group/${groupId}/travel/${travelId}/edit/op`,
       body: jsonBody,
+      body: jsonBody,
     });
   },
 
@@ -65,6 +66,7 @@ export const WebsocketAPI = {
       type: 'insert',
       opId: crypto.randomUUID(),
       clientId: clientId,
+      opTs: Date.now(), 
       opTs: Date.now(), 
       day: day,
       tcCode: planData.tcCode, 
@@ -93,6 +95,8 @@ export const WebsocketAPI = {
     prevCrdtId,
     nextCrdtId,
     tcCode = null
+    nextCrdtId,
+    tcCode = null
   ) => {
     if (!publish) return;
 
@@ -100,6 +104,7 @@ export const WebsocketAPI = {
       type: 'move',
       opId: crypto.randomUUID(), 
       clientId: clientId,
+      opTs: Date.now(), 
       opTs: Date.now(), 
       day: day,
       tcCode: tcCode, 
@@ -123,6 +128,8 @@ export const WebsocketAPI = {
     newDay,
     crdtId,
     prevCrdtId,
+    nextCrdtId,
+    tcCode = null
     nextCrdtId,
     tcCode = null
   ) => {
@@ -181,6 +188,8 @@ export const WebsocketAPI = {
     travelId,
     clientId,
     day,
+    crdtId,
+    tcCode = null
     crdtId,
     tcCode = null
   ) => {

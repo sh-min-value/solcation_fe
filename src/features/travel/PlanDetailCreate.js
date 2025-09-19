@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BiSearch } from 'react-icons/bi';
 import { IoLocationSharp } from "react-icons/io5";
@@ -14,7 +15,11 @@ const PlanDetailCreate = (data) => {
     const navigate = useNavigate();
     const { groupid, travelid } = useParams();
     const [searchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const { currentUserId } = useAuth();
+    
+    // URL 쿼리 파라미터에서 day 정보 가져오기
+    const dayFromUrl = parseInt(searchParams.get('day')) || 1;
     
     // URL 쿼리 파라미터에서 day 정보 가져오기
     const dayFromUrl = parseInt(searchParams.get('day')) || 1;
