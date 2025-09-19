@@ -3,7 +3,6 @@ import { Client } from '@stomp/stompjs';
 import { useAuth } from '../context/AuthContext';
 import { WebsocketAPI } from '../services/WebsocketAPI';
 import { useNavigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 
 export default function useStomp({ url, groupId, travelId, onMessage, onJoinResponse, reconnectDelay = 5000, onRefreshData, autoJoin = true }) {
   const clientRef = useRef(null);
@@ -70,10 +69,6 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
                 onMessageRef.current && onMessageRef.current(body);
               } else if (body && body.type === 'presence-leave' && body.userId === currentUserId){
                 navigate(`/group/${groupId}/travel/${travelId}`);
-
-              } else if (body && body.type === 'presence-leave' && body.userId === currentUserId){
-                navigate(`/group/${groupId}/travel/${travelId}`);
-
               } else {
                 console.log('[STOMP] onMessage 호출 (일반):', body);
                 onMessageRef.current && onMessageRef.current(body);
@@ -206,7 +201,6 @@ export default function useStomp({ url, groupId, travelId, onMessage, onJoinResp
     }
     const destination = `/app/group/${groupId}/travel/${travelId}/edit/op`;
     console.log('[STOMP] publishOp to:', destination, 'op:', opMessage);
-    console.log('[STOMP] opMessage type:', typeof opMessage);
     console.log('[STOMP] opMessage type:', typeof opMessage);
     return publish({ destination, body: opMessage });
   }, [groupId, travelId, publish]);
