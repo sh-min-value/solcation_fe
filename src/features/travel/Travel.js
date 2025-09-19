@@ -4,6 +4,7 @@ import { CiSquarePlus } from "react-icons/ci";
 import { TravelAPI } from '../../services/TravelAPI.js';
 import TravelCard from '../../components/common/TravelCard';
 import EmptyBear from '../../components/common/EmptyBear';
+import Loading from '../../components/common/Loading';
 
 const Travel = () => {
     const navigate = useNavigate();
@@ -57,7 +58,7 @@ const Travel = () => {
 
     return (
         <>
-        <div className='flex items-center justify-between'>
+        <div className='flex h-full items-center justify-between'>
             <select className='bg-white rounded-sm p-2 focus:outline-none focus:underline'
             value={selectedStatus}
             onChange={handleStatusChange}>
@@ -71,7 +72,7 @@ const Travel = () => {
             </button>
         </div>
         {isLoading ? (
-            <p>여행 목록을 불러오는 중입니다...</p>
+            <Loading />
         ) : (
             <div>
                 <div>
