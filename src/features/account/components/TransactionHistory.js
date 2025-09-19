@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { AccountAPI } from '../../../services/AccountAPI';
 import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
 
 const TransactionHistory = ({ groupId }) => {
+  const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState(null);
@@ -179,7 +181,21 @@ const TransactionHistory = ({ groupId }) => {
               {dayTransactions.map(transaction => (
                 <div
                   key={transaction.satPk}
-                  className="flex items-center justify-between px-2"
+                  className="flex items-center justify-between px-2 cursor-pointer hover:bg-gray-6 transition-colors"
+                  onClick={() =>
+                    navigate(
+                      `/group/${groupId}/account/transaction/${transaction.satPk}`
+                    )
+                  }
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      navigate(
+                        `/group/${groupId}/account/transaction/${transaction.satPk}`
+                      );
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
