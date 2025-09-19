@@ -118,7 +118,7 @@ const Group = ({ triggerRefresh }) => {
     };
 
     validateGroup();
-  }, [groupid, navigate, location.pathname]);
+  }, [groupid]);
 
   //전화번호 확인
   const isValidPhone = useCallback(
