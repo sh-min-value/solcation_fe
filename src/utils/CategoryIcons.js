@@ -33,14 +33,14 @@ export const getStateIcon = (
       return (
         <>
           <AiFillSchedule className={className} />
-          <p className="w-8">여행 전</p>
+          <p>여행 전</p>
         </>
       );
     case 'ONGOING':
       return (
         <>
           <BiSolidPlaneAlt className={className} />
-          <p className="w-8">여행 중</p>
+          <p>여행 중</p>
         </>
       );
     case 'FINISH':
@@ -54,7 +54,7 @@ export const getStateIcon = (
       return (
         <>
           <AiFillSchedule className={className} />
-          <p className="w-8">여행 전</p>
+          <p>여행 전</p>
         </>
       );
   }
