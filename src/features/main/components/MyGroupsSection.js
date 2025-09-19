@@ -58,7 +58,7 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
   return (
     <>
       {/* 헤더 */}
-      <div className="relative z-10 bg-white rounded-[20px] p-4 shadow-sm mb-[-26px]">
+      <div className="relative z-10 bg-white rounded-xl p-4 shadow-sm mb-[-26px]">
         <div className="flex justify-between items-center">
           <h2 className="text-[18px] font-bold text-gray-1">
             내 그룹 보러가기
@@ -92,7 +92,7 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
                 imagePath={group.groupImage}
                 groupName={group.groupName}
               />
-              <p className="text-xs text-gray-2 truncate w-60">
+              <p className="text-xs text-gray-2 truncate w-full max-w-[60px]">
                 {group.groupName}
               </p>
             </div>
