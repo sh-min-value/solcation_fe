@@ -4,6 +4,7 @@ import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
 import TransactionDetail from '../features/group/TransactionDetail';
+import Loading from '../components/common/Loading';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
 const Main = lazy(() => import('../features/main/Main'));
@@ -26,7 +27,7 @@ const TravelCreate = lazy(() => import('../features/travel/TravelCreate'));
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div>로딩중...</div>}>
+    <Suspense fallback={<Loading />}>
       <Routes>
         {/* 공개 라우트 */}
         <Route path="/login" element={<LoginForm />} />

@@ -121,25 +121,71 @@ const generateCalendarDays = (year, month, events = []) => {
   return calendarDays;
 };
 
-const CalendarSection = ({ events = [], onDateSelect, selectedDates = [] }) => {
+const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd, selectedDates = [] , isClickable = false}) => {
   const currentDate = new Date();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const calendarDays = generateCalendarDays(year, month, events);
 
-  const handleDateClick = dayInfo => {
-    if (dayInfo.isCurrentMonth && onDateSelect) {
+  const handleDateClick = (dayInfo) => {
+    if (dayInfo.isCurrentMonth && onDateSelect && isClickable) {
       onDateSelect(dayInfo.fullDate);
     }
   };
 
-  const isDateSelected = dayInfo => {
+  const handleMouseDown = (dayInfo) => {
+    if (dayInfo.isCurrentMonth && onDateSelect && isClickable) {
+      onDateSelect(dayInfo.fullDate);
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isClickable || !onDateDrag) return;
+    
+    const target = e.target;
+    const dayElement = target.closest('[data-date]');
+    if (!dayElement) return;
+    
+    const dayInfo = calendarDays[parseInt(dayElement.dataset.date)];
+    if (dayInfo && dayInfo.isCurrentMonth) {
+      onDateDrag(dayInfo.fullDate);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (onDateDragEnd && isClickable) {
+      onDateDragEnd();
+    }
+  };
+
+  const isDateSelected = (dayInfo) => {
     if (!dayInfo.isCurrentMonth) return false;
     return selectedDates.some(
       selectedDate =>
         selectedDate.toDateString() === dayInfo.fullDate.toDateString()
     );
+  };
+
+  const getSelectedDateStyle = (dayInfo) => {
+    if (!isDateSelected(dayInfo)) return '';
+    
+    const selectedDatesSorted = [...selectedDates].sort((a, b) => a - b);
+    const isStartDate = selectedDatesSorted.length > 0 && 
+      selectedDatesSorted[0].toDateString() === dayInfo.fullDate.toDateString();
+    const isEndDate = selectedDatesSorted.length > 0 && 
+      selectedDatesSorted[selectedDatesSorted.length - 1].toDateString() === dayInfo.fullDate.toDateString();
+    const isOnlyDate = selectedDatesSorted.length === 1;
+    
+    if (isOnlyDate) {
+      return 'bg-blue text-third rounded-full';
+    } else if (isStartDate) {
+      return 'bg-blue text-third rounded-l-full';
+    } else if (isEndDate) {
+      return 'bg-blue text-third rounded-r-full';
+    } else {
+      return 'bg-blue text-third';
+    }
   };
 
   return (
@@ -164,7 +210,14 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [] }) => {
       </div>
 
       {/* 날짜 */}
-      <div className="grid grid-cols-7">
+      <div 
+        className="grid grid-cols-7"
+        onMouseMove={isClickable ? handleMouseMove : undefined}
+        onMouseUp={isClickable ? handleMouseUp : undefined}
+        role={isClickable ? "application" : undefined}
+        tabIndex={isClickable ? 0 : undefined}
+        aria-label={isClickable ? "달력 날짜 선택 영역" : undefined}
+      >
         {calendarDays.map((dayInfo, index) => {
           const getBorderRadiusClass = () => {
             if (dayInfo.events.length === 0) return '';
@@ -193,30 +246,31 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [] }) => {
           };
 
           const isSelected = isDateSelected(dayInfo);
+          const selectedStyle = getSelectedDateStyle(dayInfo);
 
           return (
             <div
               key={index}
-              role="button"
-              tabIndex={dayInfo.isCurrentMonth ? 0 : -1}
+              data-date={index}
+              role={isClickable ? "button" : undefined}
+              tabIndex={isClickable && dayInfo.isCurrentMonth ? 0 : -1}
               className={`
-                 aspect-square flex items-center justify-center text-sm relative cursor-pointer
+                 aspect-square flex items-center justify-center text-sm relative
+                 ${isClickable ? 'cursor-pointer' : 'cursor-default'}
                ${dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3'}
                ${dayInfo.isToday ? 'font-bold' : ''}
-               ${isSelected ? 'bg-blue-500 text-white rounded-full' : ''}
-               hover:${dayInfo.isCurrentMonth ? 'bg-gray-100' : ''}
-               focus:outline-none focus:ring-2 focus:ring-blue-500
+               ${selectedStyle}
+               ${isClickable ? 'focus:outline-none' : ''}
                `}
-              onClick={() => handleDateClick(dayInfo)}
-              onKeyDown={e => {
+              onClick={isClickable ? () => handleDateClick(dayInfo) : undefined}
+              onMouseDown={isClickable ? () => handleMouseDown(dayInfo) : undefined}
+              onKeyDown={isClickable ? (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   handleDateClick(dayInfo);
                 }
-              }}
-              aria-label={`${dayInfo.date}일 ${
-                isSelected ? '선택됨' : '선택 가능'
-              }`}
+              } : undefined}
+              aria-label={`${dayInfo.date}일 ${isSelected ? '선택됨' : '선택 가능'}`}
             >
               {dayInfo.events.length > 0 && !isSelected && (
                 <div
@@ -237,7 +291,10 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [] }) => {
 CalendarSection.propTypes = {
   events: PropTypes.array,
   onDateSelect: PropTypes.func,
+  onDateDrag: PropTypes.func,
+  onDateDragEnd: PropTypes.func,
   selectedDates: PropTypes.array,
+  isClickable: PropTypes.bool,
 };
 
 export default CalendarSection;
