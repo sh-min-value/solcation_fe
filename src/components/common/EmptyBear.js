@@ -3,8 +3,8 @@ import bear from '../../assets/images/empty_sol.svg';
 
 const EmptyBear = ({ title, description, onClick, buttonText }) => {
     return (
-        <div className="p-4">
-            <div className="text-center py-12">
+        <div className="p-4  h-[calc(100vh-350px)] flex items-center justify-center">
+            <div className="text-center">
                 <img src={bear} alt="plan" className="w-60 h-60 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
                 <p className="text-gray-500 text-sm mb-6">

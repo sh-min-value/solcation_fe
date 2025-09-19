@@ -26,7 +26,7 @@ import PeerIcon from '../assets/categoryIcons/peer.svg';
 // state 값에 따른 아이콘 반환
 export const getStateIcon = (
   state,
-  className = 'w-3 h-3 text-gray-500 mr-1'
+  className = 'w-3 h-3 text-gray-500'
 ) => {
   switch (state) {
     case 'BEFORE':
@@ -47,7 +47,7 @@ export const getStateIcon = (
       return (
         <>
           <FaCheckCircle className={className} />
-          <p>여행 완료</p>
+          <p className="w-11">여행 완료</p>
         </>
       );
     default:
@@ -63,63 +63,63 @@ export const getStateIcon = (
 // 카테고리 아이콘 반환
 export const getTravelCategoryIcon = (
   categoryId,
-  className = 'w-3 h-3 text-gray-500 mr-1'
+  className = 'w-3 h-3 text-gray-500'
 ) => {
   switch (categoryId) {
     case 'FOOD':
       return (
         <>
           <BiSolidBowlRice className={className} />
-          <p>음식, 미식</p>
+          <p className='max-w-16 truncate'>음식, 미식</p>
         </>
       );
     case 'LEISURE':
       return (
         <>
           <MdKitesurfing className={className} />
-          <p>레저, 액티비티</p>
+          <p className='max-w-16 truncate'>레저, 액티비티</p>
         </>
       );
     case 'RECREATION':
       return (
         <>
           <FaTree className={className} />
-          <p>휴양, 힐링</p>
+          <p className='max-w-16 truncate'>휴양, 힐링</p>
         </>
       );
     case 'CULTURE':
       return (
         <>
           <HiLibrary className={className} />
-          <p>문화, 역사</p>
+          <p className='max-w-16 truncate'>문화, 역사</p>
         </>
       );
     case 'SHOPPING':
       return (
         <>
           <AiFillShopping className={className} />
-          <p>쇼핑, SNS 핫플레이스</p>
+          <p className='max-w-16 truncate'>쇼핑, SNS 핫플레이스</p>
         </>
       );
     case 'FESTIVAL':
       return (
         <>
           <MdFestival className={className} />
-          <p>시즌 축제</p>
+          <p className='max-w-16 truncate'>시즌 축제</p>
         </>
       );
     case 'SIGHTSEEING':
       return (
         <>
           <BiSolidBus className={className} />
-          <p>관광</p>
+          <p className='max-w-16 truncate'>관광</p>
         </>
       );
     default:
       return (
         <>
           <BiDotsHorizontalRounded className={className} />
-          <p>기타</p>
+          <p className='max-w-16 truncate'>기타</p>
         </>
       );
   }
@@ -127,7 +127,7 @@ export const getTravelCategoryIcon = (
 
 export const getTransactionCategoryIcon = (
   categoryId,
-  className = 'w-3 h-3 text-gray-500 mr-1'
+  className = 'w-3 h-3 text-gray-500'
 ) => {
   switch (categoryId) {
     case 'FOOD':

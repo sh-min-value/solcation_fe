@@ -20,7 +20,13 @@ const PlanDetail = () => {
                 setIsLoading(false);
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
-                setIsLoading(false);
+                const errorData = error.response?.data || error;
+                navigate('/error', { 
+                    state: { 
+                        error: errorData,
+                        from: `/group/${groupid}/travel`
+                    } 
+                });
             }
         };
         fetchData();

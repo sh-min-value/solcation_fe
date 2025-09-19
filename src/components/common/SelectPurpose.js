@@ -16,15 +16,12 @@ const transactionCategories = [
 
 const travelCategories = [
   { id: 1, name: '음식 · 미식', code: 'FOOD' },
-  { id: 2, name: '카페 · 간식', code: 'CAFE_AND_SNACK' },
-  { id: 3, name: '쇼핑 · 마트', code: 'STORE' },
-  { id: 4, name: '술 · 유흥', code: 'PLEASURE' },
-  { id: 5, name: '쇼핑', code: 'SHOPPING' },
-  { id: 6, name: '의료', code: 'MEDICAL_TREATMENT' },
-  { id: 7, name: '숙박', code: 'LODGMENT' },
-  { id: 8, name: '교통', code: 'TRANSPORTATION' },
-  { id: 9, name: '이체', code: 'TRANSFER' },
-  { id: 10, name: '기타', code: 'ETC' }
+  { id: 2, name: '레저, 액티비티', code: 'LEISURE' },
+  { id: 3, name: '휴양, 힐링', code: 'RECREATION' },
+  { id: 4, name: '문화, 역사', code: 'CULTURE' },
+  { id: 5, name: '쇼핑, SNS 핫플레이스', code: 'SHOPPING' },
+  { id: 6, name: '시즌 축제', code: 'FESTIVAL' },
+  { id: 7, name: '관광', code: 'SIGHTSEEING' }
 ];
 
 const groupCategories = [
