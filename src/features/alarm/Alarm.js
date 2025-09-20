@@ -188,7 +188,7 @@ const LoadMoreButton = React.memo(
   }
 );
 
-const Alarm = ({ triggerRefresh }) => {
+const Alarm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 

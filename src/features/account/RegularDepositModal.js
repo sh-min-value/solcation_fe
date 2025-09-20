@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { AccountAPI } from '../../services/AccountAPI';
+import { EmojiProvider, Emoji } from 'react-apple-emojis';
+import emojiData from 'react-apple-emojis/src/data.json';
 
-const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
+const RegularDepositModal = ({
+  isOpen,
+  onClose,
+  groupId,
+  isGroupLeader,
+  accountInfo,
+}) => {
   const [frequency, setFrequency] = useState('');
   const [day, setDay] = useState('');
   const [amount, setAmount] = useState('');
   const [showFrequencyDropdown, setShowFrequencyDropdown] = useState(false);
   const [showDayDropdown, setShowDayDropdown] = useState(false);
-  const [accountInfo, setAccountInfo] = useState(null);
-  const [regularDepositInfo, setRegularDepositInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [regularDepositInfo, setRegularDepositInfo] = useState({
+    depositCycle: accountInfo.depositCycle,
+    depositDate: accountInfo.depositDate,
+    depositDay: accountInfo.depositDay,
+    depositAmount: accountInfo.depositAmount,
+    depositAlarm: accountInfo.depositAlarm,
+  });
 
   const frequencies = ['매달', '매주'];
   const date = Array.from({ length: 31 }, (_, i) => `${i + 1}일`);
@@ -23,37 +35,6 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
     '토요일',
     '일요일',
   ];
-
-  // 계좌 정보 조회
-  useEffect(() => {
-    const fetchAccountInfo = async () => {
-      if (isOpen && groupId) {
-        setIsLoading(true);
-        try {
-          const response = await AccountAPI.getAccountInfo(groupId);
-          const accountData = response.data || response;
-
-          setAccountInfo(accountData);
-
-          if (accountData.depositCycle) {
-            setRegularDepositInfo({
-              depositCycle: accountData.depositCycle,
-              depositDate: accountData.depositDate,
-              depositDay: accountData.depositDay,
-              depositAmount: accountData.depositAmount,
-              depositAlarm: accountData.depositAlarm,
-            });
-          }
-        } catch (error) {
-          console.error('계좌 정보 조회 오류:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchAccountInfo();
-  }, [isOpen, groupId]);
 
   // 초기값 설정
   useEffect(() => {
@@ -92,7 +73,7 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
     }
   }, [regularDepositInfo]);
 
-  if (!isOpen || isLoading) return null;
+  if (!isOpen) return null;
 
   const handleAmountChange = e => {
     const value = e.target.value.replace(/[^0-9]/g, '');
@@ -147,7 +128,11 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
       <div className="bg-white rounded-3xl w-full max-w-md mx-auto shadow-2xl">
         <div className="flex items-center justify-between p-6 pb-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center"></div>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <EmojiProvider data={emojiData}>
+                <Emoji name={'alarm-clock'} size={7} className="w-10 h-10" />
+              </EmojiProvider>
+            </div>
             <h2 className="text-xl font-extrabold text-black">
               정기 입금일 설정
             </h2>

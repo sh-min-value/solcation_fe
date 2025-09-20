@@ -5,50 +5,13 @@ import { AccountAPI } from '../../services/AccountAPI';
 import { GroupAPI } from '../../services/GroupAPI';
 import { useAuth } from '../../context/AuthContext';
 
-const BriefAccount = ({ groupId }) => {
-  const { user } = useAuth();
+const BriefAccount = ({ accountInfo }) => {
   const [showModal, setShowModal] = useState(false);
-  const [accountInfo, setAccountInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [copyMessage, setCopyMessage] = useState('');
   const [isGroupLeader, setIsGroupLeader] = useState(false);
 
   //정기 입금일 모달
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
-
-  // 계좌 정보 조회
-  useEffect(() => {
-    const fetchAccountInfo = async () => {
-      try {
-        const response = await AccountAPI.getAccountInfo(groupId);
-        setAccountInfo(response.data || response);
-      } catch (error) {
-        console.error('계좌 정보 조회 오류:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAccountInfo();
-  }, [groupId]);
-
-  // 그룹 리더 여부 확인
-  useEffect(() => {
-    const checkGroupLeader = async () => {
-      if (!groupId || !user?.userId) return;
-
-      try {
-        const membersResponse = await GroupAPI.getGroupMembers(groupId);
-        const isLeader = membersResponse.groupLeader?.userId === user.userId;
-        setIsGroupLeader(isLeader);
-      } catch (error) {
-        console.error('그룹 리더 확인 오류:', error);
-        setIsGroupLeader(false);
-      }
-    };
-
-    checkGroupLeader();
-  }, [groupId, user?.userId]);
 
   //잔액 포맷팅
   const formatBalance = amount => {
@@ -81,21 +44,14 @@ const BriefAccount = ({ groupId }) => {
     return 'text-xl';
   };
 
-  if (loading) {
-    return (
-      <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white shadow-2xl overflow-hidden">
-        <div className="px-4 py-4 flex items-center justify-center h-32"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white shadow-2xl overflow-hidden">
+    <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white overflow-hidden">
       <RegularDepositModal
         isOpen={isRegularModalOpen}
         onClose={() => setIsRegularModalOpen(false)}
-        groupId={groupId}
+        groupId={accountInfo.groupPk}
         isGroupLeader={isGroupLeader}
+        accountInfo={accountInfo}
       />
       {/* 계좌 */}
       <div className="px-4 py-4 relative">
@@ -111,7 +67,7 @@ const BriefAccount = ({ groupId }) => {
             </h2>
             <div className="flex items-center gap-2 text-base opacity-70 relative">
               <span className="tracking-tight underline text-underline-offset-1">
-                {formatAccountNumber(accountInfo?.accountNum)}
+                {formatAccountNumber(accountInfo.accountNum)}
               </span>
               <Copy
                 className="w-4 h-4 cursor-pointer"
