@@ -134,6 +134,7 @@ export default function AppRoutes() {
           <Route path="travel" element={<Travel />} />
           <Route path="stats" element={<Stat />} />
           <Route path="stats/:travelid" element={<Stat />} />
+          <Route path="stats/overall" element={<Stat />} />
         </Route>
 
         {/* 에러 페이지 라우트 */}
