@@ -57,15 +57,12 @@ SearchBar.displayName = 'SearchBar';
 
 /* 그룹 메인 컴포넌트 */
 const Group = () => {
-  const { triggerRefresh } = useOutletContext();
+  const { groupData, triggerRefresh } = useOutletContext();
   const location = useLocation();
   const { groupid } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoading, setLoading] = useState(true);
-
-  //그룹 정보
-  const [groupData, setGroupData] = useState(null);
 
   //멤버 목록
   const [members, setMembers] = useState({
