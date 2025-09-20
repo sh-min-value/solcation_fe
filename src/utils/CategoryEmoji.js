@@ -19,11 +19,11 @@ const emojiMap = {
   'LOVER': 'pink-heart',
   'COLLEAGUE': 'briefcase',
 
-  'LEISURE': 'kitesurfing',
-  'RECREATION': 'tree',
-  'CULTURE': 'building-columns',
-  'FESTIVAL': 'festival',
-  'SIGHTSEEING': 'bus',
+  'LEISURE': 'person-surfing',
+  'RECREATION': 'leaf-fluttering-in-wind',
+  'CULTURE': 'classical-building',
+  'FESTIVAL': 'christmas-tree',
+  'SIGHTSEEING': 'trolleybus',
 };
 
 const transactionCategoryEmoji = ({ categoryCode, size}) => {

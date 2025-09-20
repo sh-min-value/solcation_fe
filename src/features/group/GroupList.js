@@ -105,7 +105,7 @@ const GroupList = () => {
             submitOnChange={true}
           />
           {/* 그룹 목록 */}
-          <div className="flex-1 overflow-y-scroll pb-24">
+          <div className="flex-1 overflow-y-scroll pb-24 pt-1">
             {/* 로딩 상태 */}
             {loading && (
               <div className="text-center py-8">

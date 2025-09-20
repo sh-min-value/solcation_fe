@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
-import TransactionDetail from '../features/group/TransactionDetail';
+import Loading from '../components/common/Loading';
+import TransactionDetail from '../features/transaction/TransactionDetail';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
 const Main = lazy(() => import('../features/main/Main'));
@@ -26,7 +27,7 @@ const TravelCreate = lazy(() => import('../features/travel/TravelCreate'));
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div>로딩중...</div>}>
+    <Suspense fallback={<Loading />}>
       <Routes>
         {/* 공개 라우트 */}
         <Route path="/login" element={<LoginForm />} />
@@ -67,7 +68,7 @@ export default function AppRoutes() {
           }
         ></Route>
         <Route
-          path="/group/:groupId/account/transaction/:transactionId"
+          path="/group/:groupid/account/transaction/:satPk"
           element={
             <ProtectedRoute>
               <RootLayout title={'이용 내역 상세'}>

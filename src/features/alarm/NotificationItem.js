@@ -84,7 +84,7 @@ const NotificationItem = React.memo(
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         tabIndex={0}
-        className={`w-full flex items-center p-3 hover:bg-gray-6 transition-colors shadow-[0_0_10px_rgba(0,0,0,0.2)] rounded-xl 
+        className={`w-full flex items-center p-3 hover:bg-gray-6 transition-colors border border-gray-5  rounded-xl 
         ${
           isRecent
             ? 'bg-light-blue'
@@ -116,9 +116,9 @@ const NotificationItem = React.memo(
         <div className="w-full flex flex-row items-center justify-between gap-2">
           <div className="ml-4 flex-1 w-24">
             {notification.groupName && (
-              <span className="text-medium font-semibold text-gray-900 flex-shrink-0 truncate w-full">
+              <div className="text-medium font-semibold text-gray-900 flex-shrink-0 truncate w-full">
                 {notification.groupName}
-              </span>
+              </div>
             )}
             {notification.content && (
               <p className="text-sm text-gray-500 mt-1">
