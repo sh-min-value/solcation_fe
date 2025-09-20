@@ -74,6 +74,7 @@ const Account = () => {
         setAccountInfo(response);
 
         //그룹 정보 저장
+        console.log(user);
         if (groupData?.leaderPk === user?.userPk) {
           setIsGroupLeader(true);
         }
@@ -164,7 +165,10 @@ const Account = () => {
         {isLoading ? (
           <AccountSkeleton />
         ) : (
-          <BriefAccount accountInfo={accountInfo} />
+          <BriefAccount
+            accountInfo={accountInfo}
+            isGroupLeader={isGroupLeader}
+          />
         )}
       </div>
       <TransactionHistory groupId={groupid} />

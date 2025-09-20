@@ -5,10 +5,9 @@ import { AccountAPI } from '../../services/AccountAPI';
 import { GroupAPI } from '../../services/GroupAPI';
 import { useAuth } from '../../context/AuthContext';
 
-const BriefAccount = ({ accountInfo }) => {
+const BriefAccount = ({ accountInfo, isGroupLeader }) => {
   const [showModal, setShowModal] = useState(false);
   const [copyMessage, setCopyMessage] = useState('');
-  const [isGroupLeader, setIsGroupLeader] = useState(false);
 
   //정기 입금일 모달
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
