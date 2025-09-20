@@ -99,7 +99,7 @@ const InviNotificationItem = React.memo(
     }, [onReject]);
 
     return (
-      <div className="cursor-pointer w-full bg-white shadow-[0_0_10px_rgba(0,0,0,0.1)] rounded-xl">
+      <div className="cursor-pointer w-full bg-white border border-gray-5 rounded-xl">
         <div className="flex items-center gap-4 p-3 relative">
           {/* 그룹 이미지 */}
           <div className="w-16 h-16 flex-shrink-0">
@@ -123,7 +123,7 @@ const InviNotificationItem = React.memo(
           </div>
 
           {/* 내용 영역 */}
-          <div className="flex-1 min-w-">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm text-gray-500 truncate flex-1">
                 {notification.groupName}
@@ -219,7 +219,7 @@ const Alarm = ({ triggerRefresh }) => {
   });
 
   //한 페이지 당 개수
-  const itmesPerPage = 3;
+  const itemsPerPage = 3;
 
   const handleAcceptInvite = useCallback(async (pnPk, groupPk) => {
     console.log('수락 요청 - pnPk:', pnPk, 'groupPk:', groupPk);
@@ -292,7 +292,7 @@ const Alarm = ({ triggerRefresh }) => {
     async (page = 0) => {
       setLoading(prev => ({ ...prev, recent7Days: true }));
       try {
-        const result = await AlarmAPI.getRecent7DaysList(page, itmesPerPage);
+        const result = await AlarmAPI.getRecent7DaysList(page, itemsPerPage);
         const data = result.content || [];
         setHasNext(prev => ({ ...prev, recent7Days: result.hasNext }));
 
@@ -326,7 +326,7 @@ const Alarm = ({ triggerRefresh }) => {
     async (page = 0) => {
       setLoading(prev => ({ ...prev, recent30Days: true }));
       try {
-        const result = await AlarmAPI.getRecent30DaysList(page, itmesPerPage);
+        const result = await AlarmAPI.getRecent30DaysList(page, itemsPerPage);
         const data = result.content || [];
 
         setHasNext(prev => ({ ...prev, recent30Days: result.hasNext }));
@@ -452,92 +452,98 @@ const Alarm = ({ triggerRefresh }) => {
         <Loading size="large" color="gray" />
       ) : (
         <div
-          className={`flex flex-col items-center min-h-full relative ${
+          className={`flex flex-col h-screen min-h-0 relative ${
             isEmpty ? 'justify-center' : 'justify-start'
           }`}
         >
-          {/* 그룹 초대 */}
-          {inviteNoti.length > 0 && (
-            <div className="w-full flex flex-col mb-4">
-              <div className="w-full text-gray-2 text-xl font-md text-left p-2">
-                그룹 초대
+          <div className="w-full flex-1 min-h-0 flex flex-col overflow-y-auto pb-24 scroll-pb-24">
+            {/* 그룹 초대 */}
+            {inviteNoti.length > 0 && (
+              <div className="w-full flex flex-col mb-4">
+                <div className="w-full text-gray-2 text-xl font-md text-left p-2">
+                  그룹 초대
+                </div>
+                <div className="w-full bg-white flex flex-col items-center justify-start gap-3">
+                  {/*초대 목록 */}
+                  {inviteNoti.map(noti => (
+                    <InviNotificationItem
+                      key={noti.pnPk}
+                      notification={noti}
+                      onAccept={() =>
+                        handleAcceptInvite(noti.pnPk, noti.groupPk)
+                      }
+                      onReject={() =>
+                        handleRejectInvite(noti.pnPk, noti.groupPk)
+                      }
+                      actionLoading={actionLoading}
+                      setActionLoading={setActionLoading}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="w-full bg-white flex flex-col items-center justify-start gap-3">
-                {/*초대 목록 */}
-                {inviteNoti.map(noti => (
-                  <InviNotificationItem
-                    key={noti.pnPk}
-                    notification={noti}
-                    onAccept={() => handleAcceptInvite(noti.pnPk, noti.groupPk)}
-                    onReject={() => handleRejectInvite(noti.pnPk, noti.groupPk)}
-                    actionLoading={actionLoading}
-                    setActionLoading={setActionLoading}
+            )}
+
+            {/* 최근 7일 */}
+            {recent7DaysNoti.length > 0 && (
+              <div className=" w-full flex flex-col mb-4">
+                <div className="w-full text-gray-2 text-xl font-md text-left p-2">
+                  최근 7일
+                </div>
+                <div className="w-full h-full bg-white flex flex-col items-center justify-start gap-3">
+                  {recent7DaysNoti.map(noti => (
+                    <NotificationItem key={noti.pnPk} notification={noti} />
+                  ))}
+                  {loading.recent7Days && (
+                    <>
+                      <NotificationSkeleton />
+                      <NotificationSkeleton />
+                      <NotificationSkeleton />
+                    </>
+                  )}
+                </div>
+                {hasNext.recent7Days && !loading.recent7Days && (
+                  <LoadMoreButton
+                    onClick={handleLoadMore7Days}
+                    loading={loading.recent7Days}
                   />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 최근 7일 */}
-          {recent7DaysNoti.length > 0 && (
-            <div className=" w-full flex flex-col mb-4">
-              <div className="w-full text-gray-2 text-xl font-md text-left p-2">
-                최근 7일
-              </div>
-              <div className="w-full h-full bg-white flex flex-col items-center justify-start gap-3">
-                {recent7DaysNoti.map(noti => (
-                  <NotificationItem key={noti.pnPk} notification={noti} />
-                ))}
-                {loading.recent7Days && (
-                  <>
-                    <NotificationSkeleton />
-                    <NotificationSkeleton />
-                    <NotificationSkeleton />
-                  </>
                 )}
               </div>
-              {hasNext.recent7Days && !loading.recent7Days && (
-                <LoadMoreButton
-                  onClick={handleLoadMore7Days}
-                  loading={loading.recent7Days}
-                />
-              )}
-            </div>
-          )}
+            )}
 
-          {/* 최근 30일 */}
-          {recent30DaysNoti.length > 0 && (
-            <div className="w-full flex flex-col mb-4">
-              <div className="w-full text-gray-2 text-xl font-md text-left p-2">
-                최근 30일
-              </div>
-              <div className="w-full bg-white flex flex-col items-center justify-start gap-3">
-                {recent30DaysNoti.map(noti => (
-                  <NotificationItem key={noti.pnPk} notification={noti} />
-                ))}
-                {loading.recent30Days && (
-                  <>
-                    <NotificationSkeleton />
-                    <NotificationSkeleton />
-                    <NotificationSkeleton />
-                  </>
+            {/* 최근 30일 */}
+            {recent30DaysNoti.length > 0 && (
+              <div className="w-full flex flex-col mb-4">
+                <div className="w-full text-gray-2 text-xl font-md text-left p-2">
+                  최근 30일
+                </div>
+                <div className="w-full bg-white flex flex-col items-center justify-start gap-3">
+                  {recent30DaysNoti.map(noti => (
+                    <NotificationItem key={noti.pnPk} notification={noti} />
+                  ))}
+                  {loading.recent30Days && (
+                    <>
+                      <NotificationSkeleton />
+                      <NotificationSkeleton />
+                      <NotificationSkeleton />
+                    </>
+                  )}
+                </div>
+                {hasNext.recent30Days && !loading.recent30Days && (
+                  <LoadMoreButton
+                    onClick={handleLoadMore30Days}
+                    loading={loading.recent30Days}
+                  />
                 )}
               </div>
-              {hasNext.recent30Days && !loading.recent30Days && (
-                <LoadMoreButton
-                  onClick={handleLoadMore30Days}
-                  loading={loading.recent30Days}
-                />
-              )}
-            </div>
-          )}
+            )}
 
-          {/* 알림이 아무것도 없는 경우 */}
-          {isEmpty && (
-            <div className="text-gray-2 text-md font-md">
-              알림이 존재하지 않습니다.
-            </div>
-          )}
+            {/* 알림이 아무것도 없는 경우 */}
+            {isEmpty && (
+              <div className="text-gray-2 text-md font-md">
+                알림이 존재하지 않습니다.
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

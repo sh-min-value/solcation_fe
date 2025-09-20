@@ -13,6 +13,7 @@ import people from '../../assets/images/people.svg';
 import HappySol from '../../assets/images/happy_sol.svg';
 import { GroupAPI } from '../../services/GroupAPI';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/common/Loading';
 
 const formDataKeys = ['gcPk', 'groupName', 'profileImg'];
 const descriptions = [
@@ -257,6 +258,7 @@ const GroupCreate = () => {
     groupName: '',
     profileImg: null,
   });
+  const [loading, setLoading] = useState(false);
 
   //초기 설정
   const currentStepData = descriptions[currentStep];
@@ -277,10 +279,13 @@ const GroupCreate = () => {
         return;
       } else {
         try {
+          setLoading(true);
           await GroupAPI.createGroup(formData);
         } catch {
           alert('그룹 생성 중 오류가 발생했어요. 다시 시도해주세요.');
           navigate('/group');
+        } finally {
+          setLoading(false);
         }
       }
     } else if (currentStep === 3) {
@@ -330,6 +335,7 @@ const GroupCreate = () => {
     };
   };
 
+  if (loading) return <Loading />;
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
       <Header showBackButton={true} />

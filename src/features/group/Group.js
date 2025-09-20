@@ -118,7 +118,7 @@ const Group = ({ triggerRefresh }) => {
     };
 
     validateGroup();
-  }, [groupid, navigate, location.pathname]);
+  }, [groupid]);
 
   //전화번호 확인
   const isValidPhone = useCallback(
@@ -216,7 +216,7 @@ const Group = ({ triggerRefresh }) => {
   // 멤버 리스트 렌더링
   const memberList = useMemo(
     () => (
-      <div className="space-y-3 p-3 pb-20 flex flex-col gap-1">
+      <div className="space-y-2 p-2 flex flex-col gap-1">
         {/* 그룹 리더 */}
         {members.groupLeader && (
           <div
@@ -224,9 +224,13 @@ const Group = ({ triggerRefresh }) => {
             tabIndex={0}
             onClick={() => handleUserClick(members.groupLeader, true, false)}
             onKeyDown={e => handleKeyDown(e, members.groupLeader)}
-            className="cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+            className="cursor-pointer rounded-lg transition-colors"
           >
-            <Member userName={members.groupLeader.userName} userRole="개설자" />
+            <Member
+              userName={members.groupLeader.userName}
+              userRole="개설자"
+              type="LEADER"
+            />
           </div>
         )}
         {/* 멤버들 */}
@@ -238,12 +242,13 @@ const Group = ({ triggerRefresh }) => {
               tabIndex={0}
               onClick={() => handleUserClick(member, true, false)}
               onKeyDown={e => handleKeyDown(e, member)}
-              className="cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+              className="cursor-pointer rounded-lg transition-colors"
             >
               <Member
                 key={member.userPk}
                 userName={member.userName}
                 userRole="멤버"
+                type="MEMBER"
               />
             </div>
           ))}
@@ -256,7 +261,7 @@ const Group = ({ triggerRefresh }) => {
               tabIndex={0}
               onClick={() => handleUserClick(waiting, false, true)}
               onKeyDown={e => handleKeyDown(e, waiting)}
-              className="cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+              className="cursor-pointer rounded-lg transition-colors"
             >
               <Member
                 key={waiting.userPk}
@@ -264,6 +269,7 @@ const Group = ({ triggerRefresh }) => {
                 userRole="수락 대기중"
                 showIcon={true}
                 icon={BiSolidBellRing}
+                type="PENDING"
               />
             </div>
           ))}
@@ -274,9 +280,9 @@ const Group = ({ triggerRefresh }) => {
 
   const GroupMainContent = useMemo(
     () => (
-      <div className="h-full flex flex-col bg-white">
+      <div className="grid grid-rows-[auto,1fr] h-[calc(100dvh-18rem)] min-h-0 bg-white">
         {/* 초대 검색바 */}
-        <div className="sticky top-0 z-10 bg-white">
+        <div className="row-start-1 row-end-2 sticky top-0 z-10 bg-white">
           <SearchBar
             searchTerm={searchTerm}
             onChange={handleSearchTermChange}
@@ -286,7 +292,12 @@ const Group = ({ triggerRefresh }) => {
           />
         </div>
         {/* 멤버 리스트 */}
-        <div className="flex-1 overflow-y-scroll">{memberList}</div>
+        <div
+          className="row-start-2 row-end-3 min-h-0 overflow-y-auto overscroll-y-contain pb-20"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {memberList}
+        </div>
         {/*프로필 모달*/}
         <ProfileModal
           groupId={groupid}
