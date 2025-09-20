@@ -87,6 +87,7 @@ export default function AppRoutes() {
           }
         />
 
+        <Route path="/group/:groupid/account/card/:sacPk"></Route>
         {/* RootLayout 없이 독립적인 라우트들 */}
         <Route
           path="/group/:groupid/travel/:travelid"
