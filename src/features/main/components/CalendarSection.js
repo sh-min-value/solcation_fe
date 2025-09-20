@@ -73,7 +73,6 @@ const generateCalendarDays = (year, month, events = []) => {
   const lastDay = new Date(year, month + 1, 0);
   const firstDayOfWeek = firstDay.getDay();
   const daysInMonth = lastDay.getDate();
-  const today = new Date();
   const calendarDays = [];
 
   // 이전 달 날짜
@@ -95,7 +94,7 @@ const generateCalendarDays = (year, month, events = []) => {
     calendarDays.push({
       date: day,
       isCurrentMonth: true,
-      isToday: date.toDateString() === today.toDateString(),
+      isToday: date.toDateString() === TODAY.toDateString(),
       fullDate: date,
       events: dayEvents,
     });
@@ -121,80 +120,169 @@ const generateCalendarDays = (year, month, events = []) => {
   return calendarDays;
 };
 
-const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd, selectedDates = [] , isClickable = false}) => {
-  const currentDate = new Date();
+// 전역 변수
+const TODAY = new Date();
+const TODAY_MONTH = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+
+const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClickable = false, showNextMonth = false, showPrevMonth = false}) => {
+  const [currentDate, setCurrentDate] = React.useState(() => TODAY_MONTH);
+  const [tempStartDate, setTempStartDate] = React.useState(null);
+  const [isSelectingEnd, setIsSelectingEnd] = React.useState(false);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const calendarDays = generateCalendarDays(year, month, events);
 
+  const handlePrevMonth = () => {
+    const currentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    
+    if (currentMonth == TODAY_MONTH) {
+      return;
+    }
+    
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  // 이전 달 버튼 비활성화 여부 확인
+  const isPrevMonthDisabled = () => {
+    const currentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    return currentMonth <= TODAY_MONTH;
+  };
+
   const handleDateClick = (dayInfo) => {
-    if (dayInfo.isCurrentMonth && onDateSelect && isClickable) {
-      onDateSelect(dayInfo.fullDate);
-    }
-  };
-
-  const handleMouseDown = (dayInfo) => {
-    if (dayInfo.isCurrentMonth && onDateSelect && isClickable) {
-      onDateSelect(dayInfo.fullDate);
-    }
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isClickable || !onDateDrag) return;
+    if (!dayInfo.isCurrentMonth || !isClickable || !isDateInRange(dayInfo)) return;
     
-    const target = e.target;
-    const dayElement = target.closest('[data-date]');
-    if (!dayElement) return;
+    const clickedDate = dayInfo.fullDate;
     
-    const dayInfo = calendarDays[parseInt(dayElement.dataset.date)];
-    if (dayInfo && dayInfo.isCurrentMonth) {
-      onDateDrag(dayInfo.fullDate);
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (onDateDragEnd && isClickable) {
-      onDateDragEnd();
+    if (!tempStartDate) {
+      // 첫 번째 클릭: 시작일 설정
+      setTempStartDate(clickedDate);
+      setIsSelectingEnd(true);
+      onDateSelect(clickedDate);
+    } else if (isSelectingEnd) {
+      // 두 번째 클릭: 마감일 설정
+      const startDate = tempStartDate;
+      const endDate = clickedDate;
+      
+      if (clickedDate < startDate) {
+        // 더 빠른 날짜를 클릭하면 시작일로 재설정
+        setTempStartDate(clickedDate);
+        onDateSelect(clickedDate);
+      } else {
+        // 마감일 설정 완료 - 시작일과 마감일만 전달
+        onDateSelect([startDate, endDate]);
+        setTempStartDate(null);
+        setIsSelectingEnd(false);
+      }
     }
   };
 
   const isDateSelected = (dayInfo) => {
-    if (!dayInfo.isCurrentMonth) return false;
-    return selectedDates.some(
-      selectedDate =>
-        selectedDate.toDateString() === dayInfo.fullDate.toDateString()
+    if (!dayInfo.isCurrentMonth || !selectedDates || selectedDates.length === 0) return false;
+    
+    const validDates = selectedDates.filter(date => 
+      date && typeof date.toDateString === 'function'
     );
+    
+    if (validDates.length === 0) return false;
+    
+    // 첫 번째 클릭만 있는 경우
+    if (validDates.length === 1) {
+      return dayInfo.fullDate.toDateString() === validDates[0].toDateString();
+    }
+    
+    // 두 번째 클릭까지 있는 경우
+    const startDate = new Date(Math.min(...validDates));
+    const endDate = new Date(Math.max(...validDates));
+    const currentDate = dayInfo.fullDate;
+    
+    // 시작일부터 마감일까지의 모든 날짜를 선택된 것으로 표시
+    return currentDate >= startDate && currentDate <= endDate;
+  };
+
+  const isDateInRange = (dayInfo) => {
+    if (!dayInfo.isCurrentMonth) return false;
+    
+    // 오늘 포함해서 선택 가능
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dayInfo.fullDate >= today;
   };
 
   const getSelectedDateStyle = (dayInfo) => {
     if (!isDateSelected(dayInfo)) return '';
     
-    const selectedDatesSorted = [...selectedDates].sort((a, b) => a - b);
-    const isStartDate = selectedDatesSorted.length > 0 && 
-      selectedDatesSorted[0].toDateString() === dayInfo.fullDate.toDateString();
-    const isEndDate = selectedDatesSorted.length > 0 && 
-      selectedDatesSorted[selectedDatesSorted.length - 1].toDateString() === dayInfo.fullDate.toDateString();
-    const isOnlyDate = selectedDatesSorted.length === 1;
+    const validDates = selectedDates.filter(date => 
+      date && typeof date.toDateString === 'function'
+    );
+    
+    if (validDates.length === 0) return '';
+    
+    // 첫 번째 클릭만 있는 경우
+    if (validDates.length === 1) {
+      return 'bg-secondary text-third font-bold rounded-full';
+    }
+    
+    // 두 번째 클릭까지 있는 경우
+    const startDate = new Date(Math.min(...validDates));
+    const endDate = new Date(Math.max(...validDates));
+    const currentDate = dayInfo.fullDate;
+    
+    const isStartDate = currentDate.toDateString() === startDate.toDateString();
+    const isEndDate = currentDate.toDateString() === endDate.toDateString();
+    const isOnlyDate = startDate.toDateString() === endDate.toDateString();
     
     if (isOnlyDate) {
-      return 'bg-blue text-third rounded-full';
+      return 'bg-secondary text-third font-bold rounded-full';
     } else if (isStartDate) {
-      return 'bg-blue text-third rounded-l-full';
+      return 'bg-secondary text-third font-bold rounded-l-full';
     } else if (isEndDate) {
-      return 'bg-blue text-third rounded-r-full';
+      return 'bg-secondary text-third font-bold rounded-r-full';
     } else {
-      return 'bg-blue text-third';
+      return 'bg-secondary text-third font-bold';
     }
   };
 
   return (
     <div className="bg-white rounded-xl px-[19px] py-4 mb-[14px]">
       {/* 헤더 */}
-      <div className="text-center mb-4">
+      <div className="flex items-center justify-between mb-4">
+        {showPrevMonth && (
+          <button
+            onClick={handlePrevMonth}
+            disabled={isPrevMonthDisabled()}
+            className={`p-2 rounded-full transition-colors ${
+              isPrevMonthDisabled() 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'hover:bg-gray-100 cursor-pointer'
+            }`}
+            aria-label="이전 달"
+          >
+            <svg className={`w-5 h-5 ${isPrevMonthDisabled() ? 'text-gray-3' : 'text-gray-1'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+        
         <h2 className="text-xl font-bold text-gray-1">
           {year} {MONTH_NAMES[month]}
         </h2>
+        
+        {showNextMonth && (
+          <button
+            onClick={handleNextMonth}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="다음 달"
+          >
+            <svg className="w-5 h-5 text-gray-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* 요일 */}
@@ -212,8 +300,6 @@ const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd,
       {/* 날짜 */}
       <div 
         className="grid grid-cols-7"
-        onMouseMove={isClickable ? handleMouseMove : undefined}
-        onMouseUp={isClickable ? handleMouseUp : undefined}
         role={isClickable ? "application" : undefined}
         tabIndex={isClickable ? 0 : undefined}
         aria-label={isClickable ? "달력 날짜 선택 영역" : undefined}
@@ -256,14 +342,13 @@ const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd,
               tabIndex={isClickable && dayInfo.isCurrentMonth ? 0 : -1}
               className={`
                  aspect-square flex items-center justify-center text-sm relative
-                 ${isClickable ? 'cursor-pointer' : 'cursor-default'}
-               ${dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3'}
-               ${dayInfo.isToday ? 'font-bold' : ''}
-               ${selectedStyle}
-               ${isClickable ? 'focus:outline-none' : ''}
+                 ${isClickable && isDateInRange(dayInfo) ? 'cursor-pointer' : 'cursor-default'}
+                 ${!isDateInRange(dayInfo) ? 'text-gray-3 opacity-50' : ''}
+                 ${dayInfo.isToday ? 'font-bold' : ''}
+                 ${isClickable ? 'focus:outline-none' : ''}
+                 ${selectedStyle || (dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3')}
                `}
               onClick={isClickable ? () => handleDateClick(dayInfo) : undefined}
-              onMouseDown={isClickable ? () => handleMouseDown(dayInfo) : undefined}
               onKeyDown={isClickable ? (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -291,10 +376,10 @@ const CalendarSection = ({ events = [], onDateSelect, onDateDrag, onDateDragEnd,
 CalendarSection.propTypes = {
   events: PropTypes.array,
   onDateSelect: PropTypes.func,
-  onDateDrag: PropTypes.func,
-  onDateDragEnd: PropTypes.func,
   selectedDates: PropTypes.array,
   isClickable: PropTypes.bool,
+  showNextMonth: PropTypes.bool,
+  showPrevMonth: PropTypes.bool,
 };
 
 export default CalendarSection;

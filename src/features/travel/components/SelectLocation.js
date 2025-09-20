@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const countriesData = {
   '전체': ['전체'],
@@ -45,23 +45,53 @@ const countriesData = {
 
 const popularCities = ['서울', '도쿄', '뉴욕', '베이징', '파리'];
 
-const SelectLocation = ({ value, onChange }) => {
-  const [selectedCountry, setSelectedCountry] = useState(value?.country || '전체');
-  const [selectedCity, setSelectedCity] = useState(value?.city || '전체');
+const SelectLocation = ({ onChange }) => {
+  const [selectedCountry, setSelectedCountry] = useState('전체');
+  const [selectedCity, setSelectedCity] = useState('전체');
   const [searchTerm, setSearchTerm] = useState('');
 
   const countries = Object.keys(countriesData);
-  const cities = selectedCountry && selectedCountry !== '전체' ? countriesData[selectedCountry] : [];
+  const cities = selectedCountry && selectedCountry !== '전체' 
+    ? countriesData[selectedCountry] 
+    : ['전체', ...Object.values(countriesData).flat().filter(city => city !== '전체')];
 
   const handleCountrySelect = (country) => {
     setSelectedCountry(country);
     setSelectedCity('전체');
-    onChange({ country, city: '전체' }); // 나라와 도시 객체로 전달
+    
+    if (country === '전체') {
+      const firstCountry = Object.keys(countriesData).find(key => key !== '전체');
+      const firstCity = countriesData[firstCountry]?.[0];
+      onChange({ country: firstCountry, city: firstCity });
+    } else {
+      onChange({ country, city: '전체' });
+    }
   };
 
   const handleCitySelect = (city) => {
     setSelectedCity(city);
-    onChange({ country: selectedCountry, city }); // 나라와 도시 객체로 전달
+    
+    if (city !== '전체') {
+      for (const [country, cities] of Object.entries(countriesData)) {
+        if (cities.includes(city)) {
+          if (selectedCountry === '전체') {
+            // 전체 탭에서 도시 선택 - 탭 변경하지 않음
+            onChange({ country, city });
+          } else {
+            // 특정 나라 탭에서 도시 선택 - 탭 변경
+            setSelectedCountry(country);
+            onChange({ country, city });
+          }
+          return;
+        }
+      }
+    } else {
+      // 전체 도시 선택
+      const firstCountry = Object.keys(countriesData).find(key => key !== '전체');
+      const firstCity = countriesData[firstCountry]?.[0];
+      setSelectedCountry('전체');
+      onChange({ country: firstCountry, city: firstCity });
+    }
   };
 
   const filteredCities = searchTerm.trim().length >= 2
