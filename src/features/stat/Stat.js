@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import TravelCard from '../../components/common/TravelCard';
 import { statAPI } from '../../services/StatAPI';
 import { GroupAPI } from '../../services/GroupAPI';
@@ -18,13 +18,17 @@ const LoadingSpinner = () => (
 const Stat = () => {
   const { groupid, travelid } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 전체 통계 페이지 확인
+  const isOverallStats = location.pathname.includes('/stats/overall');
+
   const [finishedTravels, setFinishedTravels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTravel, setSelectedTravel] = useState(null);
-  const [showOverallStats, setShowOverallStats] = useState(false);
   const [groupInfo, setGroupInfo] = useState(null);
 
-  // 데이터 변환
+  // 여행 데이터를 변환
   const convertTravelToTravelCardFormat = travel => ({
     title: travel.tpTitle,
     thumbnail: travel.tpImage,
@@ -77,46 +81,31 @@ const Stat = () => {
     fetchFinishedTravels();
   }, [groupid]);
 
-  // URL에서 travelid가 있으면 해당 여행 찾기
+  // 페이지 상태 관리
   useEffect(() => {
     if (travelid === 'overall') {
-      setShowOverallStats(true);
       setSelectedTravel(null);
     } else if (travelid && finishedTravels.length > 0) {
       const travel = finishedTravels.find(t => t.tpPk === parseInt(travelid));
       if (travel) {
         setSelectedTravel(travel);
-        setShowOverallStats(false);
       }
+    } else {
+      setSelectedTravel(null);
     }
   }, [travelid, finishedTravels]);
 
   // 전체 통계 버튼 클릭 핸들러
   const handleOverallStatsClick = () => {
-    setShowOverallStats(true);
-    setSelectedTravel(null);
     navigate(`/group/${groupid}/stats/overall`);
-  };
-
-  // 뒤로가기 핸들러
-  const handleBackToList = () => {
-    setShowOverallStats(false);
-    setSelectedTravel(null);
-    navigate(`/group/${groupid}/stats`);
   };
 
   if (selectedTravel) {
     return <TravelStatsView travel={{ ...selectedTravel, groupid }} />;
   }
 
-  if (showOverallStats) {
-    return (
-      <OverallStatsView
-        groupid={groupid}
-        groupInfo={groupInfo}
-        onBack={handleBackToList}
-      />
-    );
+  if (travelid === 'overall' || isOverallStats) {
+    return <OverallStatsView groupid={groupid} groupInfo={groupInfo} />;
   }
 
   return (
