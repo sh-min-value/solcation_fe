@@ -54,13 +54,11 @@ const PlanDetailEdit = () => {
                 break;
             case 'saved':
                 setIsSaving(false);
-                if (message.day !== undefined) {
-                    console.log(`Day ${message.day} 저장 완료`);
+                console.log('저장 완료, 데이터 새로고침 후 이동');
+                refreshPlanData();
+                setTimeout(() => {
                     navigate(`/group/${groupid}/travel/${travelid}`);
-                } else {
-                    console.log('모든 변경사항 저장 완료');
-                    navigate(`/group/${groupid}/travel/${travelid}`);
-                }
+                }, 100); 
                 break;
             case 'presence-join':
                 console.log(`사용자 ${message.userId} 입장`);
@@ -532,7 +530,7 @@ const PlanDetailEdit = () => {
                                         <GoPlusCircle className="mr-2"/>
                                         일정 추가하기
                                     </button>
-                                </div>
+                            </div>
                         </div>
                     ))}
                     </div>
