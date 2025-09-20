@@ -8,6 +8,7 @@ import BottomButton from '../../components/common/BottomButton';
 import CalendarSection from '../main/components/CalendarSection';
 import people from '../../assets/images/people.svg';
 import HappySol from '../../assets/images/happy_sol.svg';
+import { GroupAPI } from '../../services/GroupAPI';
 import { TravelAPI } from '../../services/TravelAPI';
 import SelectPurpose from '../../components/common/SelectPurpose';
 import SelectLocation from './components/SelectLocation';
@@ -323,17 +324,13 @@ const TravelCreate = () => {
   useEffect(() => {
     const fetchGroupInfo = async () => {
       try {
-        // TODO: 실제 그룹 API 호출로 그룹 인원수 가져오기
-        // const groupInfo = await GroupAPI.getGroupInfo(groupid);
-        // setGroupMemberCount(groupInfo.memberCount);
-        // setFormData(prev => ({ ...prev, participantCount: groupInfo.memberCount }));
-        
-        // 임시로 4명으로 설정 (실제 구현 시 API 호출로 변경)
-        setGroupMemberCount(4);
-        setFormData(prev => ({ ...prev, participantCount: 4 }));
+        const groupInfo = await GroupAPI.getGroup(groupid);
+        setGroupMemberCount(groupInfo.totalMembers);
+        console.log('groupMemberCount:', groupMemberCount);
+        console.log('groupInfo:', groupInfo);
+        setFormData(prev => ({ ...prev, participantCount: groupMemberCount}));
       } catch (error) {
         console.error('그룹 정보 가져오기 실패:', error);
-        // 실패 시 기본값 유지
       }
     };
 
