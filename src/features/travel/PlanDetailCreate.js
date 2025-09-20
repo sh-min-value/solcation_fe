@@ -14,7 +14,8 @@ const PlanDetailCreate = (data) => {
     const navigate = useNavigate();
     const { groupid, travelid } = useParams();
     const [searchParams] = useSearchParams();
-    const { currentUserId } = useAuth();
+    const { user } = useAuth();
+    const currentUserId = user?.userId || 'anonymous';
     
     // URL 쿼리 파라미터에서 day 정보 가져오기
     const dayFromUrl = parseInt(searchParams.get('day')) || 1;
@@ -23,7 +24,13 @@ const PlanDetailCreate = (data) => {
     const { isConnected, publish } = useStomp({
         url: 'ws://localhost:8080/ws',
         groupId: groupid,
-        travelId: travelid
+        travelId: travelid,
+        onMessage: (message) => {
+            if (message && message.type === 'saved') {
+                console.log('일정 생성 완료, 편집 페이지로 이동');
+                navigate(`/group/${groupid}/travel/${travelid}/edit`);
+            }
+        }
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +46,6 @@ const PlanDetailCreate = (data) => {
     const [isSearching, setIsSearching] = useState(false);
     const [selectedPlace, setSelectedPlace] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [travelInfo, setTravelInfo] = useState(null);
-
 
     // 주소 검색
     const searchAddress = async (query) => {
@@ -109,6 +114,7 @@ const PlanDetailCreate = (data) => {
             };
             console.log('요청 데이터:', planData);
             console.log('travelid:', travelid, 'groupid:', groupid);
+            console.log('currentUserId:', currentUserId);
             
             WebsocketAPI.publishInsertOperation(
                 publish,
@@ -120,7 +126,8 @@ const PlanDetailCreate = (data) => {
                     pdPlace: formData.place,
                     pdAddress: formData.address,
                     pdCost: parseInt(formData.cost) || 0,
-                    tcCode: formData.tcCode
+                    tcCode: formData.tcCode,
+                    travelId: travelid
                 }
             );
             console.log('일정 생성 WebSocket 메시지 전송');
@@ -258,7 +265,7 @@ const PlanDetailCreate = (data) => {
                 {/* 하단 버튼 - 고정 */}
                 <div className="bg-white p-6 border-t border-gray-100 flex space-x-4">
                     <button
-                        onClick={() => navigate(`/group/${groupid}/travel/${travelid}`)}
+                        onClick={() => navigate(`/group/${groupid}/travel/${travelid}/edit`)}
                         className="flex-1 py-4 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors duration-200"
                     >
                         취소
