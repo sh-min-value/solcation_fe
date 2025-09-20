@@ -57,49 +57,51 @@ const Travel = () => {
     };
 
     return (
-        <>
-        <div className='flex h-full items-center justify-between'>
-            <select className='bg-white rounded-sm p-2 focus:outline-none focus:underline'
-            value={selectedStatus}
-            onChange={handleStatusChange}>
-                <option value="0">전체</option>
-                <option value="1">여행 전</option>
-                <option value="2">여행 중</option>
-                <option value="3">여행 완료</option>
-            </select>
-            <button className='bg-white rounded-sm px-2 focus:outline-none focus:underline'>
-                <CiSquarePlus className='h-6 w-6' onClick={() => navigate(`/group/${groupid}/travel/new`)}/>
-            </button>
-        </div>
-        {isLoading ? (
-            <Loading />
-        ) : (
-            <div>
-                <div>
-                    {travels && travels.length > 0 ? (
-                        travels.map((travel, index) => (
-                            <TravelCard key={travel.pk || `travel-${index}`} travel={travel} groupid={groupid} onClick={() => handleTravelClick(travel)} />
-                        ))
-                    ) : (
-                        selectedStatus === '0' ? (
-                            <EmptyBear title="앗! 여행 계획이 없어요" description="새로운 여행 계획을 추가해보세요!" onClick={onClickNew} buttonText="첫 여행 계획 추가하기" />
-                        ) : (
-                            <div className="text-center py-12">
-                                <div className="text-gray-500 text-lg font-medium mb-2">
-                                    {selectedStatus === '1' && '여행 전인 여행이 없어요'}
-                                    {selectedStatus === '2' && '여행 중인 여행이 없어요'}
-                                    {selectedStatus === '3' && '여행 완료된 여행이 없어요'}
-                                </div>
-                                <div className="text-gray-400 text-sm">
-                                    다른 상태를 선택해보세요
-                                </div>
-                            </div>
-                        )
-                    )}
-                </div>
+        <div className="h-full flex flex-col">
+            <div className='flex items-center justify-between mb-4 flex-shrink-0'>
+                <select className='bg-white rounded-sm p-2 focus:outline-none focus:underline'
+                value={selectedStatus}
+                onChange={handleStatusChange}>
+                    <option value="0">전체</option>
+                    <option value="1">여행 전</option>
+                    <option value="2">여행 중</option>
+                    <option value="3">여행 완료</option>
+                </select>
+                <button className='bg-white rounded-sm px-2 focus:outline-none focus:underline'>
+                    <CiSquarePlus className='h-6 w-6' onClick={() => navigate(`/group/${groupid}/travel/new`)}/>
+                </button>
             </div>
-        )}
-        </>
+            {isLoading ? (
+                <div className="flex-1 flex items-center justify-center">
+                    <Loading />
+                </div>
+            ) : (
+                <div className="h-[calc(100vh-350px)] overflow-y-auto mb-20">
+                    <div>
+                        {travels && travels.length > 0 ? (
+                            travels.map((travel, index) => (
+                                <TravelCard key={travel.pk || `travel-${index}`} travel={travel} groupid={groupid} onClick={() => handleTravelClick(travel)} />
+                            ))
+                        ) : (
+                            selectedStatus === '0' ? (
+                                <EmptyBear title="앗! 여행 계획이 없어요" description="새로운 여행 계획을 추가해보세요!" onClick={onClickNew} buttonText="첫 여행 계획 추가하기" />
+                            ) : (
+                                <div className="text-center py-12">
+                                    <div className="text-gray-500 text-lg font-medium mb-2">
+                                        {selectedStatus === '1' && '여행 전인 여행이 없어요'}
+                                        {selectedStatus === '2' && '여행 중인 여행이 없어요'}
+                                        {selectedStatus === '3' && '여행 완료된 여행이 없어요'}
+                                    </div>
+                                    <div className="text-gray-400 text-sm">
+                                        다른 상태를 선택해보세요
+                                    </div>
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 

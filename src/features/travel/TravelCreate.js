@@ -8,25 +8,25 @@ import BottomButton from '../../components/common/BottomButton';
 import CalendarSection from '../main/components/CalendarSection';
 import people from '../../assets/images/people.svg';
 import HappySol from '../../assets/images/happy_sol.svg';
+import { GroupAPI } from '../../services/GroupAPI';
 import { TravelAPI } from '../../services/TravelAPI';
 import SelectPurpose from '../../components/common/SelectPurpose';
 import SelectLocation from './components/SelectLocation';
 
-const Calendar = ({ selectedDates, onDateSelect, onDateDrag, onDateDragEnd }) => {
+const Calendar = ({ selectedDates, onDateSelect }) => {
   return (
     <div className="w-full">
       <CalendarSection 
         selectedDates={selectedDates}
         onDateSelect={onDateSelect}
-        onDateDrag={onDateDrag}
-        onDateDragEnd={onDateDragEnd}
         isClickable={true}
+        showNextMonth={true}
+        showPrevMonth={true}
       />
     </div>
   );
 };
 
-const formDataKeys = ['travelTitle', 'selectedCountry', 'travelDates', 'travelTheme', 'profileImg', 'participantCount'];
 const descriptions = [
   {
     title: '여행 제목을\n입력하세요',
@@ -302,8 +302,6 @@ const TravelCreate = () => {
   const { groupid } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedDates, setSelectedDates] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartDate, setDragStartDate] = useState(null);
   const [formData, setFormData] = useState({
     travelTitle: '',
     travelDates: null,
@@ -314,6 +312,7 @@ const TravelCreate = () => {
     participantCount: 1, // 기본값 1명
   });
   const [groupMemberCount, setGroupMemberCount] = useState(1); // 그룹 인원수
+  const [isSubmitting, setIsSubmitting] = useState(false); // 제출 로딩 상태
 
   //초기 설정
   const currentStepData = descriptions[currentStep];
@@ -323,17 +322,12 @@ const TravelCreate = () => {
   useEffect(() => {
     const fetchGroupInfo = async () => {
       try {
-        // TODO: 실제 그룹 API 호출로 그룹 인원수 가져오기
-        // const groupInfo = await GroupAPI.getGroupInfo(groupid);
-        // setGroupMemberCount(groupInfo.memberCount);
-        // setFormData(prev => ({ ...prev, participantCount: groupInfo.memberCount }));
+        const groupInfo = await GroupAPI.getGroup(groupid);
+        setGroupMemberCount(groupInfo.totalMembers);
         
-        // 임시로 4명으로 설정 (실제 구현 시 API 호출로 변경)
-        setGroupMemberCount(4);
-        setFormData(prev => ({ ...prev, participantCount: 4 }));
+        setFormData(prev => ({ ...prev, participantCount: groupInfo.totalMembers}));
       } catch (error) {
         console.error('그룹 정보 가져오기 실패:', error);
-        // 실패 시 기본값 유지
       }
     };
 
@@ -371,6 +365,7 @@ const TravelCreate = () => {
         alert('프로필 사진을 선택해주세요.');
         return;
       } else {
+        setIsSubmitting(true);
         try {
           // FormData로 변환 (MultipartFile 전송을 위해)
           const travelFormData = new FormData();
@@ -383,7 +378,7 @@ const TravelCreate = () => {
           console.log('travelTheme:', formData.travelTheme);
           console.log('categoryCode:', formData.travelTheme);
           travelFormData.append('categoryCode', formData.travelTheme || 'FOOD');
-          travelFormData.append('photo', profileImg); // profileImg 변수 사용
+          travelFormData.append('photo', profileImg); 
           travelFormData.append('participant', formData.participantCount.toString());
           
           console.log('여행 생성 데이터:', {
@@ -399,14 +394,14 @@ const TravelCreate = () => {
           
           // TravelAPI를 사용해서 여행 생성
           await TravelAPI.createTravel(travelFormData, groupid);
-          
-          // 성공하면 다음 단계로
           setCurrentStep(currentStep + 1);
           return;
         } catch (error) {
           console.error('여행 생성 실패:', error);
           alert('여행 생성 중 오류가 발생했어요. 다시 시도해주세요.');
           navigate(`/group/${groupid}/travel`);
+        } finally {
+          setIsSubmitting(false);
         }
       }
     } else if (currentStep === 6) {
@@ -431,59 +426,30 @@ const TravelCreate = () => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  //날짜 선택 핸들러 (드래그 시작)
-  const handleDateSelect = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // 오늘 이전 날짜는 선택 불가
-    if (date < today) {
-      return;
+  //날짜 선택 핸들러
+  const handleDateSelect = (dateOrDates) => {
+    // 배열인 경우 (두 번째 클릭으로 시작일과 종료일이 모두 선택됨)
+    if (Array.isArray(dateOrDates)) {
+      setSelectedDates(dateOrDates);
+      setFormData(prev => ({ ...prev, travelDates: dateOrDates }));
+    } 
+    // 단일 날짜인 경우 (첫 번째 클릭)
+    else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // 오늘 이전 날짜는 선택 불가
+      if (dateOrDates < today) {
+        return;
+      }
+      
+      // 첫 번째 날짜 선택
+      const newDates = [dateOrDates];
+      setSelectedDates(newDates);
+      setFormData(prev => ({ ...prev, travelDates: newDates }));
     }
-    
-    // 드래그 시작
-    setIsDragging(true);
-    setDragStartDate(date);
-    
-    // 첫 번째 날짜 선택
-    const newDates = [date];
-    setSelectedDates(newDates);
-    setFormData(prev => ({ ...prev, travelDates: newDates }));
   };
 
-  //드래그 중 핸들러
-  const handleDateDrag = (endDate) => {
-    if (!isDragging || !dragStartDate) return;
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // 오늘 이전 날짜는 선택 불가
-    if (endDate < today) {
-      return;
-    }
-    
-    const startDate = new Date(dragStartDate);
-    const newDates = [];
-    
-    // 시작일부터 종료일까지 모든 날짜 추가
-    const currentDate = new Date(Math.min(startDate, endDate));
-    const endDateForLoop = new Date(Math.max(startDate, endDate));
-    
-    while (currentDate <= endDateForLoop) {
-      newDates.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    
-    setSelectedDates(newDates);
-    setFormData(prev => ({ ...prev, travelDates: newDates }));
-  };
-
-  //드래그 종료 핸들러
-  const handleDateDragEnd = () => {
-    setIsDragging(false);
-    setDragStartDate(null);
-  };
 
   //버튼 텍스트 함수
   const getButtonText = (step) => {
@@ -530,17 +496,12 @@ const TravelCreate = () => {
         ...currentStepData.props,
         selectedDates: selectedDates,
         onDateSelect: handleDateSelect,
-        onDateDrag: handleDateDrag,
-        onDateDragEnd: handleDateDragEnd,
       };
     }
 
     if (currentStepData.type === 'location') {
       return {
         ...currentStepData.props,
-        value: formData.selectedCountry && formData.selectedCity ? 
-          { country: formData.selectedCountry, city: formData.selectedCity } : 
-          { country: '전체', city: '전체' },
         onChange: (locationData) => {
           updateFormData('selectedCountry', locationData.country);
           updateFormData('selectedCity', locationData.city);
@@ -568,7 +529,7 @@ const TravelCreate = () => {
     if (currentStepData.type === 'participant') {
       return {
         ...currentStepData.props,
-        value: formData.participantCount || 1,
+        value: formData.participantCount || groupMemberCount,
         maxCount: groupMemberCount,
         onChange: value => updateFormData('participantCount', value),
       };
@@ -635,7 +596,8 @@ const TravelCreate = () => {
       {/*하단 버튼 */}
       <BottomButton
         handleNext={handleNext}
-        buttonText={`${isLastStep ? '여행 계획으로 돌아가기' : getButtonText(currentStep)}`}
+        buttonText={`${isSubmitting ? '여행 생성 중...' : (isLastStep ? '여행 계획으로 돌아가기' : getButtonText(currentStep))}`}
+        disabled={isSubmitting}
       />
     </div>
   );

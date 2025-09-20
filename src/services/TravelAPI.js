@@ -17,7 +17,7 @@ export const TravelAPI = {
       return apiClient.get(`/group/${groupId}/travel/list${params}`);
     },
     getTravel: (travelId, groupId) => apiClient.get(`/group/${groupId}/travel/${travelId}`),
-    createTravel: (travel, groupId) => apiClient.post(`/group/${groupId}/travel/new`, travel),
+    createTravel: (travel, groupId) => apiClient.postMultipart(`/group/${groupId}/travel/new`, travel),
     getTravelDetail: (travelId, groupId) => apiClient.get(`/group/${groupId}/travel/${travelId}/plans`),
   };
   
