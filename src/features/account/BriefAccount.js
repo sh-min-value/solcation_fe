@@ -4,8 +4,10 @@ import RegularDepositModal from './RegularDepositModal';
 import { AccountAPI } from '../../services/AccountAPI';
 import { GroupAPI } from '../../services/GroupAPI';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const BriefAccount = ({ accountInfo, isGroupLeader }) => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [copyMessage, setCopyMessage] = useState('');
 
@@ -41,6 +43,17 @@ const BriefAccount = ({ accountInfo, isGroupLeader }) => {
     if (formatted.length > 9) return 'text-base';
     if (formatted.length > 6) return 'text-lg';
     return 'text-xl';
+  };
+
+  //카드 페이지로 이동
+  const navigateToCard = () => {
+    if (!accountInfo?.opened) {
+      navigate(`/group/${accountInfo?.groupPk}/account/card/new`);
+    } else {
+      navigate(
+        `/group/${accountInfo?.groupPk}/account/card/${accountInfo?.sacPk}`
+      );
+    }
   };
 
   return (
@@ -134,7 +147,10 @@ const BriefAccount = ({ accountInfo, isGroupLeader }) => {
             이체
           </button>
           <div className="w-px bg-white bg-opacity-20"></div>
-          <button className="flex-1 py-2 text-center text-sm font-medium hover:bg-black hover:bg-opacity-10 transition-colors">
+          <button
+            className="flex-1 py-2 text-center text-sm font-medium hover:bg-black hover:bg-opacity-10 transition-colors"
+            onClick={navigateToCard}
+          >
             카드
           </button>
         </div>
