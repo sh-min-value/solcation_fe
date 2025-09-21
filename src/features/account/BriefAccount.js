@@ -48,7 +48,7 @@ const BriefAccount = ({ accountInfo, isGroupLeader }) => {
   //카드 페이지로 이동
   const navigateToCard = () => {
     if (!accountInfo?.opened) {
-      navigate(`/group/${accountInfo?.groupPk}/account/card/new`);
+      navigate(`/group/${accountInfo?.groupPk}/account/card/empty`);
     } else {
       navigate(
         `/group/${accountInfo?.groupPk}/account/card/${accountInfo?.sacPk}`
