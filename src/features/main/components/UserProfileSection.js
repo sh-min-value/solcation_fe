@@ -2,21 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import profilePic from '../../../assets/images/mainUserProfilePic.svg';
 
-// 로딩 스켈레톤
-const LoadingSkeleton = ({ width, height, className = '' }) => (
-  <div
-    className={`animate-pulse bg-gray-5 rounded ${className}`}
-    style={{ width, height }}
-  ></div>
-);
-
-LoadingSkeleton.propTypes = {
-  width: PropTypes.string,
-  height: PropTypes.string,
-  className: PropTypes.string,
-};
-
-const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
+const UserProfileSection = ({ user }) => {
   const [isProfileExpanded, setIsProfileExpanded] = useState(false);
 
   return (
@@ -37,23 +23,15 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
             {/* 사용자 정보 */}
             <div className="flex flex-col min-w-0 flex-1">
               <h2 className="text-xl font-bold text-gray-1 truncate">
-                {isProfileLoading ? (
-                  <LoadingSkeleton width="96px" height="24px" />
-                ) : userProfile?.userName || user?.name ? (
-                  userProfile?.userName || user?.name
+                {user?.userName ? (
+                  user.userName
                 ) : (
                   <div className="text-gray-3">사용자 정보 없음</div>
                 )}
               </h2>
               <div className="text-sm text-gray-2 truncate max-w-[200px]">
-                {isProfileLoading ? (
-                  <LoadingSkeleton
-                    width="128px"
-                    height="16px"
-                    className="mt-1"
-                  />
-                ) : userProfile?.email || user?.email ? (
-                  userProfile?.email || user?.email
+                {user?.email ? (
+                  user.email
                 ) : (
                   <div className="text-gray-3">이메일 정보 없음</div>
                 )}
@@ -96,10 +74,8 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
           <div className="flex justify-between items-center">
             <span className="text-gray-2 font-medium">아이디</span>
             <span className="text-gray-1 font-semibold">
-              {isProfileLoading ? (
-                <LoadingSkeleton width="80px" height="16px" />
-              ) : userProfile?.userId || user?.id ? (
-                userProfile?.userId || user?.id
+              {user?.userId ? (
+                user.userId
               ) : (
                 <span className="text-gray-3">아이디 정보 없음</span>
               )}
@@ -110,10 +86,8 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
           <div className="flex justify-between items-center">
             <span className="text-gray-2 font-medium">이메일</span>
             <span className="text-gray-1 font-semibold">
-              {isProfileLoading ? (
-                <LoadingSkeleton width="128px" height="16px" />
-              ) : userProfile?.email || user?.email ? (
-                userProfile?.email || user?.email
+              {user?.email ? (
+                user.email
               ) : (
                 <span className="text-gray-3">이메일 정보 없음</span>
               )}
@@ -124,10 +98,8 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
           <div className="flex justify-between items-center">
             <span className="text-gray-2 font-medium">전화번호</span>
             <span className="text-gray-1 font-semibold">
-              {isProfileLoading ? (
-                <LoadingSkeleton width="96px" height="16px" />
-              ) : userProfile?.tel || user?.phone ? (
-                userProfile?.tel || user?.phone
+              {user?.tel ? (
+                user.tel
               ) : (
                 <span className="text-gray-3">전화번호 정보 없음</span>
               )}
@@ -140,8 +112,6 @@ const UserProfileSection = ({ userProfile, isProfileLoading, user }) => {
 };
 
 UserProfileSection.propTypes = {
-  userProfile: PropTypes.object,
-  isProfileLoading: PropTypes.bool.isRequired,
   user: PropTypes.object,
 };
 
