@@ -110,5 +110,5 @@ jobs:
       - name: Notify deployment success
         if: success()
         run: |
-          echo "✅ Production deployment successful!"
+          echo "Production deployment successful!"
           echo "Image: ghcr.io/${{ secrets.REACT_IMAGE_NAME }}:${{ env.IMAGE_TAG }}"

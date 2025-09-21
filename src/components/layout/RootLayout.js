@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 import Header from '../common/Header.js';
 import NavigationBar from '../common/NavigationBar.js';
 import GroupProfileCard from '../common/GroupProfileCard.js';
@@ -19,7 +19,7 @@ export default function RootLayout({ children, title }) {
     !/^\/group\/[^/]+\/account\/card\/[^/]+$/.test(location.pathname);
 
   useEffect(() => {
-    if (isGroupRoute && groupid) {
+    if (groupid) {
       const loadGroupData = async () => {
         try {
           const data = await GroupAPI.getGroup(groupid);
@@ -33,7 +33,7 @@ export default function RootLayout({ children, title }) {
     } else {
       setGroupData(null);
     }
-  }, [isGroupRoute, groupid, refreshKey]);
+  }, [groupid, refreshKey]);
 
   const showGroupUI = isGroupRoute && groupData;
 
@@ -48,7 +48,7 @@ export default function RootLayout({ children, title }) {
       <div className="bg-main flex-1 flex flex-col">
         {showGroupUI && <GroupProfileCard group={groupData} />}
         <div className="app-main flex-1 rounded-t-3xl bg-white">
-          {React.cloneElement(children, { triggerRefresh })}
+          <Outlet context={{ triggerRefresh, groupData }} />
         </div>
       </div>
 
