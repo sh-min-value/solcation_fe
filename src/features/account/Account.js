@@ -96,7 +96,12 @@ const Account = () => {
           return;
         }
 
-        //todo: 에러 넘기기
+        navigate('/error', {
+          state: {
+            error: error.response,
+            from: location.pathname,
+          },
+        });
         setAccountInfo(null);
       } finally {
         setIsLoading(false);
