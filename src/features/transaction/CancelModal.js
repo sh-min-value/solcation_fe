@@ -12,12 +12,6 @@ const CancelModal = ({ isOpen, onConfirm, onCancel }) => {
       await onConfirm();
     } catch (error) {
       console.error('카드 해지 오류:', error);
-      navigate('/error', {
-        state: {
-          error: error.response,
-          from: location.pathname,
-        },
-      });
     } finally {
       setIsLoading(false);
     }

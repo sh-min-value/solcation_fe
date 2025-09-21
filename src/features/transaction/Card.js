@@ -75,12 +75,6 @@ const Card = () => {
       navigate(`/group/${groupid}/account`);
     } catch (error) {
       alert('카드 해지 중 오류가 발생했어요!');
-      navigate('/error', {
-        state: {
-          error: error.response,
-          from: location.pathname,
-        },
-      });
     } finally {
       setShowCancelModal(false);
     }
