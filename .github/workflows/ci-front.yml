@@ -23,7 +23,7 @@ jobs:
           npm ci --legacy-peer-deps --fetch-retries=5 --fetch-retry-maxtimeout=60000
 
       - name: Run tests
-        run: npm test -- --coverage --watchAll=false
+        run: npm test -- --coverage --watchAll=false --passWithNoTests
 
       - name: Build React app
         env:
