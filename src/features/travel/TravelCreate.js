@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 
 import { Plus } from 'lucide-react';
 
@@ -8,7 +8,6 @@ import BottomButton from '../../components/common/BottomButton';
 import CalendarSection from '../main/components/CalendarSection';
 import people from '../../assets/images/people.svg';
 import HappySol from '../../assets/images/happy_sol.svg';
-import { GroupAPI } from '../../services/GroupAPI';
 import { TravelAPI } from '../../services/TravelAPI';
 import SelectPurpose from '../../components/common/SelectPurpose';
 import SelectLocation from './components/SelectLocation';
@@ -300,6 +299,7 @@ const CompletionStep = () => {
 const TravelCreate = () => {
   const navigate = useNavigate();
   const { groupid } = useParams();
+  const { groupData, triggerRefresh } = useOutletContext();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedDates, setSelectedDates] = useState([]);
   const [formData, setFormData] = useState({
@@ -311,30 +311,21 @@ const TravelCreate = () => {
     selectedCity: '전체',
     participantCount: 1, // 기본값 1명
   });
-  const [groupMemberCount, setGroupMemberCount] = useState(1); // 그룹 인원수
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 로딩 상태
 
   //초기 설정
   const currentStepData = descriptions[currentStep];
   const isLastStep = currentStep === descriptions.length - 1;
 
-  // 그룹 인원수 가져오기
+  // 그룹 데이터가 있으면 participantCount 설정
   useEffect(() => {
-    const fetchGroupInfo = async () => {
-      try {
-        const groupInfo = await GroupAPI.getGroup(groupid);
-        setGroupMemberCount(groupInfo.totalMembers);
-        
-        setFormData(prev => ({ ...prev, participantCount: groupInfo.totalMembers}));
-      } catch (error) {
-        console.error('그룹 정보 가져오기 실패:', error);
-      }
-    };
-
-    if (groupid) {
-      fetchGroupInfo();
+    if (groupData && groupData.totalMembers) {
+      setFormData(prev => ({ 
+        ...prev, 
+        participantCount: groupData.totalMembers 
+      }));
     }
-  }, [groupid]);
+  }, [groupData]);
 
   //다음 단계 버튼 함수
   const handleNext = async () => {
@@ -529,8 +520,8 @@ const TravelCreate = () => {
     if (currentStepData.type === 'participant') {
       return {
         ...currentStepData.props,
-        value: formData.participantCount || groupMemberCount,
-        maxCount: groupMemberCount,
+        value: formData.participantCount || (groupData?.totalMembers || 1),
+        maxCount: groupData?.totalMembers || 1,
         onChange: value => updateFormData('participantCount', value),
       };
     }

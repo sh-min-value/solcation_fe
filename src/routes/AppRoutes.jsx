@@ -28,6 +28,7 @@ const PlanDetailCreate = lazy(() =>
   import('../features/travel/PlanDetailCreate')
 );
 const TravelCreate = lazy(() => import('../features/travel/TravelCreate'));
+const CardCreate = lazy(() => import('../features/transaction/CardCreate'));
 
 export default function AppRoutes() {
   return (
@@ -80,8 +81,16 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        
+        <Route
+          path="/group/:groupid/account/card/new"
+          element={
+            <ProtectedRoute>
+              <CardCreate />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* RootLayout 없이 독립적인 라우트들 */}
         <Route
           path="/group/:groupid/travel/:travelid"
           element={

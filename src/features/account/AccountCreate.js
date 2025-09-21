@@ -141,6 +141,22 @@ const AccountCreate = () => {
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
       <Header showBackButton={true} />
 
+      {/* Progress Bar */}
+      {currentStep !== descriptions.length - 1 && (
+        <div className="flex justify-center mt-8 mb-12">
+          <div className="flex space-x-2">
+            {descriptions.slice(0, -1).map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index <= currentStep ? 'bg-white' : 'bg-white/30'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 메인 콘텐츠 영역 */}
       <div className="flex flex-col min-h-[calc(100vh-140px)] mt-8">
         {/* 단계 설명 */}
@@ -154,7 +170,7 @@ const AccountCreate = () => {
         </div>
 
         {/* 폼 컴포넌트 */}
-        <div className="flex justify-center items-start px-9 flex-1">
+        <div className="flex justify-center items-start px-0 flex-1">
           {currentStep === 0 ? (
             <AccountInfoForm
               formData={formData}
@@ -166,6 +182,7 @@ const AccountCreate = () => {
               formData={formData}
               updateFormData={updateFormData}
               errors={errors}
+              onNext={handleNext}
             />
           ) : currentStep === 2 ? (
             <TermsAgreementForm
@@ -180,7 +197,7 @@ const AccountCreate = () => {
       </div>
 
       {/* 하단 버튼 */}
-      {currentStep !== 3 && (
+      {currentStep !== 1 && currentStep !== 3 && (
         <BottomButton
           handleNext={handleNext}
           buttonText={
