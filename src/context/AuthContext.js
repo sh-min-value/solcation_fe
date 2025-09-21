@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { authAPI } from '../services/api';
+
 // 초기 상태
 const initialState = {
   user: null,
@@ -9,7 +10,6 @@ const initialState = {
   expiresIn: localStorage.getItem('expiresIn'),
   isAuthenticated: false,
   loading: true,
-
   error: null,
 };
 
@@ -92,6 +92,7 @@ const AuthContext = createContext();
 // Provider 컴포넌트
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
   // 토큰 및 사용자 정보 저장
   const saveTokens = (accessToken, tokenType, expiresIn, user) => {
     localStorage.setItem('accessToken', accessToken);
@@ -119,6 +120,7 @@ export const AuthProvider = ({ children }) => {
         tokenType,
         expiresIn,
         userId,
+        userPk,
         userName,
         email,
         tel,
@@ -126,6 +128,7 @@ export const AuthProvider = ({ children }) => {
 
       const user = {
         userId,
+        userPk,
         userName,
         email,
         tel,

@@ -76,7 +76,7 @@ const GroupList = () => {
 
   // 그룹 클릭 핸들러
   const handleGroupClick = groupPk => {
-    navigate(`/group/${groupPk}`);
+    navigate(`/group/${groupPk}/main`);
   };
 
   // 검색 핸들러

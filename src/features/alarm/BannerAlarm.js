@@ -5,7 +5,7 @@ import { useNotification } from '../../hooks/useNotification';
 import { useNavigate } from 'react-router-dom';
 import { useSSEContext } from '../../context/SSEContext';
 
-const BannerAlarm = ({ triggerRefresh }) => {
+const BannerAlarm = () => {
   const { notification, clearNotification } = useNotification();
   const { connected } = useSSEContext();
 

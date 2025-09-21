@@ -4,7 +4,7 @@ import SelectTC from './SelectTC';
 import { ArrowLeft, Edit2, X } from 'lucide-react';
 import EditTransaction from './EditTransaction';
 import { TransactionAPI } from '../../services/TransactionAPI';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import {
   getTransactionCategoryIconOnly,
   getTransactionCategoryName,
@@ -13,7 +13,8 @@ import {
 import dayjs from 'dayjs';
 import Loading from '../../components/common/Loading';
 
-const TransactionDetail = ({ triggerRefresh }) => {
+const TransactionDetail = () => {
+  const { groupData, triggerRefresh } = useOutletContext();
   const navigate = useNavigate();
   const { groupid, satPk } = useParams();
   const [loading, setLoading] = useState(false);
