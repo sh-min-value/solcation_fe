@@ -18,4 +18,13 @@ export const TransactionAPI = {
       `/group/${groupId}/account/transaction/${satPk}/update-transaction`,
       data
     ),
+  getCardInfo: (groupId, sacPk) =>
+    apiClient.get(`/group/${groupId}/account/card/${sacPk}/info`),
+  cancelCard: (groupId, sacPk) =>
+    apiClient.post(`/group/${groupId}/account/card/${sacPk}/cancel`),
+  getTransactionsCard: (groupId, yearMonth) => {
+    return apiClient.get(
+      `/group/${groupId}/account/transaction/card?yearMonth=${yearMonth}`
+    );
+  },
 };
