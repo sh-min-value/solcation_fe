@@ -4,7 +4,6 @@ import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
 import Loading from '../components/common/Loading';
-import TransactionDetail from '../features/transaction/TransactionDetail';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
 const Main = lazy(() => import('../features/main/Main'));
@@ -16,6 +15,10 @@ const GroupList = lazy(() => import('../features/group/GroupList'));
 const Account = lazy(() => import('../features/account/Account'));
 const AccountCreate = lazy(() => import('../features/account/AccountCreate'));
 const Stat = lazy(() => import('../features/stat/Stat'));
+const TransactionDetail = lazy(() =>
+  import('../features/transaction/TransactionDetail')
+);
+const Card = lazy(() => import('../features/transaction/Card'));
 
 const Travel = lazy(() => import('../features/travel/Travel'));
 const PlanDetail = lazy(() => import('../features/travel/PlanDetail'));
@@ -131,6 +134,7 @@ export default function AppRoutes() {
           <Route path="travel" element={<Travel />} />
           <Route path="stats" element={<Stat />} />
           <Route path="stats/:travelid" element={<Stat />} />
+          <Route path="account/card/:sacPk" element={<Card />} />
         </Route>
 
         {/* 에러 페이지 라우트 */}
