@@ -27,4 +27,10 @@ export const TransactionAPI = {
       `/group/${groupId}/account/transaction/card?yearMonth=${yearMonth}`
     );
   },
+  
+  openCard: (groupId, data) =>
+    apiClient.post(`/group/${groupId}/account/card/open`, data),
+    getUserAddress: (groupId) =>
+    apiClient.get(`/group/${groupId}/account/card/address`),
+  
 };

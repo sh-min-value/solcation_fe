@@ -28,7 +28,7 @@ const EmptyCard = () => {
             의 카드를 개설해보세요.
           </p>
           <button
-            onClick={() => navigate(`/group/${groupid}/account/new`)}
+            onClick={() => navigate(`/group/${groupid}/account/card/new`)}
             className={buttonClass}
           >
             모임통장 카드 개설하기

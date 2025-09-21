@@ -91,7 +91,6 @@ export default function AppRoutes() {
           }
         />
 
-        <Route path="/group/:groupid/account/card/:sacPk"></Route>
         <Route
           path="/group/:groupid/travel/:travelid"
           element={

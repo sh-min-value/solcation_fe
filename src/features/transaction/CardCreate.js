@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { CardAPI } from '../../services/CardAPI';
+import { TransactionAPI } from '../../services/TransactionAPI';
 import Header from '../../components/common/Header';
 import BottomButton from '../../components/common/BottomButton';
 import PasswordSetupForm from '../account/components/PasswordSetupForm';
@@ -43,17 +42,30 @@ const Description = ({ title, currentStep }) => {
 //1. 주소 확인 (유저 정보에서 가져오기)
 const AddressConfirm = ({ userProfile }) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center gap-4">
-      <div className="w-full bg-white rounded-2xl p-6 shadow-sm">
-        <div className="text-gray-600 text-sm mb-4">배송받을 주소</div>
-        <div className="text-lg font-medium text-gray-800 mb-2">
-          {userProfile?.address || '주소 정보가 없습니다'}
+    <div className="w-full flex flex-col items-center justify-center gap-4 p-8">
+      <div className="w-full">        
+        {/* 도로명 주소 */}
+        <div className="mb-6">
+          <div className="text-gray-600 text-sm mb-2">도로명 주소</div>
+          <div className="text-white text-lg pl-2 border-b-2 border-light-blue pb-1">
+            {userProfile?.address || '계정 이름'}
+          </div>
         </div>
-        <div className="text-sm text-gray-500">
-          {userProfile?.addressDetail || ''}
+        
+        {/* 상세 주소 */}
+        <div className="mb-6">
+          <div className="text-gray-600 text-sm mb-2">상세 주소</div>
+          <div className="text-white text-lg pl-2 border-b-2 border-light-blue pb-1">
+            {userProfile?.addressDetail || '계정 이름'}
+          </div>
         </div>
-        <div className="text-sm text-gray-500">
-          {userProfile?.postCode || ''}
+        
+        {/* 우편번호 */}
+        <div className="mb-6">
+          <div className="text-gray-600 text-sm mb-2">우편번호</div>
+          <div className="text-white text-lg pl-2 border-b-2 border-light-blue pb-1">
+            {userProfile?.postCode || '계정 이름'}
+          </div>
         </div>
       </div>
       <div className="text-white text-sm text-center">
@@ -64,7 +76,7 @@ const AddressConfirm = ({ userProfile }) => {
 };
 
 //2. 비밀번호 설정
-const PasswordSetup = ({ value, onChange }) => {
+const PasswordSetup = ({ value, onChange, onNext }) => {
   const [password, setPassword] = useState(value || '');
   const [errors, setErrors] = useState({});
 
@@ -75,12 +87,23 @@ const PasswordSetup = ({ value, onChange }) => {
     }
   };
 
+  const handleNext = () => {
+    // 비밀번호가 6자리인지 확인
+    if (password.length === 6) {
+      onNext();
+    } else {
+      setErrors({ saPw: '6자리 비밀번호를 입력해주세요' });
+    }
+  };
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <PasswordSetupForm
         formData={{ saPw: password }}
         updateFormData={updateFormData}
         errors={errors}
+        className="mt-0"
+        onNext={handleNext}
       />
     </div>
   );
@@ -120,7 +143,7 @@ const CardCreate = () => {
     const fetchUserAddress = async () => {
       try {
         console.log('유저 주소 조회 시작');
-        const response = await CardAPI.getGroupUserAddress(groupid);
+        const response = await TransactionAPI.getUserAddress(groupid);
         console.log('유저 주소 응답:', response);
         setUserProfile(response);
       } catch (error) {
@@ -151,7 +174,7 @@ const CardCreate = () => {
       try {
         setIsSubmitting(true);
         console.log('카드 개설 시작:', { groupId: groupid, password: formData.password });
-        const response = await CardAPI.openCard(groupid, formData.password);
+        const response = await TransactionAPI.openCard(groupid, formData.password);
         console.log('카드 개설 성공:', response);
         
         // 성공 후 그룹 홈으로 이동
@@ -231,6 +254,7 @@ const CardCreate = () => {
         ...currentStepData.props,
         value: formData.password,
         onChange: (password) => updateFormData('password', password),
+        onNext: handleNext,
       };
     }
 
@@ -255,7 +279,7 @@ const CardCreate = () => {
       <Header showBackButton={true} />
       {/* Progress Bar */}
       {!isLastStep && (
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center my-4">
           <div className="flex space-x-2">
             {descriptions.slice(0, -1).map((_, index) => (
               <div
@@ -270,7 +294,7 @@ const CardCreate = () => {
       )}
       {/* 내용 */}
       {/* 메인 콘텐츠 영역 */}
-      <div className="flex flex-col min-h-[calc(100vh-140px)]">
+      <div className="flex flex-col min-h-[calc(100vh-140px)] w-full mt-12">
         {/* 완료 단계 X */}
         {!isLastStep && (
           <>
@@ -280,7 +304,7 @@ const CardCreate = () => {
               currentStep={currentStep}
             />
             {/* 내용 */}
-            <div className="flex min-h-[calc(100vh-500px)] justify-center items-start py-9 px-9 lex-1">
+            <div className="flex min-h-[calc(100vh-500px)] w-full justify-center items-start py-9 px-0 flex-1">
               <StepComponent {...getStepProps()} />
             </div>
           </>
@@ -294,11 +318,13 @@ const CardCreate = () => {
         )}
       </div>
       {/*하단 버튼 */}
-      <BottomButton
-        handleNext={handleNext}
-        buttonText={`${isSubmitting ? '카드 생성 중...' : getButtonText(currentStep)}`}
-        disabled={isSubmitting}
-      />
+      {currentStep !== 1 && (
+        <BottomButton
+          handleNext={handleNext}
+          buttonText={`${isSubmitting ? '카드 생성 중...' : getButtonText(currentStep)}`}
+          disabled={isSubmitting}
+        />
+      )}
     </div>
   );
 };
