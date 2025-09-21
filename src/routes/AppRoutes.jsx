@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
@@ -67,16 +67,6 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         ></Route>
-        <Route
-          path="/group/:groupid/account/transaction/:satPk"
-          element={
-            <ProtectedRoute>
-              <RootLayout title={'이용 내역 상세'}>
-                <TransactionDetail />
-              </RootLayout>
-            </ProtectedRoute>
-          }
-        ></Route>
 
         <Route
           path="/group/:groupid/account/new"
@@ -87,6 +77,7 @@ export default function AppRoutes() {
           }
         />
 
+        <Route path="/group/:groupid/account/card/:sacPk"></Route>
         {/* RootLayout 없이 독립적인 라우트들 */}
         <Route
           path="/group/:groupid/travel/:travelid"
@@ -121,19 +112,25 @@ export default function AppRoutes() {
           }
         />
 
+        {/* 그룹 영역 */}
         <Route
           path="/group/:groupid"
           element={
             <ProtectedRoute>
-              <RootLayout>
-                <Group />
-              </RootLayout>
+              <RootLayout />
             </ProtectedRoute>
           }
         >
+          {/* <Route index element={<Navigate to="main" replace />} /> */}
+          <Route path="main" element={<Group />} />
           <Route path="account" element={<Account />} />
+          <Route
+            path="account/transaction/:satPk"
+            element={<TransactionDetail />}
+          />
           <Route path="travel" element={<Travel />} />
           <Route path="stats" element={<Stat />} />
+          <Route path="stats/overall" element={<Stat />} />
           <Route path="stats/:travelid" element={<Stat />} />
         </Route>
 

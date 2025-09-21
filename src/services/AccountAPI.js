@@ -22,4 +22,8 @@ export const AccountAPI = {
   // 모임통장 정기 입금일 설정
   setRegularDeposit: (groupId, depositData) =>
     apiClient.post(`/group/${groupId}/account/cycle`, depositData),
+
+  //정기 입금일 비활성화
+  resetRegularDeposit: (groupId, saPk) =>
+    apiClient.post(`/group/${groupId}/account/reset-cycle/${saPk}`),
 };

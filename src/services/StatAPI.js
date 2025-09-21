@@ -33,4 +33,8 @@ export const statAPI = {
   // 여행 계획 총 경비 조회
   getTotalPlanSpent: (groupId, travelId) =>
     apiClient.get(`/groups/${groupId}/stats/${travelId}/plan-spent`),
+
+  // 전체 여행 소비 분석 조회
+  getAllTravelStats: groupId =>
+    apiClient.get(`/groups/${groupId}/stats/plan_total`),
 };

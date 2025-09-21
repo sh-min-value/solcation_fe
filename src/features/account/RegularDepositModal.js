@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { AccountAPI } from '../../services/AccountAPI';
+import { EmojiProvider, Emoji } from 'react-apple-emojis';
+import emojiData from 'react-apple-emojis/src/data.json';
+import { useOutletContext } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
-const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
+//로딩 스피너
+const LoadingSpinner = ({ size = 4 }) => (
+  <div
+    className={`animate-spin rounded-full h-${size} w-${size} border-2 border-current border-t-transparent`}
+  ></div>
+);
+
+const RegularDepositModal = ({ isOpen, onClose, groupId, accountInfo }) => {
   const [frequency, setFrequency] = useState('');
   const [day, setDay] = useState('');
   const [amount, setAmount] = useState('');
   const [showFrequencyDropdown, setShowFrequencyDropdown] = useState(false);
   const [showDayDropdown, setShowDayDropdown] = useState(false);
-  const [accountInfo, setAccountInfo] = useState(null);
-  const [regularDepositInfo, setRegularDepositInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const { groupData, triggerRefresh } = useOutletContext();
+  const { user } = useAuth();
+  const [isGroupLeader, setIsGroupLaeader] = useState(false);
   const frequencies = ['매달', '매주'];
   const date = Array.from({ length: 31 }, (_, i) => `${i + 1}일`);
   const days = [
@@ -24,49 +36,23 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
     '일요일',
   ];
 
-  // 계좌 정보 조회
-  useEffect(() => {
-    const fetchAccountInfo = async () => {
-      if (isOpen && groupId) {
-        setIsLoading(true);
-        try {
-          const response = await AccountAPI.getAccountInfo(groupId);
-          const accountData = response.data || response;
-
-          setAccountInfo(accountData);
-
-          if (accountData.depositCycle) {
-            setRegularDepositInfo({
-              depositCycle: accountData.depositCycle,
-              depositDate: accountData.depositDate,
-              depositDay: accountData.depositDay,
-              depositAmount: accountData.depositAmount,
-              depositAlarm: accountData.depositAlarm,
-            });
-          }
-        } catch (error) {
-          console.error('계좌 정보 조회 오류:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchAccountInfo();
-  }, [isOpen, groupId]);
-
-  // 초기값 설정
-  useEffect(() => {
-    if (regularDepositInfo) {
+  //초기값 설정 함수
+  const setInitVal = () => {
+    //그룹 리더인지 확인
+    setIsGroupLaeader(user?.userPk === groupData?.leaderPk);
+    console.log(groupData?.leaderPk === user?.userPk);
+    if (accountInfo) {
       // 주기 설정
-      if (regularDepositInfo.depositCycle === 'MONTH') {
+      if (accountInfo.depositCycle === 'MONTH') {
         setFrequency('매달');
-        if (regularDepositInfo.depositDate) {
-          setDay(`${regularDepositInfo.depositDate}일`);
+        if (accountInfo.depositDate) {
+          setDay(`${accountInfo.depositDate}일`);
+        } else {
+          setDay('1일');
         }
-      } else if (regularDepositInfo.depositCycle === 'WEEK') {
+      } else if (accountInfo.depositCycle === 'WEEK') {
         setFrequency('매주');
-        if (regularDepositInfo.depositDay) {
+        if (accountInfo.depositDay) {
           const dayMap = {
             MON: '월요일',
             TUE: '화요일',
@@ -76,23 +62,47 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
             SAT: '토요일',
             SUN: '일요일',
           };
-          setDay(dayMap[regularDepositInfo.depositDay] || '월요일');
+          setDay(dayMap[accountInfo.depositDay] || '월요일');
+        } else {
+          setDay('월요일');
         }
+      } else {
+        // depositCycle이 없으면 기본값
+        setFrequency('매달');
+        setDay('1일');
       }
 
       // 금액 설정
-      if (regularDepositInfo.depositAmount) {
-        setAmount(regularDepositInfo.depositAmount.toString());
+      if (accountInfo.depositAmount) {
+        setAmount(accountInfo.depositAmount.toString());
+      } else {
+        setAmount('100000');
       }
     } else {
-      // 정기입금 정보가 없을 때 기본값 설정
+      // accountInfo가 없을 때 기본값 설정
       setFrequency('매달');
       setDay('1일');
       setAmount('100000');
     }
-  }, [regularDepositInfo]);
+  };
 
-  if (!isOpen || isLoading) return null;
+  //모달 닫기
+  const closeModal = () => {
+    setShowFrequencyDropdown(false);
+    setShowDayDropdown(false);
+    // 모달이 닫힐 때는 초기값으로 되돌리지 않음 (현재 accountInfo 상태 유지)
+    onClose();
+  };
+
+  // accountInfo가 변경될 때마다 초기값 설정
+  useEffect(() => {
+    if (isOpen) {
+      // 모달이 열릴 때만 초기값 설정
+      setInitVal();
+    }
+  }, [accountInfo, isOpen]);
+
+  if (!isOpen) return null;
 
   const handleAmountChange = e => {
     const value = e.target.value.replace(/[^0-9]/g, '');
@@ -103,7 +113,7 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  // 요일
+  // 요일 코드 변환
   const getDayCode = dayName => {
     const dayMap = {
       월요일: 'MON',
@@ -117,12 +127,41 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
     return dayMap[dayName] || 'MON';
   };
 
+  //리셋 설정
+  const handleResetRegularDeposit = async () => {
+    if (!accountInfo?.saPk) {
+      console.error('계좌 정보가 없습니다.');
+      return;
+    }
+
+    setIsResetting(true);
+
+    try {
+      await AccountAPI.resetRegularDeposit(groupId, accountInfo.saPk);
+      // 리셋 성공 후 기본값으로 설정
+      setFrequency('매달');
+      setDay('1일');
+      setAmount('100000');
+
+      alert('초기화가 완료되었어요!');
+    } catch (error) {
+      console.error('정기 입금일 리셋 오류:', error);
+      alert('초기화 중 오류가 발생했어요!');
+    } finally {
+      closeModal();
+      setIsResetting(false);
+      triggerRefresh();
+    }
+  };
+
   // 정기 입금일 설정
   const handleSetRegularDeposit = async () => {
     if (!accountInfo?.saPk) {
       console.error('계좌 정보가 없습니다.');
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const depositData = {
@@ -136,9 +175,15 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
       };
 
       await AccountAPI.setRegularDeposit(groupId, depositData);
-      onClose();
+
+      alert('정기 입금일 변경이 완료되었어요!');
     } catch (error) {
       console.error('정기 입금일 설정 오류:', error);
+      alert('정기 입금일 변경 중 오류가 발생했어요!');
+    } finally {
+      closeModal();
+      setIsLoading(false);
+      triggerRefresh();
     }
   };
 
@@ -147,13 +192,17 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
       <div className="bg-white rounded-3xl w-full max-w-md mx-auto shadow-2xl">
         <div className="flex items-center justify-between p-6 pb-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center"></div>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <EmojiProvider data={emojiData}>
+                <Emoji name={'alarm-clock'} size={7} className="w-10 h-10" />
+              </EmojiProvider>
+            </div>
             <h2 className="text-xl font-extrabold text-black">
               정기 입금일 설정
             </h2>
           </div>
           <button
-            onClick={isGroupLeader ? handleSetRegularDeposit : onClose}
+            onClick={closeModal}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-6 transition-colors"
           >
             <X className="w-5 h-5 text-gray-2" />
@@ -211,7 +260,6 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
               )}
             </div>
           </div>
-
           {/* 입금 기준일 */}
           <div>
             <label
@@ -254,7 +302,6 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
               )}
             </div>
           </div>
-
           {/* 금액 */}
           <div>
             <label
@@ -281,6 +328,37 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, isGroupLeader }) => {
                 원
               </span>
             </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={handleResetRegularDeposit}
+              disabled={isResetting || isLoading}
+              className="flex-1 py-4 px-6 bg-gray-6 hover:bg-gray-5/70 disabled:bg-gray-4 disabled:cursor-not-allowed text-gray-700 disabled:text-gray-500 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+            >
+              {isResetting ? (
+                <>
+                  <LoadingSpinner size={4} />
+                  <span>초기화...</span>
+                </>
+              ) : (
+                '초기화'
+              )}
+            </button>
+            <button
+              onClick={handleSetRegularDeposit}
+              disabled={isLoading || isResetting}
+              className="flex-1 py-4 px-6 bg-main/80 hover:bg-main disabled:bg-main/50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors shadow-lg flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <LoadingSpinner size={4} />
+                  <span>저장 중...</span>
+                </>
+              ) : (
+                '저장'
+              )}
+            </button>
           </div>
         </div>
       </div>

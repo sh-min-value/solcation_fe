@@ -9,7 +9,7 @@ export default function NavigationBar() {
   const { groupid } = useParams();
 
   const items = [
-    { to: `/group/${groupid}`, label: '메인', icon: <HiHome /> },
+    { to: `/group/${groupid}/main`, label: '메인', icon: <HiHome /> },
     {
       to: `/group/${groupid}/account`,
       label: '모임 통장',

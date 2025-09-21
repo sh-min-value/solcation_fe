@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Outlet, useLocation, useParams, useNavigate } from 'react-router-dom';
+import {
+  Outlet,
+  useLocation,
+  useParams,
+  useNavigate,
+  useOutletContext,
+} from 'react-router-dom';
 import { GroupAPI } from '../../services/GroupAPI';
 import { RiSendPlaneFill } from 'react-icons/ri';
 import Member from './Member';
@@ -50,15 +56,13 @@ const SearchBar = React.memo(
 SearchBar.displayName = 'SearchBar';
 
 /* 그룹 메인 컴포넌트 */
-const Group = ({ triggerRefresh }) => {
+const Group = () => {
+  const { groupData, triggerRefresh } = useOutletContext();
   const location = useLocation();
   const { groupid } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoading, setLoading] = useState(true);
-
-  //그룹 정보
-  const [groupData, setGroupData] = useState(null);
 
   //멤버 목록
   const [members, setMembers] = useState({
@@ -340,7 +344,7 @@ const Group = ({ triggerRefresh }) => {
   );
 
   // 현재 경로가 /group/:groupid 인지 확인
-  const isGroupMain = location.pathname === `/group/${groupid}`;
+  const isGroupMain = location.pathname === `/group/${groupid}/main`;
 
   if (isLoading) {
     return <Loading />;
