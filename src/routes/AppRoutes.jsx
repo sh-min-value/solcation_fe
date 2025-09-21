@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import RootLayout from '../components/layout/RootLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ErrorPage from '../components/common/ErrorPage';
@@ -132,6 +132,7 @@ export default function AppRoutes() {
           />
           <Route path="travel" element={<Travel />} />
           <Route path="stats" element={<Stat />} />
+          <Route path="stats/overall" element={<Stat />} />
           <Route path="stats/:travelid" element={<Stat />} />
           <Route path="account/card/:sacPk" element={<Card />} />
           <Route path="account/card/empty" element={<EmptyCard />} />

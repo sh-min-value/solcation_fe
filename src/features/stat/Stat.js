@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import TravelCard from '../../components/common/TravelCard';
 import { statAPI } from '../../services/StatAPI';
+import { GroupAPI } from '../../services/GroupAPI';
 import emptySol from '../../assets/images/empty_sol.svg';
 import TravelStatsView from './components/TravelStatsView';
+import OverallStatsView from './components/OverallStatsView';
 
 // 로딩 스피너
 const LoadingSpinner = () => (
@@ -16,11 +18,17 @@ const LoadingSpinner = () => (
 const Stat = () => {
   const { groupid, travelid } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 전체 통계 페이지 확인
+  const isOverallStats = location.pathname.includes('/stats/overall');
+
   const [finishedTravels, setFinishedTravels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTravel, setSelectedTravel] = useState(null);
+  const [groupInfo, setGroupInfo] = useState(null);
 
-  // 데이터 변환
+  // 여행 데이터를 변환
   const convertTravelToTravelCardFormat = travel => ({
     title: travel.tpTitle,
     thumbnail: travel.tpImage,
@@ -31,6 +39,22 @@ const Stat = () => {
     categoryCode: travel.tpcCode,
     tpPk: travel.tpPk,
   });
+
+  // 그룹 정보 로드
+  useEffect(() => {
+    const fetchGroupInfo = async () => {
+      if (!groupid) return;
+
+      try {
+        const response = await GroupAPI.getGroup(groupid);
+        setGroupInfo(response);
+      } catch (error) {
+        console.error('그룹 정보를 가져오는데 실패했습니다:', error);
+      }
+    };
+
+    fetchGroupInfo();
+  }, [groupid]);
 
   // 여행 목록 로드
   useEffect(() => {
@@ -57,22 +81,71 @@ const Stat = () => {
     fetchFinishedTravels();
   }, [groupid]);
 
-  // URL에서 travelid가 있으면 해당 여행 찾기
+  // 페이지 상태 관리
   useEffect(() => {
-    if (travelid && finishedTravels.length > 0) {
+    if (travelid === 'overall') {
+      setSelectedTravel(null);
+    } else if (travelid && finishedTravels.length > 0) {
       const travel = finishedTravels.find(t => t.tpPk === parseInt(travelid));
       if (travel) {
         setSelectedTravel(travel);
       }
+    } else {
+      setSelectedTravel(null);
     }
   }, [travelid, finishedTravels]);
+
+  // 전체 통계 버튼 클릭 핸들러
+  const handleOverallStatsClick = () => {
+    navigate(`/group/${groupid}/stats/overall`);
+  };
 
   if (selectedTravel) {
     return <TravelStatsView travel={{ ...selectedTravel, groupid }} />;
   }
 
+  if (travelid === 'overall' || isOverallStats) {
+    return <OverallStatsView groupid={groupid} groupInfo={groupInfo} />;
+  }
+
   return (
     <div className="h-full overflow-y-auto">
+      {/* 전체 여행 소비 패턴 분석 버튼 */}
+      {finishedTravels && finishedTravels.length > 0 && (
+        <div className="mb-4">
+          <button
+            onClick={handleOverallStatsClick}
+            className="w-full bg-light-blue hover:bg-blue-200 rounded-xl p-4 shadow-lg transition-all duration-200 flex items-center justify-between group"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="text-left">
+                <h3 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+                  {groupInfo?.groupName || '그룹'} 여행 소비 패턴 분석
+                </h3>
+                <p className="text-sm text-gray-600 group-hover:text-blue-500 transition-colors">
+                  전체 여행 통계 보기
+                </p>
+              </div>
+            </div>
+            <div className="text-gray-400 group-hover:text-blue-500 transition-colors">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+      )}
+
       {/* 여행 목록 */}
       <div className="space-y-4">
         {isLoading ? (
