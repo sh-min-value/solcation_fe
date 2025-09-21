@@ -58,17 +58,27 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
   return (
     <>
       {/* 헤더 */}
-      <div className="relative z-10 bg-white rounded-xl p-4 shadow-sm mb-[-26px]">
+      <div
+        className="relative z-10 bg-white rounded-xl p-4 shadow-sm mb-[-26px] cursor-pointer"
+        onClick={() => navigate('/group')}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate('/group');
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
         <div className="flex justify-between items-center">
           <h2 className="text-[18px] font-bold text-gray-1">
             내 그룹 보러가기
           </h2>
           <svg
-            className="w-5 h-5 text-gray-2 cursor-pointer"
+            className="w-5 h-5 text-gray-2"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            onClick={() => navigate('/group')}
           >
             <path
               strokeLinecap="round"
@@ -81,7 +91,18 @@ const MyGroupsSection = ({ myGroups, navigate }) => {
       </div>
 
       {/* 그룹 목록 */}
-      <div className="relative z-0 bg-white rounded-xl px-6 py-4 pt-12 mb-6">
+      <div
+        className="relative z-0 bg-white rounded-xl px-6 py-4 pt-12 mb-6 cursor-pointer"
+        onClick={() => navigate('/group')}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate('/group');
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
         <div className="grid grid-cols-4 gap-3">
           {myGroups.map(group => (
             <div
