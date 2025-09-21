@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm config set registry https://registry.npmjs.org/
-          npm ci --retry=3 --timeout=300000
+          npm ci --legacy-peer-deps --fetch-retries=5 --fetch-retry-maxtimeout=60000
 
       - name: Run linting
         run: npm run lint
