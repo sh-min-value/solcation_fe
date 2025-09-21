@@ -135,7 +135,7 @@ const CategoryCompareSection = ({ travel, groupid }) => {
   return (
     <div className="mb-6">
       <div className="text-left">
-        <h2 className="text-sm font-normal text-black mb-4">
+        <h2 className="text-base font-bold text-third mb-4">
           카테고리 별로 비교해 드릴게요
         </h2>
       </div>
