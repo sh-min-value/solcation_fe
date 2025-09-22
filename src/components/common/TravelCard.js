@@ -3,7 +3,7 @@ import { getTravelProfileImage } from '../../services/s3';
 import { getStateIcon, getTravelCategoryIcon } from '../../utils/CategoryIcons';
 import { FaUserGroup } from 'react-icons/fa6';
 
-const TravelCard = ({ travel, groupid, onClick }) => {
+const TravelCard = ({ travel, groupid, onClick, className }) => {
     const [imageUrl, setImageUrl] = useState(null);
     const [imageLoading, setImageLoading] = useState(false);
 
@@ -34,8 +34,8 @@ const TravelCard = ({ travel, groupid, onClick }) => {
 
     return (
         <div 
-            className='w-full bg-white p-3 my-4 rounded-xl shadow-lg flex items-center space-x-2 justify-between cursor-pointer' 
-            onClick={onClick}
+        className={`bg-white backdrop-blur-sm rounded-3xl p-4 my-4 mx-1 shadow-[0_0_5px_rgba(0,0,0,0.1)] transition-all duration-200 cursor-pointer transform hover:-translate-y-1 hover:shadow-lg flex flex-row items-center space-x-4 ${className}`}
+        onClick={onClick}
             onKeyDown={handleKeyDown}
             role="button"
             tabIndex={0}
