@@ -19,6 +19,7 @@ export const TravelAPI = {
     getTravel: (travelId, groupId) => apiClient.get(`/group/${groupId}/travel/${travelId}`),
     createTravel: (travel, groupId) => apiClient.postMultipart(`/group/${groupId}/travel/new`, travel),
     getTravelDetail: (travelId, groupId) => apiClient.get(`/group/${groupId}/travel/${travelId}/plans`),
+    deleteTravel: (travelId, groupId) => apiClient.delete(`/group/${groupId}/travel/${travelId}`),
   };
   
 export const planDetailAPI = {

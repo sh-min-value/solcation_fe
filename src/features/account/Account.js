@@ -6,6 +6,7 @@ import { AccountAPI } from '../../services/AccountAPI';
 import { useAuth } from '../../context/AuthContext';
 import emptySol from '../../assets/images/empty_sol.svg';
 import Loading from '../../components/common/Loading';
+import EmptyBear from '../../components/common/EmptyBear';
 
 // 스켈레톤 로딩 컴포넌트
 const AccountSkeleton = () => {
@@ -114,53 +115,25 @@ const Account = () => {
   // 계좌가 없는 경우
   if (!isExist) {
     return (
-      <div className="text-center pt-20 justify-center items-center">
-        <img
-          src={emptySol}
-          alt="No Account"
-          className="w-[240px] h-[240px] mx-auto mb-6"
+      <>
+        <EmptyBear
+          title={'앗! 아직 모임통장이 없어요!'}
+          description={
+            isGroupLeader
+              ? `${groupData?.groupName}의 모임통장을 개설해보세요.`
+              : `${groupData?.groupLeader}님에게 개설을 요청해보세요.`
+          }
+          onClick={
+            isGroupLeader
+              ? () => navigate(`/group/${groupid}/account/new`)
+              : null
+          }
+          buttonText={
+            isGroupLeader ? '모임통장 만들기' : '모임통장 개설 요청하기'
+          }
+          disabledButton={isGroupLeader ? false : true}
         />
-        <div className="text-black text-lg mb-2">
-          앗, 아직 모임통장이 없어요!
-        </div>
-        {isGroupLeader ? (
-          <div>
-            <p className="text-black text-lg mb-6">
-              <span className="font-bold">
-                &ldquo;{groupData?.groupName}&rdquo;
-              </span>
-              의 모임통장을 개설해보세요.
-            </p>
-            <button
-              onClick={() => navigate(`/group/${groupid}/account/new`)}
-              className={buttonClass}
-            >
-              모임통장 만들기
-            </button>
-          </div>
-        ) : (
-          <div>
-            <p className="text-black text-lg mb-6">
-              {groupData?.groupLeader ? (
-                <>
-                  <span className="font-bold">
-                    &ldquo;{groupData?.groupLeader}&rdquo;
-                  </span>
-                  님에게 개설을 요청해보세요.
-                </>
-              ) : (
-                <>
-                  <span className="font-bold">그룹장</span>에게 개설을
-                  요청해보세요.
-                </>
-              )}
-            </p>
-            <button onClick={() => {}} className={buttonClass}>
-              모임통장 개설 요청하기
-            </button>
-          </div>
-        )}
-      </div>
+      </>
     );
   }
 

@@ -28,7 +28,7 @@ const ErrorPage = ({ error: propError }) => {
             </div>
               <p className="text-lg text-red-600 font-bold">ERROR</p>
               <p className="text-lg text-gray-700 m-1 ml-2">
-                {error?.message || '알 수 없는 오류가 발생했습니다.'}
+                {error.response?.error || error.message || 'Unknown error' || '알 수 없는 오류가 발생했습니다.'}
               </p>
           </div>
 
