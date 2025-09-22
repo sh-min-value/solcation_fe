@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Plus } from 'lucide-react';
 
@@ -9,6 +9,7 @@ import CalendarSection from '../main/components/CalendarSection';
 import people from '../../assets/images/people.svg';
 import HappySol from '../../assets/images/happy_sol.svg';
 import { TravelAPI } from '../../services/TravelAPI';
+import { GroupAPI } from '../../services/GroupAPI';
 import SelectPurpose from '../../components/common/SelectPurpose';
 import SelectLocation from './components/SelectLocation';
 
@@ -299,7 +300,7 @@ const CompletionStep = () => {
 const TravelCreate = () => {
   const navigate = useNavigate();
   const { groupid } = useParams();
-  const { groupData, triggerRefresh } = useOutletContext();
+  const [groupData, setGroupData] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedDates, setSelectedDates] = useState([]);
   const [formData, setFormData] = useState({
@@ -317,7 +318,24 @@ const TravelCreate = () => {
   const currentStepData = descriptions[currentStep];
   const isLastStep = currentStep === descriptions.length - 1;
 
-  // 그룹 데이터가 있으면 participantCount 설정
+  // 그룹 데이터 로드
+  useEffect(() => {
+    const loadGroupData = async () => {
+      try {
+        const data = await GroupAPI.getGroup(groupid);
+        setGroupData(data);
+        console.log('groupData:', data);
+      } catch (error) {
+        console.error('그룹 데이터 로드 실패:', error);
+      }
+    };
+    
+    if (groupid) {
+      loadGroupData();
+    }
+  }, [groupid]);
+
+  // 그룹 데이터가 로드되면 participantCount 설정
   useEffect(() => {
     if (groupData && groupData.totalMembers) {
       setFormData(prev => ({ 
@@ -405,13 +423,6 @@ const TravelCreate = () => {
     }
   };
 
-  //이전 버튼 함수
-  const handlePrev = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
   //선택한 값 업데이트
   const updateFormData = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -455,9 +466,10 @@ const TravelCreate = () => {
     return buttonTexts[step] || '다음 단계로';
   };
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+  // 디버깅용 - 필요시에만 사용
+  // useEffect(() => {
+  //   console.log(formData);
+  // }, [formData]);
   //전체 컴포넌트
   const stepComponents = {
     input: InputTravelTitle,
@@ -546,7 +558,7 @@ const TravelCreate = () => {
       <Header showBackButton={true} />
       {/* Progress Bar */}
       {!isLastStep && (
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center my-12">
           <div className="flex space-x-2">
             {descriptions.slice(0, -1).map((_, index) => (
               <div

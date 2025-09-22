@@ -5,6 +5,7 @@ import Header from '../../components/common/Header';
 import BottomButton from '../../components/common/BottomButton';
 import PasswordSetupForm from '../account/components/PasswordSetupForm';
 import HappySol from '../../assets/images/happy_sol.svg';
+import Loading from '../../components/common/Loading';
 
 const descriptions = [
   {
@@ -76,7 +77,7 @@ const AddressConfirm = ({ userProfile }) => {
 };
 
 //2. 비밀번호 설정
-const PasswordSetup = ({ value, onChange, onNext }) => {
+const PasswordSetup = ({ value, onChange, onNext, groupid, setIsSubmitting, isSubmitting }) => {
   const [password, setPassword] = useState(value || '');
   const [errors, setErrors] = useState({});
 
@@ -87,10 +88,24 @@ const PasswordSetup = ({ value, onChange, onNext }) => {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     // 비밀번호가 6자리인지 확인
     if (password.length === 6) {
-      onNext();
+      // 카드 개설 API 호출
+      try {
+        setIsSubmitting(true);
+        console.log('카드 개설 시작:', { groupId: groupid, password: password });
+        const response = await TransactionAPI.openCard(groupid, { pw: password });
+        console.log('카드 개설 성공:', response);
+        setIsSubmitting(false);
+        onNext();
+        
+      } catch (error) {
+        console.error('카드 개설 실패:', error);
+        alert('카드 개설에 실패했습니다. 다시 시도해주세요.');
+        setIsSubmitting(false);
+        return;
+      }
     } else {
       setErrors({ saPw: '6자리 비밀번호를 입력해주세요' });
     }
@@ -98,13 +113,17 @@ const PasswordSetup = ({ value, onChange, onNext }) => {
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <PasswordSetupForm
-        formData={{ saPw: password }}
-        updateFormData={updateFormData}
-        errors={errors}
-        className="mt-0"
-        onNext={handleNext}
-      />
+      {isSubmitting ? (
+        <Loading/>
+      ) : (
+        <PasswordSetupForm
+          formData={{ saPw: password }}
+          updateFormData={updateFormData}
+          errors={errors}
+          className="mt-0"
+          onNext={handleNext}
+        />
+      )}
     </div>
   );
 };
@@ -163,41 +182,15 @@ const CardCreate = () => {
         alert('주소 정보가 없습니다. 계정 설정에서 주소를 입력해주세요.');
         return;
       }
-    } else if (currentStep === 1) {
-      // 비밀번호 설정 확인
-      if (!formData.password || formData.password.length !== 6) {
-        alert('6자리 비밀번호를 입력해주세요.');
-        return;
-      }
     } else if (currentStep === 2) {
-      // 카드 개설 API 호출
-      try {
-        setIsSubmitting(true);
-        console.log('카드 개설 시작:', { groupId: groupid, password: formData.password });
-        const response = await TransactionAPI.openCard(groupid, formData.password);
-        console.log('카드 개설 성공:', response);
-        
-        // 성공 후 그룹 홈으로 이동
-        navigate(`/group/${groupid}/account`);
-        return;
-      } catch (error) {
-        console.error('카드 개설 실패:', error);
-        alert('카드 개설에 실패했습니다. 다시 시도해주세요.');
-        setIsSubmitting(false);
-        return;
-      }
+      // 성공 후 그룹 홈으로 이동
+      navigate(`/group/${groupid}/account`);
+      return;
     }
 
     // 다음 단계로
     if (currentStep < descriptions.length - 1) {
       setCurrentStep(currentStep + 1);
-    }
-  };
-
-  //이전 버튼 함수
-  const handlePrev = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -255,6 +248,9 @@ const CardCreate = () => {
         value: formData.password,
         onChange: (password) => updateFormData('password', password),
         onNext: handleNext,
+        groupid: groupid,
+        setIsSubmitting: setIsSubmitting,
+        isSubmitting: isSubmitting,
       };
     }
 
@@ -276,7 +272,7 @@ const CardCreate = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
-      <Header showBackButton={true} />
+      <Header showBackButton={true}/>
       {/* Progress Bar */}
       {!isLastStep && (
         <div className="flex justify-center my-4">

@@ -10,7 +10,8 @@ const Travel = () => {
     const navigate = useNavigate();
     const [travels, setTravels] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedStatus, setSelectedStatus] = useState('0'); // 0: 전체, 1: 여행 전, 2: 여행 중, 3: 여행 완료
+    const [selectedStatus, setSelectedStatus] = useState('0'); 
+    const [showDropdown, setShowDropdown] = useState(false);
     const { groupid } = useParams();
 
     useEffect(() => {
@@ -48,29 +49,97 @@ const Travel = () => {
         navigate(`/group/${groupid}/travel/new`);
     }
 
-    const handleStatusChange = (e) => {
-        setSelectedStatus(e.target.value);
+    const statusOptions = [
+        { value: '0', label: '전체' },
+        { value: '1', label: '여행 전' },
+        { value: '2', label: '여행 중' },
+        { value: '3', label: '여행 완료' }
+    ];
+
+    const getStatusText = () => {
+        const option = statusOptions.find(opt => opt.value === selectedStatus);
+        return option ? option.label : '전체';
+    };
+
+    const handleStatusChange = (status) => {
+        setSelectedStatus(status);
+        setShowDropdown(false);
     }
 
     const handleTravelClick = (travel) => {
         navigate(`/group/${groupid}/travel/${travel.pk}`);
     };
 
+    // 필터 및 추가 버튼 컴포넌트
+    const FilterAndAddButtons = () => (
+        <div className='flex items-center justify-between mb-4 flex-shrink-0'>
+            <div className="relative">
+                <div
+                    className="inline-flex items-center cursor-pointer px-2 pl-3 py-1 w-20 flex flex-row justify-between bg-white rounded-sm"
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            setShowDropdown(!showDropdown);
+                        }
+                    }}
+                    aria-expanded={showDropdown}
+                    aria-haspopup="listbox"
+                >
+                    <span className="text-sm text-gray-2">{getStatusText()}</span>
+                    <svg
+                        className={`w-3 h-3 text-gray-2 transition-transform ml-1 ${
+                            showDropdown ? 'rotate-180' : ''
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                        />
+                    </svg>
+                </div>
+
+                {showDropdown && (
+                    <div className="absolute z-10 bg-white border border-gray-5 rounded-md shadow-lg mt-1 min-w-fit w-20">
+                        {statusOptions.map(option => (
+                            <div
+                                key={option.value}
+                                className={`px-2 pl-3 py-2 text-sm cursor-pointer text-left w-20 ${
+                                    selectedStatus === option.value
+                                        ? 'bg-main text-white'
+                                        : 'text-gray-2 hover:bg-gray-6'
+                                }`}
+                                role="option"
+                                tabIndex={0}
+                                aria-selected={selectedStatus === option.value}
+                                onClick={() => handleStatusChange(option.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        handleStatusChange(option.value);
+                                    }
+                                }}
+                            >
+                                {option.label}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <button className='bg-white rounded-sm px-2 focus:outline-none focus:underline'>
+                <CiSquarePlus className='h-6 w-6 text-gray-2' onClick={() => navigate(`/group/${groupid}/travel/new`)}/>
+            </button>
+        </div>
+    );
+
     return (
         <div className="h-full flex flex-col">
-            <div className='flex items-center justify-between mb-4 flex-shrink-0'>
-                <select className='bg-white rounded-sm p-2 focus:outline-none focus:underline'
-                value={selectedStatus}
-                onChange={handleStatusChange}>
-                    <option value="0">전체</option>
-                    <option value="1">여행 전</option>
-                    <option value="2">여행 중</option>
-                    <option value="3">여행 완료</option>
-                </select>
-                <button className='bg-white rounded-sm px-2 focus:outline-none focus:underline'>
-                    <CiSquarePlus className='h-6 w-6' onClick={() => navigate(`/group/${groupid}/travel/new`)}/>
-                </button>
-            </div>
+            {travels && travels.length > 0 && <FilterAndAddButtons />}
             {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
                     <Loading />

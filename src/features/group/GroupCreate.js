@@ -297,13 +297,6 @@ const GroupCreate = () => {
     }
   };
 
-  //이전 버튼 함수
-  const handlePrev = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
   //선택한 값 업데이트
   const updateFormData = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));

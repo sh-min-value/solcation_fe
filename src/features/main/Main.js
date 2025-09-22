@@ -15,8 +15,6 @@ const Main = () => {
 
   // 상태 관리
   const [myGroups, setMyGroups] = useState([]);
-  const [userProfile, setUserProfile] = useState(null);
-  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [events, setEvents] = useState([]);
   const [isEventsLoading, setIsEventsLoading] = useState(true);
@@ -29,18 +27,6 @@ const Main = () => {
     } catch (error) {
       console.error('그룹 목록 조회 실패 :', error);
       setMyGroups([]);
-    }
-  };
-
-  const fetchUserProfile = async () => {
-    try {
-      const profileResponse = await mainAPI.getUserProfile();
-      setUserProfile(profileResponse);
-    } catch (error) {
-      console.error('사용자 프로필 조회 실패 :', error);
-      setUserProfile(null);
-    } finally {
-      setIsProfileLoading(false);
     }
   };
 
@@ -75,7 +61,6 @@ const Main = () => {
     const fetchData = async () => {
       await Promise.all([
         fetchGroups(),
-        fetchUserProfile(),
         fetchNotifications(),
         fetchMonthlyPlans(),
       ]);
@@ -90,11 +75,7 @@ const Main = () => {
 
       <div className="flex-1 p-6 w-full overflow-y-auto">
         <MyGroupsSection myGroups={myGroups} navigate={navigate} />
-        <UserProfileSection
-          userProfile={userProfile}
-          isProfileLoading={isProfileLoading}
-          user={user}
-        />
+        <UserProfileSection user={user} />
         <NotificationSection
           notifications={notifications}
           navigate={navigate}
