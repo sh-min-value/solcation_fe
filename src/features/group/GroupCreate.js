@@ -301,6 +301,8 @@ const GroupCreate = () => {
   const handlePrev = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+    }else{
+      navigate('/group');
     }
   };
 

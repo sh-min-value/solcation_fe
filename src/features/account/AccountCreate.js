@@ -135,6 +135,8 @@ const AccountCreate = () => {
   const handlePrev = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+    }else{
+      navigate(`/group/${groupId}/account`);
     }
   };
   // 폼 데이터 업데이트 함수
