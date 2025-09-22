@@ -297,15 +297,6 @@ const GroupCreate = () => {
     }
   };
 
-  //이전 버튼 함수
-  const handlePrev = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }else{
-      navigate('/group');
-    }
-  };
-
   //선택한 값 업데이트
   const updateFormData = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -340,7 +331,7 @@ const GroupCreate = () => {
   if (loading) return <Loading />;
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
-      <Header showBackButton={true} onBack={handlePrev} />
+      <Header showBackButton={true} />
       {/* Progress Bar */}
       {!isLastStep && (
         <div className="flex justify-center mb-14">
