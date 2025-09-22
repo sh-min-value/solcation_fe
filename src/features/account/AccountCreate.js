@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/common/Header';
 import BottomButton from '../../components/common/BottomButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AccountAPI } from '../../services/AccountAPI';
+import { TransactionAPI } from '../../services/TransactionAPI';
 import AccountInfoForm from './components/AccountInfoForm';
 import PasswordSetupForm from './components/PasswordSetupForm';
 import TermsAgreementForm from './components/TermsAgreementForm';
@@ -34,6 +35,8 @@ const AccountCreate = () => {
   const { groupid: groupId } = useParams();
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
 
   // 서명 데이터를 파일로 변환하는 함수
   const dataURLtoFile = (dataURL, filename) => {
@@ -137,6 +140,31 @@ const AccountCreate = () => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
+  // 유저 주소 조회
+  useEffect(() => {
+    const fetchUserAddress = async () => {
+      try {
+        const response = await TransactionAPI.getUserAddress(groupId);
+        setUserProfile(response);
+      } catch (error) {
+        console.error('유저 주소 조회 실패:', error);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchUserAddress();
+  }, [groupId]);
+
+  // 로딩 중일 때
+  if (isLoadingProfile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex items-center justify-center">
+        <div className="text-white text-lg">사용자 정보를 불러오는 중...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
       <Header showBackButton={true} />
@@ -178,6 +206,7 @@ const AccountCreate = () => {
               formData={formData}
               updateFormData={updateFormData}
               errors={errors}
+              userProfile={userProfile}
             />
           ) : currentStep === 1 ? (
             <PasswordSetupForm

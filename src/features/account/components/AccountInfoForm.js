@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SignatureCanvas from 'react-signature-canvas';
 import InputField from './InputField';
 import { useAuth } from '../../../context/AuthContext';
 
 // 계정 정보 입력 폼 컴포넌트
-const AccountInfoForm = ({ formData, updateFormData, errors }) => {
+const AccountInfoForm = ({ formData, updateFormData, errors, userProfile }) => {
   const sigPad = useRef();
   const { user } = useAuth();
 
@@ -21,34 +21,22 @@ const AccountInfoForm = ({ formData, updateFormData, errors }) => {
   };
 
   // 상태 관리
-  const [residentNumber, setResidentNumber] = useState({ front: '', back: '' });
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState(parsePhoneNumber(user?.tel));
 
-  // 주민등록번호 입력
-  const handleResidentNumberChange = (part, value) => {
-    const newResidentNumber = { ...residentNumber, [part]: value };
-    setResidentNumber(newResidentNumber);
-    updateFormData('residentNumber', newResidentNumber);
-
-    if (part === 'front' && value.length === 6) {
-      setTimeout(() => {
-        const backInput = document.querySelector(
-          'input[placeholder="뒤 1자리"]'
-        );
-        if (backInput) {
-          backInput.focus();
-        }
-      }, 0);
-    } else if (part === 'back') {
-      const firstDigit = value.slice(0, 1);
-      const maskedDigits = '*'.repeat(6);
-      const newBackValue = firstDigit + maskedDigits;
-      const updatedResidentNumber = { ...residentNumber, [part]: newBackValue };
-      setResidentNumber(updatedResidentNumber);
-      updateFormData('residentNumber', updatedResidentNumber);
+  // 주소 정보 설정
+  useEffect(() => {
+    if (userProfile) {
+      const addressData = userProfile.data || userProfile;
+      if (addressData) {
+        const fullAddress = `${addressData.address || ''} ${
+          addressData.addressDetail || ''
+        } ${addressData.postCode || ''}`.trim();
+        setAddress(fullAddress);
+        updateFormData('address', fullAddress);
+      }
     }
-  };
+  }, [userProfile]);
 
   // 전화번호 입력
   const handlePhoneNumberChange = (part, value) => {
@@ -76,66 +64,15 @@ const AccountInfoForm = ({ formData, updateFormData, errors }) => {
         disabled={true}
       />
 
-      {/* 주민등록번호 입력 */}
-      <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <label
-            htmlFor="resident-number"
-            className="text-gray04 text-lg font-medium"
-          >
-            주민등록번호
-          </label>
-          {errors.residentNumber && (
-            <span className="text-group-1 text-[10px]">
-              {errors.residentNumber}
-            </span>
-          )}
-        </div>
-        <div id="resident-number" className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="앞 6자리"
-              maxLength={6}
-              className="w-full text-lg border-none outline-none bg-transparent text-white text-left placeholder-gray04 px-1 py-2"
-              value={residentNumber.front}
-              onChange={e =>
-                handleResidentNumberChange(
-                  'front',
-                  e.target.value.replace(/\D/g, '')
-                )
-              }
-            />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-blue"></div>
-          </div>
-          <span className="text-white text-sm">-</span>
-          <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="뒤 1자리"
-              maxLength={7}
-              className="w-full text-lg border-none outline-none bg-transparent text-white text-left placeholder-gray04 px-1 py-2"
-              value={residentNumber.back}
-              onChange={e =>
-                handleResidentNumberChange(
-                  'back',
-                  e.target.value.replace(/\D/g, '')
-                )
-              }
-            />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-blue"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* 주소 입력 */}
+      {/* 주소 표시 */}
       <InputField
         id="address"
         label="주소"
         placeholder="주소"
         value={address}
-        onChange={e => handleAddressChange(e.target.value)}
+        onChange={() => {}}
         error={errors.address}
+        disabled={true}
       />
 
       {/* 전화번호 입력 */}
@@ -243,6 +180,7 @@ AccountInfoForm.propTypes = {
   formData: PropTypes.object.isRequired,
   updateFormData: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
+  userProfile: PropTypes.object,
 };
 
 export default AccountInfoForm;
