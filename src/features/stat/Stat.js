@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+  useOutletContext,
+} from 'react-router-dom';
 import TravelCard from '../../components/common/TravelCard';
 import { statAPI } from '../../services/StatAPI';
-import { GroupAPI } from '../../services/GroupAPI';
 import emptySol from '../../assets/images/empty_sol.svg';
 import TravelStatsView from './components/TravelStatsView';
 import OverallStatsView from './components/OverallStatsView';
@@ -20,6 +24,7 @@ const Stat = () => {
   const { groupid, travelid } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { groupData, triggerRefresh } = useOutletContext();
 
   // 전체 통계 페이지 확인
   const isOverallStats = location.pathname.includes('/stats/overall');
@@ -27,7 +32,6 @@ const Stat = () => {
   const [finishedTravels, setFinishedTravels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTravel, setSelectedTravel] = useState(null);
-  const [groupInfo, setGroupInfo] = useState(null);
 
   // 여행 데이터를 변환
   const convertTravelToTravelCardFormat = travel => ({
@@ -40,22 +44,6 @@ const Stat = () => {
     categoryCode: travel.tpcCode,
     tpPk: travel.tpPk,
   });
-
-  // 그룹 정보 로드
-  useEffect(() => {
-    const fetchGroupInfo = async () => {
-      if (!groupid) return;
-
-      try {
-        const response = await GroupAPI.getGroup(groupid);
-        setGroupInfo(response);
-      } catch (error) {
-        console.error('그룹 정보를 가져오는데 실패했습니다:', error);
-      }
-    };
-
-    fetchGroupInfo();
-  }, [groupid]);
 
   // 여행 목록 로드
   useEffect(() => {
@@ -106,7 +94,7 @@ const Stat = () => {
   }
 
   if (travelid === 'overall' || isOverallStats) {
-    return <OverallStatsView groupid={groupid} groupInfo={groupInfo} />;
+    return <OverallStatsView groupid={groupid} groupInfo={groupData} />;
   }
 
   return (
@@ -121,7 +109,7 @@ const Stat = () => {
             <div className="flex items-center space-x-3">
               <div className="text-left">
                 <h3 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                  {groupInfo?.groupName || '그룹'} 여행 소비 패턴 분석
+                  {groupData?.groupName || '그룹'} 여행 소비 패턴 분석
                 </h3>
                 <p className="text-sm text-gray-600 group-hover:text-blue-500 transition-colors">
                   전체 여행 통계 보기

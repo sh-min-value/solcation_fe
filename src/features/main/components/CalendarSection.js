@@ -45,7 +45,7 @@ const getEventsForDate = (date, events) => {
   const targetDate = new Date(date);
   targetDate.setHours(0, 0, 0, 0);
 
-  return events
+  const filteredEvents = events
     .map(event => {
       const startDate = new Date(event.tpStart);
       const endDate = new Date(event.tpEnd);
@@ -65,6 +65,14 @@ const getEventsForDate = (date, events) => {
         : null;
     })
     .filter(Boolean);
+
+  return filteredEvents.sort((a, b) => {
+    const aStartDate = new Date(a.tpStart);
+    const bStartDate = new Date(b.tpStart);
+    return aStartDate.getTime() !== bStartDate.getTime()
+      ? aStartDate.getTime() - bStartDate.getTime()
+      : a.travelPk - b.travelPk;
+  });
 };
 
 // 달력 날짜 생성
@@ -124,7 +132,14 @@ const generateCalendarDays = (year, month, events = []) => {
 const TODAY = new Date();
 const TODAY_MONTH = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
 
-const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClickable = false, showNextMonth = false, showPrevMonth = false}) => {
+const CalendarSection = ({
+  events = [],
+  onDateSelect,
+  selectedDates = [],
+  isClickable = false,
+  showNextMonth = false,
+  showPrevMonth = false,
+}) => {
   const [currentDate, setCurrentDate] = React.useState(() => TODAY_MONTH);
   const [tempStartDate, setTempStartDate] = React.useState(null);
   const [isSelectingEnd, setIsSelectingEnd] = React.useState(false);
@@ -134,30 +149,43 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClic
   const calendarDays = generateCalendarDays(year, month, events);
 
   const handlePrevMonth = () => {
-    const currentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    
+    const currentMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+
     if (currentMonth == TODAY_MONTH) {
       return;
     }
-    
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+
+    setCurrentDate(
+      prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setCurrentDate(
+      prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+    );
   };
 
   // 이전 달 버튼 비활성화 여부 확인
   const isPrevMonthDisabled = () => {
-    const currentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const currentMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
     return currentMonth <= TODAY_MONTH;
   };
 
-  const handleDateClick = (dayInfo) => {
-    if (!dayInfo.isCurrentMonth || !isClickable || !isDateInRange(dayInfo)) return;
-    
+  const handleDateClick = dayInfo => {
+    if (!dayInfo.isCurrentMonth || !isClickable || !isDateInRange(dayInfo))
+      return;
+
     const clickedDate = dayInfo.fullDate;
-    
+
     if (!tempStartDate) {
       // 첫 번째 클릭: 시작일 설정
       setTempStartDate(clickedDate);
@@ -167,7 +195,7 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClic
       // 두 번째 클릭: 마감일 설정
       const startDate = tempStartDate;
       const endDate = clickedDate;
-      
+
       if (clickedDate < startDate) {
         // 더 빠른 날짜를 클릭하면 시작일로 재설정
         setTempStartDate(clickedDate);
@@ -181,61 +209,62 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClic
     }
   };
 
-  const isDateSelected = (dayInfo) => {
-    if (!dayInfo.isCurrentMonth || !selectedDates || selectedDates.length === 0) return false;
-    
-    const validDates = selectedDates.filter(date => 
-      date && typeof date.toDateString === 'function'
+  const isDateSelected = dayInfo => {
+    if (!dayInfo.isCurrentMonth || !selectedDates || selectedDates.length === 0)
+      return false;
+
+    const validDates = selectedDates.filter(
+      date => date && typeof date.toDateString === 'function'
     );
-    
+
     if (validDates.length === 0) return false;
-    
+
     // 첫 번째 클릭만 있는 경우
     if (validDates.length === 1) {
       return dayInfo.fullDate.toDateString() === validDates[0].toDateString();
     }
-    
+
     // 두 번째 클릭까지 있는 경우
     const startDate = new Date(Math.min(...validDates));
     const endDate = new Date(Math.max(...validDates));
     const currentDate = dayInfo.fullDate;
-    
+
     // 시작일부터 마감일까지의 모든 날짜를 선택된 것으로 표시
     return currentDate >= startDate && currentDate <= endDate;
   };
 
-  const isDateInRange = (dayInfo) => {
+  const isDateInRange = dayInfo => {
     if (!dayInfo.isCurrentMonth) return false;
-    
+
     // 오늘 포함해서 선택 가능
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return dayInfo.fullDate >= today;
   };
 
-  const getSelectedDateStyle = (dayInfo) => {
+  const getSelectedDateStyle = dayInfo => {
     if (!isDateSelected(dayInfo)) return '';
-    
-    const validDates = selectedDates.filter(date => 
-      date && typeof date.toDateString === 'function'
+
+    const validDates = selectedDates.filter(
+      date => date && typeof date.toDateString === 'function'
     );
-    
+
     if (validDates.length === 0) return '';
-    
+
     // 첫 번째 클릭만 있는 경우
     if (validDates.length === 1) {
       return 'bg-secondary text-third font-bold rounded-full';
     }
-    
+
     // 두 번째 클릭까지 있는 경우
     const startDate = new Date(Math.min(...validDates));
     const endDate = new Date(Math.max(...validDates));
     const currentDate = dayInfo.fullDate;
-    
+
     const isStartDate = currentDate.toDateString() === startDate.toDateString();
     const isEndDate = currentDate.toDateString() === endDate.toDateString();
     const isOnlyDate = startDate.toDateString() === endDate.toDateString();
-    
+
     if (isOnlyDate) {
       return 'bg-secondary text-third font-bold rounded-full';
     } else if (isStartDate) {
@@ -256,30 +285,52 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClic
             onClick={handlePrevMonth}
             disabled={isPrevMonthDisabled()}
             className={`p-2 rounded-full transition-colors ${
-              isPrevMonthDisabled() 
-                ? 'opacity-50 cursor-not-allowed' 
+              isPrevMonthDisabled()
+                ? 'opacity-50 cursor-not-allowed'
                 : 'hover:bg-gray-100 cursor-pointer'
             }`}
             aria-label="이전 달"
           >
-            <svg className={`w-5 h-5 ${isPrevMonthDisabled() ? 'text-gray-3' : 'text-gray-1'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className={`w-5 h-5 ${
+                isPrevMonthDisabled() ? 'text-gray-3' : 'text-gray-1'
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
         )}
-        
+
         <h2 className="text-xl font-bold text-gray-1">
           {year} {MONTH_NAMES[month]}
         </h2>
-        
+
         {showNextMonth && (
           <button
             onClick={handleNextMonth}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="다음 달"
           >
-            <svg className="w-5 h-5 text-gray-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5 text-gray-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         )}
@@ -298,39 +349,13 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClic
       </div>
 
       {/* 날짜 */}
-      <div 
+      <div
         className="grid grid-cols-7"
-        role={isClickable ? "application" : undefined}
+        role={isClickable ? 'application' : undefined}
         tabIndex={isClickable ? 0 : undefined}
-        aria-label={isClickable ? "달력 날짜 선택 영역" : undefined}
+        aria-label={isClickable ? '달력 날짜 선택 영역' : undefined}
       >
         {calendarDays.map((dayInfo, index) => {
-          const getBorderRadiusClass = () => {
-            if (dayInfo.events.length === 0) return '';
-
-            const firstEvent = dayInfo.events[0];
-            let borderRadiusClass = '';
-
-            // 당일치기
-            if (firstEvent.isStartDate && firstEvent.isEndDate) {
-              borderRadiusClass = 'rounded-[20px]';
-            }
-            // 종료일
-            else if (firstEvent.isEndDate) {
-              borderRadiusClass = 'rounded-r-[20px]';
-            }
-            // 시작일
-            else if (firstEvent.isStartDate) {
-              borderRadiusClass = 'rounded-l-[20px]';
-            }
-            // 중간 날짜
-            else {
-              borderRadiusClass = 'rounded-none';
-            }
-
-            return `font-semibold ${borderRadiusClass}`;
-          };
-
           const isSelected = isDateSelected(dayInfo);
           const selectedStyle = getSelectedDateStyle(dayInfo);
 
@@ -338,31 +363,70 @@ const CalendarSection = ({ events = [], onDateSelect, selectedDates = [], isClic
             <div
               key={index}
               data-date={index}
-              role={isClickable ? "button" : undefined}
+              role={isClickable ? 'button' : undefined}
               tabIndex={isClickable && dayInfo.isCurrentMonth ? 0 : -1}
               className={`
                  aspect-square flex items-center justify-center text-sm relative
-                 ${isClickable && isDateInRange(dayInfo) ? 'cursor-pointer' : 'cursor-default'}
+                 ${
+                   isClickable && isDateInRange(dayInfo)
+                     ? 'cursor-pointer'
+                     : 'cursor-default'
+                 }
                  ${!isDateInRange(dayInfo) ? 'text-gray-500' : ''}
                  ${dayInfo.isToday ? 'font-bold' : ''}
                  ${isClickable ? 'focus:outline-none' : ''}
                  ${selectedStyle || (dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-5')}
                `}
               onClick={isClickable ? () => handleDateClick(dayInfo) : undefined}
-              onKeyDown={isClickable ? (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleDateClick(dayInfo);
-                }
-              } : undefined}
-              aria-label={`${dayInfo.date}일 ${isSelected ? '선택됨' : '선택 가능'}`}
+              onKeyDown={
+                isClickable
+                  ? e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleDateClick(dayInfo);
+                      }
+                    }
+                  : undefined
+              }
+              aria-label={`${dayInfo.date}일 ${
+                isSelected ? '선택됨' : '선택 가능'
+              }`}
             >
               {dayInfo.events.length > 0 && !isSelected && (
-                <div
-                  className={`absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px] ${getGroupColor(
-                    dayInfo.events[0].groupPk
-                  )} ${getBorderRadiusClass()}`}
-                />
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[30px]">
+                  {dayInfo.events.map((event, eventIndex) => {
+                    const getBorderRadiusClass = event => {
+                      if (!event) return '';
+
+                      let borderRadiusClass = '';
+                      if (event.isStartDate && event.isEndDate) {
+                        borderRadiusClass = 'rounded-[20px]'; // 당일치기
+                      } else if (event.isEndDate) {
+                        borderRadiusClass = 'rounded-r-[20px]'; // 종료일
+                      } else if (event.isStartDate) {
+                        borderRadiusClass = 'rounded-l-[20px]'; // 시작일
+                      } else {
+                        borderRadiusClass = 'rounded-none'; // 중간 날짜
+                      }
+
+                      return `font-semibold ${borderRadiusClass}`;
+                    };
+
+                    return (
+                      <div
+                        key={event.travelPk}
+                        className={`absolute inset-x-0 ${getGroupColor(
+                          event.groupPk
+                        )} ${getBorderRadiusClass(event)}`}
+                        style={{
+                          height: '30px',
+                          opacity: 1,
+                          zIndex: dayInfo.events.length - eventIndex,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               )}
               <span className="relative z-10">{dayInfo.date}</span>
             </div>
