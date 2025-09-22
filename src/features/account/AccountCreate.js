@@ -164,9 +164,11 @@ const AccountCreate = () => {
           <div className="text-white text-xl font-[600] leading-tight whitespace-pre-line">
             {descriptions[currentStep].title}
           </div>
-          <div className="text-white text-sm font-medium">
-            {currentStep + 1} / {descriptions.length}
-          </div>
+          {currentStep !== descriptions.length - 1 && (
+            <div className="text-white text-sm font-medium">
+              {currentStep + 1} / {descriptions.length - 1}
+            </div>
+          )}
         </div>
 
         {/* 폼 컴포넌트 */}
