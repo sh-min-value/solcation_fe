@@ -55,7 +55,7 @@ const GroupCard = ({ group, onClick }) => {
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
-      className="bg-white backdrop-blur-sm rounded-xl p-4 border border-gray-5 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
+      className="bg-white backdrop-blur-sm rounded-xl p-4 shadow-[0_0_5px_rgba(0,0,0,0.1)] mx-1 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
     >
       <div className="flex items-center space-x-3">
         {/* 그룹 프로필 이미지 */}
