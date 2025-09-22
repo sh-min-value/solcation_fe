@@ -132,6 +132,11 @@ const AccountCreate = () => {
     }
   };
 
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
   // 폼 데이터 업데이트 함수
   const updateFormData = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -139,7 +144,7 @@ const AccountCreate = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
-      <Header showBackButton={true} />
+      <Header showBackButton={true} onBack={handlePrev} />
 
       {/* Progress Bar */}
       {currentStep !== descriptions.length - 1 && (

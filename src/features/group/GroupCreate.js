@@ -338,7 +338,7 @@ const GroupCreate = () => {
   if (loading) return <Loading />;
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
-      <Header showBackButton={true} />
+      <Header showBackButton={true} onBack={handlePrev} />
       {/* Progress Bar */}
       {!isLastStep && (
         <div className="flex justify-center mb-14">
