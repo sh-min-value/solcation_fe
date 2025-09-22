@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountAPI } from '../../../services/AccountAPI';
 import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
 
-const TransactionHistory = ({ groupId }) => {
+const TransactionHistory = ({ groupId, accountInfo }) => {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +14,11 @@ const TransactionHistory = ({ groupId }) => {
   // 거래내역 조회
   useEffect(() => {
     const fetchTransactions = async () => {
+      if (!groupId || !accountInfo) {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const response = await AccountAPI.getTransactionHistory(groupId);
         setTransactions(response.data || response);

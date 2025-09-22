@@ -56,6 +56,11 @@ const BriefAccount = ({ accountInfo, isGroupLeader }) => {
     }
   };
 
+  // accountInfo가 없으면 렌더링하지 않음
+  if (!accountInfo) {
+    return null;
+  }
+
   return (
     <div className="w-full bg-gradient-to-br from-third/60 to-third rounded-3xl text-white overflow-hidden">
       <RegularDepositModal
