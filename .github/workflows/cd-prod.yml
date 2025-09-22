@@ -1,0 +1,116 @@
+name: CD (React - Production)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+env:
+  IMAGE_TAG: react-prod-${{ github.sha }}
+  APP_DIR: $HOME/apps/react-app-prod
+
+jobs:
+  build_push_deploy:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm ci --retry=3 --timeout=300000
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test -- --coverage --watchAll=false --passWithNoTests
+
+      - name: Build React app
+        env:
+          REACT_APP_AWS_REGION: ${{ secrets.REACT_APP_AWS_REGION }}
+          REACT_APP_AWS_ACCESS_KEY_ID: ${{ secrets.REACT_APP_AWS_ACCESS_KEY_ID }}
+          REACT_APP_AWS_SECRET_ACCESS_KEY: ${{ secrets.REACT_APP_AWS_SECRET_ACCESS_KEY }}
+          REACT_APP_S3_BUCKET_NAME: ${{ secrets.REACT_APP_S3_BUCKET_NAME }}
+        run: npm run build
+
+      - name: Build Docker image (load into local Docker)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          tags: |
+            ghcr.io/${{ secrets.REACT_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            ghcr.io/${{ secrets.REACT_IMAGE_NAME }}:prod-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+          sbom: false
+
+      - name: Docker login (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push images
+        run: |
+          docker push ghcr.io/${{ secrets.REACT_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push ghcr.io/${{ secrets.REACT_IMAGE_NAME }}:prod-latest
+
+      - name: Deploy to Production
+        env:
+          IMAGE_NAME: ${{ secrets.REACT_IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          REACT_APP_AWS_REGION: ${{ secrets.REACT_APP_AWS_REGION }}
+          REACT_APP_AWS_ACCESS_KEY_ID: ${{ secrets.REACT_APP_AWS_ACCESS_KEY_ID }}
+          REACT_APP_AWS_SECRET_ACCESS_KEY: ${{ secrets.REACT_APP_AWS_SECRET_ACCESS_KEY }}
+          REACT_APP_S3_BUCKET_NAME: ${{ secrets.REACT_APP_S3_BUCKET_NAME }}
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+        run: |
+          set -e
+          mkdir -p "$APP_DIR"
+          cp docker-compose.yml "$APP_DIR/"
+          cd "$APP_DIR"
+
+          echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u '${{ github.actor }}' --password-stdin
+
+          export IMAGE_NAME IMAGE_TAG
+
+          # 이전 이미지 백업
+          if [ -f docker-compose.yml ]; then
+            docker compose ps -q > previous_containers.txt 2>/dev/null || true
+          fi
+
+          docker compose pull
+          docker compose up -d
+          
+          # 헬스체크
+          sleep 15
+          if ! docker compose ps | grep -q "Up"; then
+            echo "배포 실패, 롤백 시도"
+            if [ -f previous_containers.txt ]; then
+              docker compose down
+              docker compose up -d
+            fi
+            exit 1
+          fi
+          
+          docker compose ps
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "Production deployment successful!"
+          echo "Image: ghcr.io/${{ secrets.REACT_IMAGE_NAME }}:${{ env.IMAGE_TAG }}"

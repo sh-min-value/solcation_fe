@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  react-app:
+    image: ghcr.io/${IMAGE_NAME}:${IMAGE_TAG}
+    container_name: react-app
+    ports:
+      - "3000:80"
+    restart: always
+    environment:
+      - REACT_APP_AWS_REGION=${REACT_APP_AWS_REGION}
+      - REACT_APP_AWS_ACCESS_KEY_ID=${REACT_APP_AWS_ACCESS_KEY_ID}
+      - REACT_APP_AWS_SECRET_ACCESS_KEY=${REACT_APP_AWS_SECRET_ACCESS_KEY}
+      - REACT_APP_S3_BUCKET_NAME=${REACT_APP_S3_BUCKET_NAME}
+      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
