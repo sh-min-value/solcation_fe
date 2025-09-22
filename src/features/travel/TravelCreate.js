@@ -310,7 +310,7 @@ const TravelCreate = () => {
     profileImg: null,
     selectedCountry: '전체',
     selectedCity: '전체',
-    participantCount: 1, // 기본값 1명
+    participantCount: 1, 
   });
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 로딩 상태
 
@@ -338,6 +338,7 @@ const TravelCreate = () => {
   // 그룹 데이터가 로드되면 participantCount 설정
   useEffect(() => {
     if (groupData && groupData.totalMembers) {
+      console.log('groupData.totalMembers:', groupData.totalMembers);
       setFormData(prev => ({ 
         ...prev, 
         participantCount: groupData.totalMembers 

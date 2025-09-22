@@ -3,8 +3,8 @@ import { FaUserGroup } from 'react-icons/fa6';
 import { getGroupProfileImage } from '../../services/s3';
 import {
   getGroupCategoryIcon,
-  getGroupCategoryName,
 } from '../../utils/CategoryIcons';
+import categoryCache from '../../utils/CategoryCache';
 
 // 그룹 카드 컴포넌트
 const GroupCard = ({ group, onClick }) => {
@@ -118,7 +118,7 @@ const GroupCard = ({ group, onClick }) => {
                   alt={group.gcPk}
                   className="w-3 h-3 mr-1"
                 />
-                <span>{getGroupCategoryName(group.gcPk)}</span>
+                <span>{categoryCache.getGroupCategoryName(group.gcPk)}</span>
               </div>
             )}
           </div>
