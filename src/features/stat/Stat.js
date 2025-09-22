@@ -6,6 +6,7 @@ import { GroupAPI } from '../../services/GroupAPI';
 import emptySol from '../../assets/images/empty_sol.svg';
 import TravelStatsView from './components/TravelStatsView';
 import OverallStatsView from './components/OverallStatsView';
+import EmptyBear from '../../components/common/EmptyBear';
 
 // 로딩 스피너
 const LoadingSpinner = () => (
@@ -151,19 +152,13 @@ const Stat = () => {
         {isLoading ? (
           <LoadingSpinner />
         ) : !finishedTravels || finishedTravels.length === 0 ? (
-          <div className="text-center py-12">
-            <img
-              src={emptySol}
-              alt="완료한 여행이 없음"
-              className="w-48 h-48 mx-auto mb-6"
-            />
-            <p className="text-gray-1 text-lg mb-2">
-              앗, 아직 여행기록이 없어요!
-            </p>
-            <p className="text-gray-2 text-lg">
-              여행을 떠나고 소비 분석 받아보세요
-            </p>
-          </div>
+          <EmptyBear
+            title={'앗! 아직 여행 기록이 없어요.'}
+            description={'여행을 떠나고 소비 분석을 받아보세요'}
+            onClick={null}
+            buttonText={null}
+            disabledButton={true}
+          />
         ) : (
           finishedTravels.map((travel, index) => (
             <TravelCard
