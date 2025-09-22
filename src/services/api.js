@@ -124,6 +124,11 @@ class ApiClient {
   async get(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'GET' });
   }
+
+  // DELETE 요청
+  async delete(endpoint, options = {}) {
+    return this.request(endpoint, { ...options, method: 'DELETE' });
+  }
 }
 
 // API 클라이언트 인스턴스

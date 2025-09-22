@@ -59,6 +59,15 @@ const PlanDetail = () => {
     const onClickEdit = () => {
         navigate(`/group/${groupid}/travel/${travelid}/edit`);
     }
+    const onClickDelete = async() => {
+        try{
+            await TravelAPI.deleteTravel(travelid, groupid);
+            alert('여행이 삭제되었습니다.');
+            navigate(`/group/${groupid}/travel`);
+        } catch (error) {
+            alert(error.response?.error.message || error.message || 'Unknown error');
+        }
+    }
 
     return (
         <TravelLayout title="여행 일정">
@@ -66,7 +75,11 @@ const PlanDetail = () => {
                 planData.length > 0 ? (
                 <div>
                     {/* 일정이 있을 때 - 편집 버튼과 일별 일정 표시 */}
-                    <button className="w-full text-gray-500 text-sm text-right m-0" onClick={onClickEdit}>편집</button>
+                    <div className="w-full flex justify-end items-center space-x-4 text-gray-500 text-sm text-right m-0">
+                        <button className="hover:text-red-500 hover:bg-red-50 rounded cursor-pointer p-1 px-2" onClick={onClickDelete}>삭제</button>
+                        <p> | </p>
+                        <button className="hover:text-blue hover:bg-light-blue rounded cursor-pointer p-1 px-2" onClick={onClickEdit}>편집</button>
+                    </div>
                     {Array.from({ length: travelDays }, (_, index) => index + 1).map((day) => (
                         <div key={day} className="space-y-3 pb-4">
                             {/* Day Header */}
