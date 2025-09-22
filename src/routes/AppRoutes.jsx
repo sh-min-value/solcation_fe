@@ -6,6 +6,7 @@ import ErrorPage from '../components/common/ErrorPage';
 import Loading from '../components/common/Loading';
 
 const LoginForm = lazy(() => import('../components/auth/LoginForm'));
+const Signup = lazy(() => import('../components/auth/Signup'));
 const Main = lazy(() => import('../features/main/Main'));
 const Alarm = lazy(() => import('../features/alarm/Alarm'));
 
@@ -35,6 +36,7 @@ export default function AppRoutes() {
     <Suspense fallback={<Loading />}>
       <Routes>
         {/* 공개 라우트 */}
+        <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<LoginForm />} />
 
         {/* 보호된 라우트 */}
@@ -81,7 +83,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        
+
         <Route
           path="/group/:groupid/account/card/new"
           element={
