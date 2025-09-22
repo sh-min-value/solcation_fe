@@ -56,9 +56,11 @@ const PlanDetailEdit = () => {
                 setIsSaving(false);
                 console.log('저장 완료, 데이터 새로고침 후 이동');
                 refreshPlanData();
-                setTimeout(() => {
-                    navigate(`/group/${groupid}/travel/${travelid}`);
-                }, 100); 
+                if(message.clientId === currentUserId){
+                    setTimeout(() => {
+                        navigate(`/group/${groupid}/travel/${travelid}`);
+                    }, 100); 
+                }
                 break;
             case 'presence-join':
                 console.log(`사용자 ${message.userId} 입장`);
@@ -71,8 +73,13 @@ const PlanDetailEdit = () => {
                 setPlanData(message.snapshot);
                 setIsLoading(false); // 로딩 상태 해제
                     break;
-                default:
+            case 'deleted':
+                alert('여행이 삭제되었습니다.');
+                navigate(`/group/${groupid}/travel`);
+                break;
+            default:
                 console.log('알 수 없는 메시지 타입:', message.type, message);
+            
         }
     }
 
