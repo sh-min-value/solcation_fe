@@ -91,6 +91,19 @@ const LoginForm = () => {
               {isLoading ? '로그인 중...' : '로그인'}
             </button>
           </form>
+          <div
+            className="mt-2 text-sm text-center underline text-third cursor-pointer"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate('/signup')}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+              }
+            }}
+          >
+            아직 회원이 아니신가요?
+          </div>
         </div>
       </div>
     </div>
