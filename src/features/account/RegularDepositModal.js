@@ -329,37 +329,38 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, accountInfo }) => {
               </span>
             </div>
           </div>
-
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={handleResetRegularDeposit}
-              disabled={isResetting || isLoading}
-              className="flex-1 py-4 px-6 bg-gray-6 hover:bg-gray-5/70 disabled:bg-gray-4 disabled:cursor-not-allowed text-gray-700 disabled:text-gray-500 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
-            >
-              {isResetting ? (
-                <>
-                  <LoadingSpinner size={4} />
-                  <span>초기화...</span>
-                </>
-              ) : (
-                '초기화'
-              )}
-            </button>
-            <button
-              onClick={handleSetRegularDeposit}
-              disabled={isLoading || isResetting}
-              className="flex-1 py-4 px-6 bg-main/80 hover:bg-main disabled:bg-main/50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors shadow-lg flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <LoadingSpinner size={4} />
-                  <span>저장 중...</span>
-                </>
-              ) : (
-                '저장'
-              )}
-            </button>
-          </div>
+          {isGroupLeader && (
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleResetRegularDeposit}
+                disabled={isResetting || isLoading}
+                className="flex-1 py-4 px-6 bg-gray-6 hover:bg-gray-5/70 disabled:bg-gray-4 disabled:cursor-not-allowed text-gray-700 disabled:text-gray-500 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+              >
+                {isResetting ? (
+                  <>
+                    <LoadingSpinner size={4} />
+                    <span>초기화...</span>
+                  </>
+                ) : (
+                  '초기화'
+                )}
+              </button>
+              <button
+                onClick={handleSetRegularDeposit}
+                disabled={isLoading || isResetting}
+                className="flex-1 py-4 px-6 bg-main/80 hover:bg-main disabled:bg-main/50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors shadow-lg flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <LoadingSpinner size={4} />
+                    <span>저장 중...</span>
+                  </>
+                ) : (
+                  '저장'
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
