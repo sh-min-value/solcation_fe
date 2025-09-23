@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Outlet, useLocation, useParams, useNavigate } from 'react-router-dom';
 import Header from '../common/Header.js';
 import NavigationBar from '../common/NavigationBar.js';
 import GroupProfileCard from '../common/GroupProfileCard.js';
@@ -7,6 +7,7 @@ import { GroupAPI } from '../../services/GroupAPI.js';
 
 export default function RootLayout({ children, title }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { groupid } = useParams();
   const [groupData, setGroupData] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -27,6 +28,12 @@ export default function RootLayout({ children, title }) {
         } catch (error) {
           console.error('그룹 데이터 로드 실패:', error);
           setGroupData(null);
+          navigate('/error', {
+            state: {
+              error: error.response,
+              from: location.pathname,
+            },
+          });
         }
       };
       loadGroupData();

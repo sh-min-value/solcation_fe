@@ -8,6 +8,9 @@ const ErrorPage = ({ error: propError }) => {
   const location = useLocation();
   
   const error = propError || location.state?.error;
+  
+  // 404 에러인지 확인
+  const is404 = !error && location.pathname !== '/error';
 
   const handleGoHome = () => {
     navigate('/');
@@ -26,9 +29,14 @@ const ErrorPage = ({ error: propError }) => {
                 <BiSolidError className="w-8 h-8 text-red-500"/>
               </div>
             </div>
-              <p className="text-lg text-red-600 font-bold">ERROR</p>
+              <p className="text-lg text-red-600 font-bold">
+                {is404 ? '404' : 'ERROR'}
+              </p>
               <p className="text-lg text-gray-700 m-1 ml-2">
-                {error.response?.error || error.message || 'Unknown error' || '알 수 없는 오류가 발생했습니다.'}
+                {is404 
+                  ? '페이지를 찾을 수 없습니다.' 
+                  : (error?.response?.error || error?.message || '알 수 없는 오류가 발생했습니다.')
+                }
               </p>
           </div>
 
