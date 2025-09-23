@@ -7,7 +7,10 @@ const ErrorPage = ({ error: propError }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const error = propError;
+  // propError가 있으면 사용, 없으면 location.state에서 가져오기
+  const error = propError || location.state?.error;
+  console.log("에러로그" , error);
+  console.log("location.state" , location.state);
   // 404 에러인지 확인
   const is404 = !error && location.pathname !== '/error';
 
@@ -34,7 +37,7 @@ const ErrorPage = ({ error: propError }) => {
             <p className="text-lg text-gray-700 m-1 ml-2">
               {is404
                 ? '페이지를 찾을 수 없습니다.'
-                : (error?.error.message || error?.message || '알 수 없는 오류가 발생했습니다.')
+                : (error?.error?.message || error?.message || `HTTP ${error?.status}: ${error?.statusText}` || '알 수 없는 오류가 발생했습니다.')
               }
             </p>
           </div>
