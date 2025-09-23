@@ -372,13 +372,10 @@ const CalendarSection = ({
                      ? 'cursor-pointer'
                      : 'cursor-default'
                  }
-                 ${!isDateInRange(dayInfo) ? 'text-gray-3 opacity-50' : ''}
+                 ${!isDateInRange(dayInfo) ? 'text-gray-500' : ''}
                  ${dayInfo.isToday ? 'font-bold' : ''}
                  ${isClickable ? 'focus:outline-none' : ''}
-                 ${
-                   selectedStyle ||
-                   (dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-3')
-                 }
+                 ${selectedStyle || (dayInfo.isCurrentMonth ? 'text-gray-1' : 'text-gray-5')}
                `}
               onClick={isClickable ? () => handleDateClick(dayInfo) : undefined}
               onKeyDown={

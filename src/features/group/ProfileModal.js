@@ -5,7 +5,7 @@ import {
   X,
   Phone,
   Calendar,
-  Mail,
+  User,
   Heart,
   CheckCircle2,
   Bell,
@@ -80,7 +80,13 @@ const ProfileModal = ({
         <div className="p-6">
           {/* 프로필 아바타 */}
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-light-blue to-main rounded-full flex items-center justify-center">
+            <div
+              className={`w-16 h-16 bg-gradient-to-br ${
+                userData?.gender === 'F'
+                  ? 'from-pink-200 to-pink-500'
+                  : 'from-light-blue to-main'
+              } rounded-full flex items-center justify-center`}
+            >
               <span className="text-white text-2xl font-semibold">
                 {userData.userName?.charAt(0) || '?'}
               </span>
@@ -94,33 +100,26 @@ const ProfileModal = ({
           </h2>
 
           {/* 연락처 정보 */}
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center space-x-3 text-gray-600">
-              <Phone size={16} className="text-blue-500" />
-              <span className="text-sm">TEL</span>
-              <span className="text-sm font-medium">
-                {userData.tel || '전화번호가 없어요!'}
-              </span>
-            </div>
+          <div className="w-full flex items-center justify-center">
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center space-x-3 text-gray-600">
+                <Phone size={16} className="text-third" />
+                <span className="text-sm">TEL</span>
+                <span className="text-sm font-medium">
+                  {userData.tel || '전화번호가 없어요!'}
+                </span>
+              </div>
 
-            <div className="flex items-center space-x-3 text-gray-600">
-              <Calendar size={16} className="text-green-500" />
-              <span className="text-sm">BIRTH</span>
-              <span className="text-sm font-medium">
-                {dayjs(userData.dateOfBirth).format('YYYY.MM.DD') ||
-                  '생년월일이 없어요!'}
-              </span>
-            </div>
-
-            <div className="flex items-center space-x-3 text-gray-600">
-              <Mail size={16} className="text-red-500" />
-              <span className="text-sm">EMAIL</span>
-              <span className="text-sm font-medium break-all">
-                {userData.email || '이메일 없음'}
-              </span>
+              <div className="flex items-center space-x-3 text-gray-600">
+                <Calendar size={16} className="text-green-500" />
+                <span className="text-sm">BIRTH</span>
+                <span className="text-sm font-medium">
+                  {dayjs(userData.dateOfBirth).format('YYYY.MM.DD') ||
+                    '생년월일이 없어요!'}
+                </span>
+              </div>
             </div>
           </div>
-
           {/* 초대 버튼 */}
           {showInvitation && !isMember && !isPending && (
             <div className="flex justify-center">

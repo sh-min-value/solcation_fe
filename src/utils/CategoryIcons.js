@@ -15,6 +15,9 @@ import {
 import { MdKitesurfing, MdFestival } from 'react-icons/md';
 import { HiLibrary } from 'react-icons/hi';
 import { BsFillPiggyBankFill } from 'react-icons/bs';
+import categoryCache from './CategoryCache';
+import categoryManager from './CategoryManager';
+import { getDefaultCategoryCode, getFallbackName } from './CategoryConfig';
 
 // 그룹 카테고리 아이콘 import
 import FamilyIcon from '../assets/categoryIcons/family.svg';
@@ -69,49 +72,49 @@ export const getTravelCategoryIcon = (
       return (
         <>
           <BiSolidBowlRice className={className} />
-          <p className='max-w-16 truncate'>음식, 미식</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     case 'LEISURE':
       return (
         <>
           <MdKitesurfing className={className} />
-          <p className='max-w-16 truncate'>레저, 액티비티</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     case 'RECREATION':
       return (
         <>
           <FaTree className={className} />
-          <p className='max-w-16 truncate'>휴양, 힐링</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     case 'CULTURE':
       return (
         <>
           <HiLibrary className={className} />
-          <p className='max-w-16 truncate'>문화, 역사</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     case 'SHOPPING':
       return (
         <>
           <AiFillShopping className={className} />
-          <p className='max-w-16 truncate'>쇼핑, SNS 핫플레이스</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     case 'FESTIVAL':
       return (
         <>
           <MdFestival className={className} />
-          <p className='max-w-16 truncate'>시즌 축제</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     case 'SIGHTSEEING':
       return (
         <>
           <BiSolidBus className={className} />
-          <p className='max-w-16 truncate'>관광</p>
+          <p className='max-w-16 truncate'>{categoryCache.getTravelCategoryName(categoryId)}</p>
         </>
       );
     default:
@@ -133,70 +136,70 @@ export const getTransactionCategoryIcon = (
       return (
         <>
           <BiSolidBowlRice className={className} />
-          <p>식비</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'CAFE_AND_SNACK':
       return (
         <>
           <BiSolidCoffee className={className} />
-          <p>카페, 간식</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'STORE':
       return (
         <>
           <BiSolidStore className={className} />
-          <p>편의점, 마트</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'PLEASURE':
       return (
         <>
           <BiSolidDrink className={className} />
-          <p>술, 유흥</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'SHOPPING':
       return (
         <>
           <BiSolidShoppingBag className={className} />
-          <p>쇼핑</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'MEDICAL_TREATMENT':
       return (
         <>
           <FaBriefcaseMedical className={className} />
-          <p>의료</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'LODGMENT':
       return (
         <>
           <BiSolidBed className={className} />
-          <p>숙박</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'TRANSPORTATION':
       return (
         <>
           <AiFillCar className={className} />
-          <p>교통</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     case 'TRANSFER':
       return (
         <>
           <BsFillPiggyBankFill className={className} />
-          <p>이체</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
     default:
       return (
         <>
           <BiDotsHorizontalRounded className={className} />
-          <p>기타</p>
+          <p>{categoryCache.getTransactionCategoryName(categoryId)}</p>
         </>
       );
   }
@@ -288,57 +291,29 @@ export const getGroupCategoryIcon = categoryCode => {
 
 // 그룹 카테고리 이름 반환
 export const getGroupCategoryName = categoryCode => {
-  switch (categoryCode) {
-    case 'FAMILY':
-      return '가족';
-    case 'FRIENDS':
-      return '친구';
-    case 'COUPLE':
-      return '연인';
-    case 'COLLEAGUE':
-      return '동료';
-    default:
-      return '친구';
-  }
+  return categoryManager.getCategoryName('group', categoryCode);
 };
 
 //그룹 카테고리 아이콘 이모지 이름 반환
 export const getGroupCategoryEmojiName = categoryCode => {
+  try {
+    if (categoryCache.isReady()) {
+      return categoryCache.getGroupCategoryEmojiName(categoryCode);
+    }
+  } catch (error) {
+    console.warn('CategoryCache not ready, using fallback:', error);
+  }
+  
+  // 하위 호환성을 위한 fallback
   switch (categoryCode) {
     case 'FRIENDS':
-      return 'handshake';
+      return categoryCache.getGroupCategoryEmojiName(categoryCode);
     case 'COUPLE':
-      return 'pink-heart';
+      return categoryCache.getGroupCategoryEmojiName(categoryCode);
     case 'FAMILY':
-      return 'couple-with-heart-man-woman';
+      return categoryCache.getGroupCategoryEmojiName(categoryCode);
     case 'COLLEAGUE':
-      return 'briefcase';
-  }
-};
-
-// 거래 카테고리 이름 반환
-export const getTransactionCategoryName = categoryCode => {
-  switch (categoryCode) {
-    case 'FOOD':
-      return '식비';
-    case 'CAFE_AND_SNACK':
-      return '카페, 간식';
-    case 'STORE':
-      return '편의점, 마트';
-    case 'PLEASURE':
-      return '술, 유흥';
-    case 'SHOPPING':
-      return '쇼핑';
-    case 'MEDICAL_TREATMENT':
-      return '의료';
-    case 'LODGMENT':
-      return '숙박';
-    case 'TRANSPORTATION':
-      return '교통';
-    case 'TRANSFER':
-      return '이체';
-    default:
-      return '기타';
+      return categoryCache.getGroupCategoryEmojiName(categoryCode);
   }
 };
 
@@ -354,5 +329,15 @@ export const getTransactionTypeName = categoryCode => {
     default:
       return '기타';
   }
+};
+
+// 거래 카테고리 이름 반환 (CategoryManager 사용)
+export const getTransactionCategoryName = categoryCode => {
+  return categoryManager.getCategoryName('transaction', categoryCode);
+};
+
+// 여행 카테고리 이름 반환 (CategoryManager 사용)
+export const getTravelCategoryName = categoryCode => {
+  return categoryManager.getCategoryName('travel', categoryCode);
 };
 
