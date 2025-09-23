@@ -67,6 +67,12 @@ const GroupList = () => {
       } catch (err) {
         setError(err);
         console.error('그룹 목록 조회 실패:', err);
+        navigate('/error', {
+          state: {
+            error: err,
+            from: location.pathname,
+          },
+        });
       } finally {
         setLoading(false);
       }

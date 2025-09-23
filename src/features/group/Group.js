@@ -122,10 +122,9 @@ const Group = () => {
         });
       } catch (err) {
         // 에러 발생 시 에러 페이지로 이동
-        const errorData = err.response?.error || err;
         navigate('/error', {
           state: {
-            error: errorData,
+            error: err,
             from: location.pathname,
           },
         });
@@ -223,8 +222,7 @@ const Group = () => {
       await GroupAPI.inviteMember(groupId, tel);
     } catch (error) {
       console.log(
-        `초대 중 오류 발생: ${
-          error.response?.error || error.message || 'Unknown error'
+        `초대 중 오류 발생: ${error.response?.error || error.message || 'Unknown error'
         }`
       );
       throw error;

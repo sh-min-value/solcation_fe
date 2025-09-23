@@ -43,8 +43,13 @@ class ApiClient {
         return;
       }
 
-      const error = new Error(`HTTP error! status: ${response.status}`);
-      error.response = errorData;
+      // 전체 에러 정보를 포함한 객체 throw
+      const error = {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url,
+        ...errorData
+      };
       throw error;
     }
 

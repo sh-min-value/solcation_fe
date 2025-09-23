@@ -97,7 +97,7 @@ const Account = () => {
 
         navigate('/error', {
           state: {
-            error: error.response,
+            error: error,
             from: location.pathname,
           },
         });
@@ -148,7 +148,7 @@ const Account = () => {
         )}
       </div>
       {/* 계좌가 존재할 때만 거래내역 표시 */}
-      {isExist && <TransactionHistory groupId={groupid} accountInfo={accountInfo}/>}
+      {isExist && <TransactionHistory groupId={groupid} accountInfo={accountInfo} />}
     </div>
   );
 };

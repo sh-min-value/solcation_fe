@@ -76,9 +76,9 @@ const AccountCreate = () => {
       const newErrors = {
         residentNumber:
           !formData.residentNumber?.front ||
-          formData.residentNumber.front.length !== 6 ||
-          !formData.residentNumber?.back ||
-          formData.residentNumber.back.length !== 7
+            formData.residentNumber.front.length !== 6 ||
+            !formData.residentNumber?.back ||
+            formData.residentNumber.back.length !== 7
             ? '주민등록번호를 입력해주세요'
             : '',
         address: !formData.address?.trim() ? '주소를 입력해주세요' : '',
@@ -131,6 +131,12 @@ const AccountCreate = () => {
         setCurrentStep(3);
       } catch (error) {
         console.error('계좌 생성 오류:', error);
+        navigate('/error', {
+          state: {
+            error: error,
+            from: location.pathname,
+          },
+        });
       }
     }
   };
@@ -176,9 +182,8 @@ const AccountCreate = () => {
             {descriptions.slice(0, -1).map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index <= currentStep ? 'bg-white' : 'bg-white/30'
-                }`}
+                className={`w-2 h-2 rounded-full transition-colors ${index <= currentStep ? 'bg-white' : 'bg-white/30'
+                  }`}
               />
             ))}
           </div>

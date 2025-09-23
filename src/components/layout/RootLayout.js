@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useParams, useNavigate } from 'react-router-dom';
 import Header from '../common/Header.js';
 import NavigationBar from '../common/NavigationBar.js';
 import GroupProfileCard from '../common/GroupProfileCard.js';
@@ -14,6 +14,7 @@ const SESSION_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes
 
 export default function RootLayout({ children, title }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { groupid } = useParams();
   const [groupData, setGroupData] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -25,20 +26,25 @@ export default function RootLayout({ children, title }) {
   const triggerRefresh = () => setRefreshKey(prev => prev + 1);
 
   // 계산된 값들을 useMemo로 최적화
-  const isGroupRoute = useMemo(() => 
+  const isGroupRoute = useMemo(() =>
     location.pathname.startsWith('/group/') &&
     !/^\/group\/[^/]+\/account\/transaction\/[^/]+$/.test(location.pathname) &&
     !/^\/group\/[^/]+\/account\/card\/[^/]+$/.test(location.pathname),
     [location.pathname]
   );
 
-  const requiresPassword = useMemo(() => 
-    location.pathname.includes('/account') || 
-    location.pathname.includes('/card'),
-    [location.pathname]
-  );
+  const requiresPassword = useMemo(() => {
+    if (location.pathname.includes('/account') && !location.pathname.includes('/card')) {
+      // 계좌 페이지인 경우 groupData.created 확인
+      return groupData && groupData.created;
+    } else if (location.pathname.includes('/card')) {
+      // 카드 페이지인 경우 항상 비밀번호 필요
+      return true;
+    }
+    return false;
+  }, [location.pathname, groupData]);
   // 비밀번호 인증 상태 확인 
-  
+
   // 계좌/카드별로 다른 세션 키 생성
   const getSessionKey = useCallback(() => {
     if (location.pathname.includes('/account') && !location.pathname.includes('/card')) {
@@ -69,10 +75,17 @@ export default function RootLayout({ children, title }) {
       const loadGroupData = async () => {
         try {
           const data = await GroupAPI.getGroup(groupid);
+          console.log('GroupAPI 응답:', data);
           setGroupData(data);
         } catch (error) {
           console.error('그룹 데이터 로드 실패:', error);
           setGroupData(null);
+          navigate('/error', {
+            state: {
+              error: error,
+              from: location.pathname,
+            },
+          });
         }
       };
       loadGroupData();
@@ -84,12 +97,20 @@ export default function RootLayout({ children, title }) {
   // 계좌/카드 정보 가져오기
   const fetchAccountCardInfo = useCallback(async () => {
     if (!groupid) return;
-    
+
     try {
       if (location.pathname.includes('/account') && !location.pathname.includes('/card')) {
-        // 일반 계좌 페이지
-        const accountData = await AccountAPI.getAccountInfo(groupid);
-        setAccountInfo(accountData);
+        // 일반 계좌 페이지 - groupData.created로 계좌 존재 여부 확인
+        if (groupData && groupData.created) {
+          // 계좌가 있는 경우에만 API 호출
+          const accountData = await AccountAPI.getAccountInfo(groupid);
+          setAccountInfo(accountData);
+          setShowPasswordModal(true);
+        } else {
+          // 계좌가 없는 경우
+          setAccountInfo(null);
+          setShowPasswordModal(false);
+        }
       } else if (location.pathname.includes('/card')) {
         // 카드 페이지
         const cardMatch = location.pathname.match(/\/card\/(\d+)/);
@@ -97,29 +118,56 @@ export default function RootLayout({ children, title }) {
           const sacPk = cardMatch[1];
           const cardData = await TransactionAPI.getCardInfo(groupid, sacPk);
           setCardInfo({ ...cardData, sacPk });
+          setShowPasswordModal(true);
         }
       }
     } catch (error) {
       console.error('계좌/카드 정보 가져오기 실패:', error);
+      
+      if (error.response?.status === 404) {
+        console.log('계좌/카드가 존재하지 않습니다.');
+        setAccountInfo(null);
+        setCardInfo(null);
+        return;
+      }
+      
+      // 다른 에러인 경우에만 에러 페이지로 리다이렉트
+      navigate('/error', {
+        state: {
+          error: error,
+          from: location.pathname,
+        },
+      });
     }
-  }, [groupid, location.pathname]);
+  }, [groupid, location.pathname, navigate, groupData]);
 
   // 비밀번호 인증 모달 표시 여부 확인
   useEffect(() => {
+  console.log('비밀번호 모달 체크:', {
+    requiresPassword,
+    isPasswordAuthenticated: isPasswordAuthenticated(),
+    groupData,
+    created: groupData?.created,
+    pathname: location.pathname,
+    showPasswordModal
+  });
+    
     if (requiresPassword && !isPasswordAuthenticated()) {
-      setShowPasswordModal(true);
-      // 경로에 따른 제목 설정
+      // 경로에 따른 제목 설정 및 정보 가져오기
       if (location.pathname.includes('/account') && !location.pathname.includes('/card')) {
+        console.log('계좌 비밀번호 모달 표시');
         setPasswordTitle("계좌 정보 확인을 위해\n비밀번호를 입력해주세요");
         fetchAccountCardInfo();
       } else if (location.pathname.includes('/card')) {
+        console.log('카드 비밀번호 모달 표시');
         setPasswordTitle("카드 정보 확인을 위해\n비밀번호를 입력해주세요");
         fetchAccountCardInfo();
       }
     } else {
       setShowPasswordModal(false);
     }
-  }, [location.pathname, groupid, requiresPassword, isPasswordAuthenticated, fetchAccountCardInfo]);
+  }, [location.pathname, groupid, requiresPassword, isPasswordAuthenticated, fetchAccountCardInfo, groupData]);
+
 
   const showGroupUI = useMemo(() => isGroupRoute && groupData, [isGroupRoute, groupData]);
 
@@ -163,8 +211,8 @@ export default function RootLayout({ children, title }) {
             onCancel={handlePasswordCancel}
             title={passwordTitle}
             groupid={groupid}
-            accountinfo={accountInfo}
-            cardinfo={cardInfo}
+            accountInfo={accountInfo}
+            cardInfo={cardInfo}
           />
         </div>
       )}
