@@ -166,7 +166,7 @@ const AccountCreate = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
+    <div className="h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex flex-col">
       <Header showBackButton={true} />
 
       {/* Progress Bar */}
@@ -186,9 +186,9 @@ const AccountCreate = () => {
       )}
 
       {/* 메인 콘텐츠 영역 */}
-      <div className="flex flex-col min-h-[calc(100vh-140px)] mt-8">
+      <div className="flex-1 overflow-y-auto px-6">
         {/* 단계 설명 */}
-        <div className="flex items-start justify-between px-9 mb-8">
+        <div className="flex items-start justify-between px-3 mb-8">
           <div className="text-white text-xl font-[600] leading-tight whitespace-pre-line">
             {descriptions[currentStep].title}
           </div>
@@ -200,7 +200,7 @@ const AccountCreate = () => {
         </div>
 
         {/* 폼 컴포넌트 */}
-        <div className="flex justify-center items-start px-0 flex-1">
+        <div className="flex justify-center items-start px-0 pb-20">
           {currentStep === 0 ? (
             <AccountInfoForm
               formData={formData}

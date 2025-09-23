@@ -208,7 +208,7 @@ const PlannedVsActualSection = ({ travel, groupid }) => {
                     </div>
                     <div className="w-24 h-6 rounded relative">
                       <div
-                        className="absolute left-0 top-0 h-full bg-group-3 rounded"
+                        className="absolute left-0 top-0 h-full bg-stat rounded"
                         style={{
                           width:
                             actualAmount === 0 ? '3px' : `${actualBarWidth}%`,

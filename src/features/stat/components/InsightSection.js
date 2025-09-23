@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
 import { TbBulb } from 'react-icons/tb';
 import { statAPI } from '../../../services/StatAPI';
@@ -8,23 +9,34 @@ const InsightSection = ({ groupid, travelId }) => {
   const [showInsightModal, setShowInsightModal] = useState(false);
   const [insightData, setInsightData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  // 인사이트 데이터 로드
+  useEffect(() => {
+    const loadInsightData = async () => {
+      if (!groupid || !travelId || hasLoaded) return;
+
+      setLoading(true);
+      try {
+        const response = await statAPI.getInsight(groupid, travelId);
+        const textData = response.msg;
+        const parsedData = parseInsightText(textData);
+        setInsightData(parsedData);
+        setHasLoaded(true);
+      } catch (error) {
+        setInsightData(null);
+        setHasLoaded(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInsightData();
+  }, [groupid, travelId, hasLoaded]);
 
   // 인사이트 버튼 클릭 핸들러
-  const handleInsightClick = async () => {
+  const handleInsightClick = () => {
     setShowInsightModal(true);
-    setLoading(true);
-
-    try {
-      const response = await statAPI.getInsight(groupid, travelId);
-      const textData = response.msg;
-      const parsedData = parseInsightText(textData);
-      setInsightData(parsedData);
-    } catch (error) {
-      console.error('인사이트 데이터 로드 실패:', error);
-      setInsightData(null);
-    } finally {
-      setLoading(false);
-    }
   };
 
   // 텍스트 데이터를 파싱
@@ -50,7 +62,6 @@ const InsightSection = ({ groupid, travelId }) => {
   // 모달 닫기 핸들러
   const handleCloseModal = () => {
     setShowInsightModal(false);
-    setInsightData(null);
   };
 
   // 플로팅 버튼 컴포넌트
@@ -157,6 +168,11 @@ const InsightSection = ({ groupid, travelId }) => {
       {showInsightModal && createPortal(<Modal />, document.body)}
     </>
   );
+};
+
+InsightSection.propTypes = {
+  groupid: PropTypes.string.isRequired,
+  travelId: PropTypes.number.isRequired,
 };
 
 export default InsightSection;
