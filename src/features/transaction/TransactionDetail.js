@@ -7,11 +7,11 @@ import { TransactionAPI } from '../../services/TransactionAPI';
 import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import {
   getTransactionCategoryIconOnly,
-  getTransactionCategoryName,
   getTransactionTypeName,
 } from '../../utils/CategoryIcons';
 import dayjs from 'dayjs';
 import Loading from '../../components/common/Loading';
+import categoryCache from '../../utils/CategoryCache';
 
 const TransactionDetail = () => {
   const { groupData, triggerRefresh } = useOutletContext();
@@ -147,7 +147,7 @@ const TransactionDetail = () => {
             <div className="flex items-center justify-between">
               <span className="text-gray-2">카테고리</span>
               <span className="text-gray-2">
-                {getTransactionCategoryName(selectedCategory)}
+                {categoryCache.getTransactionCategoryName(selectedCategory)}
               </span>
             </div>
             {/* 일시 */}

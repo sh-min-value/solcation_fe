@@ -33,34 +33,36 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext }) => {
   };
 
   return (
-    <div className="flex-1 w-full h-full max-w-sm mx-0 px-0 space-y-36 mt-16">
-      {/* 비밀번호 점 표시 */}
-      <div className="flex justify-center space-x-3 relative">
-        {[1, 2, 3, 4, 5, 6].map(index => (
-          <div
-            key={index}
-            className={`w-4 h-4 rounded-full border-2 transition-colors ${
-              index <= password.length
-                ? 'bg-white border-white'
-                : 'border-white'
-            }`}
-          />
-        ))}
-        {/* 에러 메시지 표시 */}
-        {errors.saPw && (
-          <div
-            className="absolute -top-12 left-0 right-0 text-center"
-            style={{ margin: 0 }}
-          >
-            <span className="text-group-1 text-xs">{errors.saPw}</span>
-          </div>
-        )}
+    <div className="w-full min-h-[calc(100vh-200px)] flex flex-col">
+      {/* 상단 비밀번호 점 표시 */}
+      <div className="bg-blue-500 flex-1 flex justify-center items-center px-6 relative">
+        <div className="flex justify-center space-x-3 relative">
+          {[1, 2, 3, 4, 5, 6].map(index => (
+            <div
+              key={index}
+              className={`w-4 h-4 rounded-full border-2 transition-colors ${
+                index <= password.length
+                  ? 'bg-white border-white'
+                  : 'border-white'
+              }`}
+            />
+          ))}
+          {/* 에러 메시지 표시 */}
+          {errors.saPw && (
+            <div
+              className="absolute -top-12 left-0 right-0 text-center"
+              style={{ margin: 0 }}
+            >
+              <span className="text-red-300 text-xs">{errors.saPw}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 하단 키패드 섹션 */}
-      <div className="bg-light-blue rounded-t-3xl pt-12 pb-28 mx-0 px-0 flex-1 flex flex-col justify-center align-bottom min-h-full">
-        <div className="grid grid-cols-3 gap-8 max-w-sm mx-auto">
-          {/* 첫 번째 줄: 4, 7, 1 */}
+      <div className="bg-light-blue rounded-t-3xl flex-shrink-0">
+        <div className="p-12 pb-20">
+          <div className="grid grid-cols-3 gap-6 max-w-sm mx-auto justify-center items-center ml-3">
           <button
             type="button"
             onClick={() => handleNumberClick(keypadNumbers[0])}
@@ -83,7 +85,6 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext }) => {
             {keypadNumbers[2]}
           </button>
 
-          {/* 두 번째 줄: 2, 5, 8 */}
           <button
             type="button"
             onClick={() => handleNumberClick(keypadNumbers[3])}
@@ -106,7 +107,6 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext }) => {
             {keypadNumbers[5]}
           </button>
 
-          {/* 세 번째 줄: 9, 0, 3 */}
           <button
             type="button"
             onClick={() => handleNumberClick(keypadNumbers[6])}
@@ -151,6 +151,7 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext }) => {
           >
             확인
           </button>
+          </div>
         </div>
       </div>
     </div>
