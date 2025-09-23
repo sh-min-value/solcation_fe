@@ -82,6 +82,7 @@ const InviNotificationItem = React.memo(
         await onAccept();
       } catch (err) {
         console.log('초대 수락 실패: ', err);
+        alert('초대 수락에 실패했습니다. 다시 시도해주세요.');
       } finally {
         setActionLoading(false);
       }
@@ -93,6 +94,7 @@ const InviNotificationItem = React.memo(
         await onReject();
       } catch (err) {
         console.log('초대 거절 실패: ', err);
+        alert('초대 거절에 실패했습니다. 다시 시도해주세요.');
       } finally {
         setActionLoading(false);
       }
@@ -241,6 +243,7 @@ const Alarm = () => {
     } catch (err) {
       console.error('초대 수락 실패:', err);
       console.error('에러 응답:', err.response);
+      alert('초대 수락에 실패했습니다. 다시 시도해주세요.');
     }
   }, []);
 
@@ -274,12 +277,10 @@ const Alarm = () => {
       console.log('초대 알림 목록:', result);
       setInviteNoti(result || []);
     } catch (err) {
-      const errorData = err.response?.error || err;
-
       //에러 발생 시 에러 페이지로 이동
       navigate('/error', {
         state: {
-          error: errorData,
+          error: err,
           from: location.pathname,
         },
       });
@@ -306,12 +307,10 @@ const Alarm = () => {
           setRecent7DaysNoti(prev => [...prev, ...data]);
         }
       } catch (err) {
-        const errorData = err.response?.error || err;
-
         //에러 발생 시 에러 페이지로 이동
         navigate('/error', {
           state: {
-            error: errorData,
+            error: err,
             from: location.pathname,
           },
         });
@@ -341,12 +340,10 @@ const Alarm = () => {
           setRecent30DaysNoti(prev => [...prev, ...data]);
         }
       } catch (err) {
-        const errorData = err.response?.error || err;
-
         //에러 발생 시 에러 페이지로 이동
         navigate('/error', {
           state: {
-            error: errorData,
+            error: err,
             from: location.pathname,
           },
         });
@@ -452,9 +449,8 @@ const Alarm = () => {
         <Loading size="large" color="gray" />
       ) : (
         <div
-          className={`flex flex-col h-screen min-h-0 relative ${
-            isEmpty ? 'justify-center' : 'justify-start'
-          }`}
+          className={`flex flex-col h-screen min-h-0 relative ${isEmpty ? 'justify-center' : 'justify-start'
+            }`}
         >
           <div className="w-full flex-1 min-h-0 flex flex-col overflow-y-auto pb-24 scroll-pb-24">
             {/* 그룹 초대 */}

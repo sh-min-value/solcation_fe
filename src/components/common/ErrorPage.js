@@ -6,9 +6,9 @@ import Header from './Header';
 const ErrorPage = ({ error: propError }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const error = propError || location.state?.error;
-  
+
+  const error = propError;
+  console.log("에러로그" , error);
   // 404 에러인지 확인
   const is404 = !error && location.pathname !== '/error';
 
@@ -26,22 +26,22 @@ const ErrorPage = ({ error: propError }) => {
           <div className="mb-8">
             <div className="flex items-center justify-center mb-4">
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
-                <BiSolidError className="w-8 h-8 text-red-500"/>
+                <BiSolidError className="w-8 h-8 text-red-500" />
               </div>
             </div>
-              <p className="text-lg text-red-600 font-bold">
-                {is404 ? '404' : 'ERROR'}
-              </p>
-              <p className="text-lg text-gray-700 m-1 ml-2">
-                {is404 
-                  ? '페이지를 찾을 수 없습니다.' 
-                  : (error?.response?.error || error?.message || '알 수 없는 오류가 발생했습니다.')
-                }
-              </p>
+            <p className="text-lg text-red-600 font-bold">
+              {is404 ? '404' : 'ERROR'}
+            </p>
+            <p className="text-lg text-gray-700 m-1 ml-2">
+              {is404
+                ? '페이지를 찾을 수 없습니다.'
+                : (error?.error.message || error?.message || '알 수 없는 오류가 발생했습니다.')
+              }
+            </p>
           </div>
 
           {/* 액션 버튼 */}
-          <button 
+          <button
             onClick={handleGoHome}
             className="w-full bg-light-blue text-third py-3 rounded-lg hover:bg-blue/90 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >

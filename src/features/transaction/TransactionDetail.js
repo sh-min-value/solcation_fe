@@ -69,12 +69,10 @@ const TransactionDetail = () => {
       setMemo(result.memo);
       console.log(result);
     } catch (err) {
-      const errorData = err.response?.error || err;
-
       //에러 발생 시 에러 페이지로 이동
       navigate('/error', {
         state: {
-          error: errorData,
+          error: err,
           from: location.pathname,
         },
       });
