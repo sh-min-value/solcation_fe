@@ -129,7 +129,7 @@ const Card = () => {
       } catch (err) {
         navigate('/error', {
           state: {
-            error: err.response,
+            error: err,
             from: location.pathname,
           },
         });

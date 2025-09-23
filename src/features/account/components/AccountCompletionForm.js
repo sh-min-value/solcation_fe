@@ -19,6 +19,12 @@ const AccountCompletionForm = ({ groupId }) => {
         setAccountInfo(response.data || response);
       } catch (error) {
         console.error('계좌 정보 조회 오류:', error);
+        navigate('/error', {
+          state: {
+            error: error,
+            from: location.pathname,
+          },
+        });
       } finally {
         setLoading(false);
       }

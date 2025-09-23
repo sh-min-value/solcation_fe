@@ -125,6 +125,12 @@ const AccountCreate = () => {
         setCurrentStep(3);
       } catch (error) {
         console.error('계좌 생성 오류:', error);
+        navigate('/error', {
+          state: {
+            error: error,
+            from: location.pathname,
+          },
+        });
       }
     }
   };

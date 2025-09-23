@@ -26,6 +26,12 @@ const Main = () => {
       setMyGroups(groupsResponse);
     } catch (error) {
       console.error('그룹 목록 조회 실패 :', error);
+      navigate('/error', {
+        state: {
+          error: error,
+          from: location.pathname,
+        },
+      });
       setMyGroups([]);
     }
   };
@@ -36,6 +42,12 @@ const Main = () => {
       setNotifications(notificationsResponse);
     } catch (error) {
       console.error('알림 조회 실패 :', error);
+      navigate('/error', {
+        state: {
+          error: error,
+          from: location.pathname,
+        },
+      });
       setNotifications([]);
     }
   };

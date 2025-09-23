@@ -29,6 +29,12 @@ const TravelStatsView = ({ travel }) => {
         const index = travels.findIndex(t => t.tpPk === travel.tpPk);
         setCurrentIndex(index >= 0 ? index : 0);
       } catch (error) {
+        navigate('/error', {
+          state: {
+            error: error,
+            from: `/group/${groupid}/stats/${travel?.tpPk}`,
+          },
+        });
         setTravelList([]);
       }
     };

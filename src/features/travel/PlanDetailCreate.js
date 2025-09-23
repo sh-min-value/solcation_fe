@@ -16,10 +16,10 @@ const PlanDetailCreate = (data) => {
     const [searchParams] = useSearchParams();
     const { user } = useAuth();
     const currentUserId = user?.userId || 'anonymous';
-    
+
     // URL 쿼리 파라미터에서 day 정보 가져오기
     const dayFromUrl = parseInt(searchParams.get('day')) || 1;
-    
+
     // WebSocket 연결
     const { isConnected, publish } = useStomp({
         url: 'ws://localhost:8080/ws',
@@ -40,7 +40,7 @@ const PlanDetailCreate = (data) => {
         address: data?.address || '',
         cost: data?.cost || '',
         tcCode: data?.tcCode || 'FOOD',
-        day: data?.day || dayFromUrl 
+        day: data?.day || dayFromUrl
     });
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -60,6 +60,7 @@ const PlanDetailCreate = (data) => {
             console.log(data);
         } catch (error) {
             console.error('주소 검색 실패:', error);
+            alert("주소 검색에 실패했습니다. 다시 시도해주세요.");
             setSearchResults([]);
         } finally {
             setIsSearching(false);
@@ -115,7 +116,7 @@ const PlanDetailCreate = (data) => {
             console.log('요청 데이터:', planData);
             console.log('travelid:', travelid, 'groupid:', groupid);
             console.log('currentUserId:', currentUserId);
-            
+
             WebsocketAPI.publishInsertOperation(
                 publish,
                 groupid,
@@ -131,7 +132,7 @@ const PlanDetailCreate = (data) => {
                 }
             );
             console.log('일정 생성 WebSocket 메시지 전송');
-            
+
             navigate(`/group/${groupid}/travel/${travelid}/edit`);
         } catch (error) {
             console.error('일정 생성 실패:', error);
@@ -250,7 +251,7 @@ const PlanDetailCreate = (data) => {
                             type='transaction'
                             value={formData.tcCode}
                             onChange={(value) => setFormData(prev => ({ ...prev, tcCode: value }))}
-                        />  
+                        />
                     </div>
 
                     {/* 지도 표시 */}
@@ -261,7 +262,7 @@ const PlanDetailCreate = (data) => {
                         </div>
                     )}
                 </div>
-                
+
                 {/* 하단 버튼 - 고정 */}
                 <div className="bg-white p-6 border-t border-gray-100 flex space-x-4">
                     <button

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { statAPI } from '../../../services/StatAPI';
 import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
@@ -31,6 +32,7 @@ const getCategoryIconAndText = tcCode => {
 };
 
 const TotalSpentSection = ({ travel, groupid }) => {
+  const navigate = useNavigate();
   const [expenseData, setExpenseData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,6 +88,12 @@ const TotalSpentSection = ({ travel, groupid }) => {
       } catch (error) {
         setError(error);
         setExpenseData(null);
+        navigate('/error', {
+          state: {
+            error: error,
+            from: `/group/${groupid}/stats/${travel?.tpPk}`,
+          },
+        });
       } finally {
         setIsLoading(false);
       }
