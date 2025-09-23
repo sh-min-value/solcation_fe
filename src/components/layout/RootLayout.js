@@ -48,7 +48,7 @@ export default function RootLayout({ children, title }) {
       <div className="bg-main flex-1 flex flex-col">
         {showGroupUI && <GroupProfileCard group={groupData} />}
         <div className="app-main flex-1 rounded-t-3xl bg-white">
-          <Outlet context={{ triggerRefresh, groupData }} />
+          {children || <Outlet context={{ triggerRefresh, groupData }} />}
         </div>
       </div>
 
