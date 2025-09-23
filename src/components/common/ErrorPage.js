@@ -8,7 +8,6 @@ const ErrorPage = ({ error: propError }) => {
   const location = useLocation();
 
   const error = propError;
-  console.log("에러로그" , error);
   // 404 에러인지 확인
   const is404 = !error && location.pathname !== '/error';
 
