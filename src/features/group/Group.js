@@ -15,7 +15,14 @@ import Loading from '../../components/common/Loading';
 
 /* 초대 검색바 컴포넌트 */
 const SearchBar = React.memo(
-  ({ searchTerm, onChange, onClick, placeholder, icon: IconComponent }) => {
+  ({
+    searchTerm,
+    onChange,
+    onClick,
+    placeholder,
+    icon: IconComponent,
+    isSearching,
+  }) => {
     const handleSubmit = useCallback(
       e => {
         e.preventDefault();
@@ -39,13 +46,19 @@ const SearchBar = React.memo(
             value={searchTerm}
             onChange={handleChange}
             placeholder={placeholder || '검색어를 입력하세요'}
-            className="w-full px-4 py-2 pr-12 rounded-3xl border-2 border-main focus:outline-none focus:ring-2 focus:ring-main/20"
+            disabled={isSearching}
+            className="w-full px-4 py-2 pr-12 rounded-3xl border-2 border-main focus:outline-none focus:ring-2 focus:ring-main/20 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="submit"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+            disabled={isSearching}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <IconComponent className="w-6 h-6 text-main" />
+            {isSearching ? (
+              <div className="w-6 h-6 border-2 border-main border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <IconComponent className="w-6 h-6 text-main" />
+            )}
           </button>
         </form>
       </div>
@@ -63,6 +76,8 @@ const Group = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false); // 검색 로딩 상태 추가
+  const [isInviting, setIsInviting] = useState(false); // 초대 로딩 상태 추가
 
   //멤버 목록
   const [members, setMembers] = useState({
@@ -105,8 +120,6 @@ const Group = () => {
           members: memberInfo.members || [],
           waitingList: memberInfo.waitingList || [],
         });
-
-        setLoading(false);
       } catch (err) {
         // 에러 발생 시 에러 페이지로 이동
         const errorData = err.response?.error || err;
@@ -142,6 +155,7 @@ const Group = () => {
       }
 
       try {
+        setIsSearching(true); // 검색 로딩 시작
         const response = await GroupAPI.getInvitee(groupid, q);
         setSelectedInvUser(response);
         setIsInvModalOpen(true);
@@ -150,6 +164,8 @@ const Group = () => {
       } catch (err) {
         const errorData = err.response?.error || err;
         alert(`${errorData.message || errorData}`);
+      } finally {
+        setIsSearching(false); // 검색 로딩 종료
       }
     },
     [searchTerm, groupid, isValidPhone]
@@ -198,14 +214,14 @@ const Group = () => {
   }, []);
 
   //유저 초대 함수
-
   const handleInvite = async (groupId, tel) => {
     try {
       if (!tel) {
         throw new Error('전화번호가 없으면 초대할 수 없어요!');
       }
+      setIsInviting(true); // 초대 로딩 시작
       await GroupAPI.inviteMember(groupId, tel);
-    } catch (response) {
+    } catch (error) {
       console.log(
         `초대 중 오류 발생: ${
           error.response?.error || error.message || 'Unknown error'
@@ -213,6 +229,7 @@ const Group = () => {
       );
       throw error;
     } finally {
+      setIsInviting(false); // 초대 로딩 종료
       triggerRefresh();
     }
   };
@@ -285,6 +302,7 @@ const Group = () => {
   const GroupMainContent = useMemo(
     () => (
       <div className="grid grid-rows-[auto,1fr] h-[calc(100dvh-18rem)] min-h-0 bg-white">
+        {isLoading && <Loading />}
         {/* 초대 검색바 */}
         <div className="row-start-1 row-end-2 sticky top-0 z-10 bg-white">
           <SearchBar
@@ -293,6 +311,7 @@ const Group = () => {
             onClick={handleSearch}
             placeholder="전화번호를 검색하세요"
             icon={RiSendPlaneFill}
+            isSearching={isSearching} // 검색 로딩 상태 전달
           />
         </div>
         {/* 멤버 리스트 */}
@@ -322,13 +341,17 @@ const Group = () => {
           isMember={isMemberInv}
           isPending={isPendingInv}
           onInvite={handleInvite}
+          isInviting={isInviting} // 초대 로딩 상태 전달
         />
       </div>
     ),
     [
+      isLoading,
+      isInviting,
       searchTerm,
       handleSearchTermChange,
       handleSearch,
+      isSearching,
       memberList,
       isModalOpen,
       handleCloseModal,
@@ -345,10 +368,6 @@ const Group = () => {
 
   // 현재 경로가 /group/:groupid 인지 확인
   const isGroupMain = location.pathname === `/group/${groupid}/main`;
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   return <>{isGroupMain ? GroupMainContent : <Outlet />}</>;
 };
