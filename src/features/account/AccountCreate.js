@@ -71,16 +71,10 @@ const AccountCreate = () => {
 
   // 다음 단계 처리 함수
   const handleNext = async () => {
+    console.log('handleNext called, currentStep:', currentStep);
     if (currentStep === 0) {
       // 입력 안했을 시 메세지 출력
       const newErrors = {
-        residentNumber:
-          !formData.residentNumber?.front ||
-          formData.residentNumber.front.length !== 6 ||
-          !formData.residentNumber?.back ||
-          formData.residentNumber.back.length !== 7
-            ? '주민등록번호를 입력해주세요'
-            : '',
         address: !formData.address?.trim() ? '주소를 입력해주세요' : '',
         signature: !formData.signature ? '서명을 해주세요' : '',
       };
