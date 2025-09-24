@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountAPI } from '../../../services/AccountAPI';
 import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
 
-const TransactionHistory = ({ groupId, accountInfo }) => {
+const TransactionHistory = ({ groupId }) => {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,13 +14,14 @@ const TransactionHistory = ({ groupId, accountInfo }) => {
   // 거래내역 조회
   useEffect(() => {
     const fetchTransactions = async () => {
-      if (!groupId || !accountInfo) {
+      if (!groupId) {
         setLoading(false);
         return;
       }
 
       try {
         const response = await AccountAPI.getTransactionHistory(groupId);
+        console.log('거래');
         setTransactions(response.data || response);
       } catch (error) {
         console.error('거래내역 조회 오류:', error);
@@ -131,8 +132,9 @@ const TransactionHistory = ({ groupId, accountInfo }) => {
         >
           <span className="text-sm text-gray-2">{getFilterText()}</span>
           <svg
-            className={`w-3 h-3 text-gray-2 transition-transform ml-1 ${showDropdown ? 'rotate-180' : ''
-              }`}
+            className={`w-3 h-3 text-gray-2 transition-transform ml-1 ${
+              showDropdown ? 'rotate-180' : ''
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -151,10 +153,11 @@ const TransactionHistory = ({ groupId, accountInfo }) => {
             {filterOptions.map(option => (
               <div
                 key={option.value || 'all'}
-                className={`px-2 pl-3 py-2 text-sm cursor-pointer text-left w-16 ${filter === option.value
+                className={`px-2 pl-3 py-2 text-sm cursor-pointer text-left w-16 ${
+                  filter === option.value
                     ? 'bg-main text-white'
                     : 'text-gray-2 hover:bg-gray-6'
-                  }`}
+                }`}
                 role="option"
                 tabIndex={0}
                 aria-selected={filter === option.value}
@@ -230,12 +233,7 @@ const TransactionHistory = ({ groupId, accountInfo }) => {
                     </div>
 
                     <div className="text-right">
-                      <div
-                        className={`text-sm font-medium ${transaction.ttype === 'DEPOSIT'
-                            ? 'text-main'
-                            : 'text-gray-1'
-                          }`}
-                      >
+                      <div className="text-sm font-medium text-gray-1">
                         {transaction.ttype === 'DEPOSIT' ? '+' : '-'}
                         {formatAmount(transaction.satAmount)}원
                       </div>
