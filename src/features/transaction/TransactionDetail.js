@@ -89,14 +89,9 @@ const TransactionDetail = () => {
     return <Loading />;
   }
 
-  const formatAmount = (ttype, amount) => {
-    const absAmount = Math.abs(amount);
-
-    if (ttype === 'DEPOSIT') {
-      return `${absAmount}원`;
-    } else {
-      return `-${absAmount}원`;
-    }
+  // 금액 포맷팅
+  const formatAmount = amount => {
+    return Math.abs(amount).toLocaleString('ko-KR') + ' 원';
   };
 
   const formatBalance = balance => {
@@ -131,8 +126,8 @@ const TransactionDetail = () => {
             </button>
           </div>
 
-          <div className="text-3xl font-bold text-black mb-4">
-            {formatAmount(data.ttype, data.satAmount)}
+          <div className="text-3xl font-bold text-black mb-4 ">
+            {formatAmount(data.satAmount)}
           </div>
         </div>
         {/* 구분선 */}
