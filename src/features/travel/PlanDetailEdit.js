@@ -29,7 +29,7 @@ const PlanDetailEdit = () => {
 
     console.log(currentUserId);
     const { isConnected, error: stompError, publish, publishOp, refreshData } = useStomp({
-        url: 'ws://localhost:8080/ws',
+        url: process.env.REACT_APP_WEBSOCKET_URL,
         groupId: groupid,
         travelId: travelid,
         onMessage: handleStompMessage,

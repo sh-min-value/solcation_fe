@@ -22,7 +22,7 @@ const PlanDetailCreate = (data) => {
 
     // WebSocket 연결
     const { isConnected, publish } = useStomp({
-        url: 'ws://localhost:8080/ws',
+        url: process.env.REACT_APP_WEBSOCKET_URL,
         groupId: groupid,
         travelId: travelid,
         onMessage: (message) => {
