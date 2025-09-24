@@ -109,7 +109,7 @@ const Stat = () => {
             <div className="flex items-center space-x-3">
               <div className="text-left">
                 <h3 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                  {groupData?.groupName || '그룹'} 여행 소비 패턴 분석
+                  {groupData?.groupName || '그룹'} 전체 여행 소비 통계
                 </h3>
                 <p className="text-sm text-gray-600 group-hover:text-blue-500 transition-colors">
                   전체 여행 통계 보기
