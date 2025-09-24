@@ -18,7 +18,7 @@ const emojiMap = {
 
   'FRIENDS': 'handshake',
   'FAMILY': 'couple-with-heart-man-woman',
-  'LOVER': 'pink-heart',
+  'COUPLE': 'pink-heart',
   'COLLEAGUE': 'briefcase',
 
   'LEISURE': 'person-surfing',
