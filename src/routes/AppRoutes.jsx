@@ -151,6 +151,9 @@ export default function AppRoutes() {
 
         {/* 에러 페이지 라우트 */}
         <Route path="/error" element={<ErrorPage />} />
+        
+        {/* 404 - 제공되지 않은 모든 라우트 */}
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Suspense>
   );

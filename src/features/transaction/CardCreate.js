@@ -112,7 +112,7 @@ const PasswordSetup = ({ value, onChange, onNext, groupid, setIsSubmitting, isSu
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center">
+    <div className="w-full flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
       {isSubmitting ? (
         <Loading/>
       ) : (
@@ -264,7 +264,7 @@ const CardCreate = () => {
   // 로딩 중일 때
   if (isLoadingProfile) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex items-center justify-center bg-red-500">
         <div className="text-white text-lg">사용자 정보를 불러오는 중...</div>
       </div>
     );
@@ -300,7 +300,7 @@ const CardCreate = () => {
               currentStep={currentStep}
             />
             {/* 내용 */}
-            <div className="flex min-h-[calc(100vh-500px)] w-full justify-center items-start py-9 px-0 flex-1">
+            <div className="flex min-h-[calc(100vh-100px)] w-full justify-center items-start py-9 px-0 flex-1">
               <StepComponent {...getStepProps()} />
             </div>
           </>

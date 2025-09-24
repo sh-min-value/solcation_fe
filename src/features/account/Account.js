@@ -4,8 +4,6 @@ import BriefAccount from './BriefAccount';
 import TransactionHistory from './components/TransactionHistory';
 import { AccountAPI } from '../../services/AccountAPI';
 import { useAuth } from '../../context/AuthContext';
-import emptySol from '../../assets/images/empty_sol.svg';
-import Loading from '../../components/common/Loading';
 import EmptyBear from '../../components/common/EmptyBear';
 
 // 스켈레톤 로딩 컴포넌트
@@ -86,7 +84,7 @@ const Account = () => {
         console.error('모임통장 정보 조회 실패:', error.response.error);
         const { code, message } = error.response.error;
 
-        if (code === 40001) {
+        if (code === 40401) {
           setIsExist(false);
           setAccountInfo(null);
           //그룹 정보 저장
@@ -99,7 +97,7 @@ const Account = () => {
 
         navigate('/error', {
           state: {
-            error: error.response,
+            error: error,
             from: location.pathname,
           },
         });
@@ -149,7 +147,8 @@ const Account = () => {
           />
         )}
       </div>
-      <TransactionHistory groupId={groupid} />
+      {/* 계좌가 존재할 때만 거래내역 표시 */}
+      {isExist && <TransactionHistory groupId={groupid} accountInfo={accountInfo} />}
     </div>
   );
 };

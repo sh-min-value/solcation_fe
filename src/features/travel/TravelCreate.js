@@ -16,7 +16,7 @@ import SelectLocation from './components/SelectLocation';
 const Calendar = ({ selectedDates, onDateSelect }) => {
   return (
     <div className="w-full">
-      <CalendarSection 
+      <CalendarSection
         selectedDates={selectedDates}
         onDateSelect={onDateSelect}
         isClickable={true}
@@ -175,28 +175,26 @@ const SelectParticipantCount = ({ value, onChange, maxCount }) => {
         <button
           onClick={handleDecrease}
           disabled={value <= 1}
-          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${
-            value <= 1 
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${value <= 1
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
-          }`}
+            }`}
           aria-label="인원수 감소"
         >
           −
         </button>
-        
+
         <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center">
           <span className="text-3xl font-bold text-blue-500">{value}</span>
         </div>
-        
+
         <button
           onClick={handleIncrease}
           disabled={value >= maxCount}
-          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${
-            value >= maxCount 
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${value >= maxCount
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
-          }`}
+            }`}
           aria-label="인원수 증가"
         >
           +
@@ -310,7 +308,7 @@ const TravelCreate = () => {
     profileImg: null,
     selectedCountry: '전체',
     selectedCity: '전체',
-    participantCount: 1, // 기본값 1명
+    participantCount: 1,
   });
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 로딩 상태
 
@@ -326,10 +324,16 @@ const TravelCreate = () => {
         setGroupData(data);
         console.log('groupData:', data);
       } catch (error) {
+        navigate('/error', {
+          state: {
+            error: error,
+            from: location.pathname,
+          },
+        });
         console.error('그룹 데이터 로드 실패:', error);
       }
     };
-    
+
     if (groupid) {
       loadGroupData();
     }
@@ -338,9 +342,10 @@ const TravelCreate = () => {
   // 그룹 데이터가 로드되면 participantCount 설정
   useEffect(() => {
     if (groupData && groupData.totalMembers) {
-      setFormData(prev => ({ 
-        ...prev, 
-        participantCount: groupData.totalMembers 
+      console.log('groupData.totalMembers:', groupData.totalMembers);
+      setFormData(prev => ({
+        ...prev,
+        participantCount: groupData.totalMembers
       }));
     }
   }, [groupData]);
@@ -355,8 +360,8 @@ const TravelCreate = () => {
       }
     } else if (currentStep === 1) {
       // 나라/도시 선택 확인
-      if (!formData.selectedCountry || formData.selectedCountry === '전체' || 
-          !formData.selectedCity || formData.selectedCity === '전체') {
+      if (!formData.selectedCountry || formData.selectedCountry === '전체' ||
+        !formData.selectedCity || formData.selectedCity === '전체') {
         alert('여행 지역을 선택해주세요.');
         return;
       }
@@ -387,9 +392,9 @@ const TravelCreate = () => {
           console.log('travelTheme:', formData.travelTheme);
           console.log('categoryCode:', formData.travelTheme);
           travelFormData.append('categoryCode', formData.travelTheme || 'FOOD');
-          travelFormData.append('photo', profileImg); 
+          travelFormData.append('photo', profileImg);
           travelFormData.append('participant', formData.participantCount.toString());
-          
+
           console.log('여행 생성 데이터:', {
             groupPk: groupid,
             country: formData.selectedCountry,
@@ -400,7 +405,7 @@ const TravelCreate = () => {
             categoryCode: formData.travelTheme,
             participant: formData.participantCount
           });
-          
+
           // TravelAPI를 사용해서 여행 생성
           await TravelAPI.createTravel(travelFormData, groupid);
           setCurrentStep(currentStep + 1);
@@ -434,17 +439,17 @@ const TravelCreate = () => {
     if (Array.isArray(dateOrDates)) {
       setSelectedDates(dateOrDates);
       setFormData(prev => ({ ...prev, travelDates: dateOrDates }));
-    } 
+    }
     // 단일 날짜인 경우 (첫 번째 클릭)
     else {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       // 오늘 이전 날짜는 선택 불가
       if (dateOrDates < today) {
         return;
       }
-      
+
       // 첫 번째 날짜 선택
       const newDates = [dateOrDates];
       setSelectedDates(newDates);
@@ -458,7 +463,7 @@ const TravelCreate = () => {
     const buttonTexts = [
       '제목 입력 완료',
       '지역 선택 완료',
-      '일정 선택 완료', 
+      '일정 선택 완료',
       '테마 선택 완료',
       '인원수 선택 완료',
       '여행 계획 생성하기'
@@ -483,7 +488,7 @@ const TravelCreate = () => {
 
   //현재 컴포넌트
   const StepComponent = stepComponents[currentStepData.type];
-  
+
   // 디버깅용 콘솔 출력
   console.log('현재 단계:', currentStep);
   console.log('현재 단계 데이터:', currentStepData);
@@ -520,7 +525,7 @@ const TravelCreate = () => {
         onChange: value => updateFormData('travelTitle', value),
       };
     }
-    
+
     if (currentStepData.type === 'select') {
       return {
         ...currentStepData.props,
@@ -528,7 +533,7 @@ const TravelCreate = () => {
         onChange: value => updateFormData('travelTheme', value),
       };
     }
-    
+
     if (currentStepData.type === 'participant') {
       return {
         ...currentStepData.props,
@@ -537,7 +542,7 @@ const TravelCreate = () => {
         onChange: value => updateFormData('participantCount', value),
       };
     }
-    
+
     if (currentStepData.type === 'profile') {
       return {
         ...currentStepData.props,
@@ -549,7 +554,7 @@ const TravelCreate = () => {
     return {
       ...currentStepData.props,
       value: '',
-      onChange: () => {},
+      onChange: () => { },
     };
   };
 
@@ -563,9 +568,8 @@ const TravelCreate = () => {
             {descriptions.slice(0, -1).map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index <= currentStep ? 'bg-white' : 'bg-white/30'
-                }`}
+                className={`w-2 h-2 rounded-full transition-colors ${index <= currentStep ? 'bg-white' : 'bg-white/30'
+                  }`}
               />
             ))}
           </div>

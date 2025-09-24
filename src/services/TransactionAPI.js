@@ -30,7 +30,11 @@ export const TransactionAPI = {
   
   openCard: (groupId, data) =>
     apiClient.post(`/group/${groupId}/account/card/open`, data),
-    getUserAddress: (groupId) =>
+  getUserAddress: (groupId) =>
     apiClient.get(`/group/${groupId}/account/card/address`),
+  
+  // 비밀번호 검증
+  verifyPassword: (groupId, sacPk, data) =>
+    apiClient.post(`/group/${groupId}/account/card/${sacPk}/verify`, data),
   
 };

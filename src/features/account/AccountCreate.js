@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/common/Header';
 import BottomButton from '../../components/common/BottomButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AccountAPI } from '../../services/AccountAPI';
+import { TransactionAPI } from '../../services/TransactionAPI';
 import AccountInfoForm from './components/AccountInfoForm';
 import PasswordSetupForm from './components/PasswordSetupForm';
 import TermsAgreementForm from './components/TermsAgreementForm';
@@ -34,6 +35,8 @@ const AccountCreate = () => {
   const { groupid: groupId } = useParams();
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
 
   // 서명 데이터를 파일로 변환하는 함수
   const dataURLtoFile = (dataURL, filename) => {
@@ -68,16 +71,10 @@ const AccountCreate = () => {
 
   // 다음 단계 처리 함수
   const handleNext = async () => {
+    console.log('handleNext called, currentStep:', currentStep);
     if (currentStep === 0) {
       // 입력 안했을 시 메세지 출력
       const newErrors = {
-        residentNumber:
-          !formData.residentNumber?.front ||
-          formData.residentNumber.front.length !== 6 ||
-          !formData.residentNumber?.back ||
-          formData.residentNumber.back.length !== 7
-            ? '주민등록번호를 입력해주세요'
-            : '',
         address: !formData.address?.trim() ? '주소를 입력해주세요' : '',
         signature: !formData.signature ? '서명을 해주세요' : '',
       };
@@ -128,6 +125,12 @@ const AccountCreate = () => {
         setCurrentStep(3);
       } catch (error) {
         console.error('계좌 생성 오류:', error);
+        navigate('/error', {
+          state: {
+            error: error,
+            from: location.pathname,
+          },
+        });
       }
     }
   };
@@ -137,8 +140,33 @@ const AccountCreate = () => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
+  // 유저 주소 조회
+  useEffect(() => {
+    const fetchUserAddress = async () => {
+      try {
+        const response = await TransactionAPI.getUserAddress(groupId);
+        setUserProfile(response);
+      } catch (error) {
+        console.error('유저 주소 조회 실패:', error);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchUserAddress();
+  }, [groupId]);
+
+  // 로딩 중일 때
+  if (isLoadingProfile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex items-center justify-center">
+        <div className="text-white text-lg">사용자 정보를 불러오는 중...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
+    <div className="h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex flex-col">
       <Header showBackButton={true} />
 
       {/* Progress Bar */}
@@ -158,24 +186,27 @@ const AccountCreate = () => {
       )}
 
       {/* 메인 콘텐츠 영역 */}
-      <div className="flex flex-col min-h-[calc(100vh-140px)] mt-8">
+      <div className="flex-1 overflow-y-auto px-6">
         {/* 단계 설명 */}
-        <div className="flex items-start justify-between px-9 mb-8">
+        <div className="flex items-start justify-between px-3 mb-8">
           <div className="text-white text-xl font-[600] leading-tight whitespace-pre-line">
             {descriptions[currentStep].title}
           </div>
-          <div className="text-white text-sm font-medium">
-            {currentStep + 1} / {descriptions.length}
-          </div>
+          {currentStep !== descriptions.length - 1 && (
+            <div className="text-white text-sm font-medium">
+              {currentStep + 1} / {descriptions.length - 1}
+            </div>
+          )}
         </div>
 
         {/* 폼 컴포넌트 */}
-        <div className="flex justify-center items-start px-0 flex-1">
+        <div className="flex justify-center items-start px-0 pb-20">
           {currentStep === 0 ? (
             <AccountInfoForm
               formData={formData}
               updateFormData={updateFormData}
               errors={errors}
+              userProfile={userProfile}
             />
           ) : currentStep === 1 ? (
             <PasswordSetupForm

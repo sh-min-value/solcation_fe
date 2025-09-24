@@ -51,6 +51,12 @@ const OverallStatsView = ({ groupid, groupInfo }) => {
         setOverallStats(response);
       } catch (error) {
         setOverallStats(null);
+        navigator('/error', {
+          state: {
+            error: error,
+            from: location.pathname,
+          },
+        });
       } finally {
         setIsLoading(false);
       }

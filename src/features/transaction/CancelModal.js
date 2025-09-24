@@ -12,6 +12,7 @@ const CancelModal = ({ isOpen, onConfirm, onCancel }) => {
       await onConfirm();
     } catch (error) {
       console.error('카드 해지 오류:', error);
+      alert('카드 해지에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -41,11 +42,10 @@ const CancelModal = ({ isOpen, onConfirm, onCancel }) => {
           <button
             onClick={handleCancel}
             disabled={isLoading}
-            className={`flex-1 py-4 text-center font-medium border-r border-gray-5 transition-colors ${
-              isLoading
+            className={`flex-1 py-4 text-center font-medium border-r border-gray-5 transition-colors ${isLoading
                 ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                 : 'text-gray-1 hover:bg-gray-6'
-            }`}
+              }`}
           >
             아니요
           </button>
@@ -54,11 +54,10 @@ const CancelModal = ({ isOpen, onConfirm, onCancel }) => {
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className={`flex-1 py-4 text-center font-medium transition-colors flex items-center justify-center ${
-              isLoading
+            className={`flex-1 py-4 text-center font-medium transition-colors flex items-center justify-center ${isLoading
                 ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                 : 'text-gray-1 hover:bg-gray-6'
-            }`}
+              }`}
           >
             {isLoading ? (
               <div className="flex items-center gap-2">

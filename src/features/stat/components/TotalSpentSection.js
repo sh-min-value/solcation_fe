@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { statAPI } from '../../../services/StatAPI';
 import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
@@ -31,6 +32,7 @@ const getCategoryIconAndText = tcCode => {
 };
 
 const TotalSpentSection = ({ travel, groupid }) => {
+  const navigate = useNavigate();
   const [expenseData, setExpenseData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,6 +88,12 @@ const TotalSpentSection = ({ travel, groupid }) => {
       } catch (error) {
         setError(error);
         setExpenseData(null);
+        navigate('/error', {
+          state: {
+            error: error,
+            from: `/group/${groupid}/stats/${travel?.tpPk}`,
+          },
+        });
       } finally {
         setIsLoading(false);
       }
@@ -130,14 +138,27 @@ const TotalSpentSection = ({ travel, groupid }) => {
       </h2>
 
       {/* 카테고리별 비율 바 */}
-      <div className="flex h-4 rounded-full overflow-hidden mb-6">
-        {expenseData.categories.map((category, index) => (
-          <div
-            key={index}
-            className={`${category.color}`}
-            style={{ width: `${category.percentage}%` }}
-          />
-        ))}
+      <div className="flex h-4 mb-6">
+        {expenseData.categories.map((category, index) => {
+          const isFirst = index === 0;
+          const isLast = index === expenseData.categories.length - 1;
+          const roundedClass =
+            isFirst && isLast
+              ? 'rounded-full'
+              : isFirst
+              ? 'rounded-l-full'
+              : isLast
+              ? 'rounded-r-full'
+              : '';
+
+          return (
+            <div
+              key={index}
+              className={`${category.color} ${roundedClass}`}
+              style={{ width: `${category.percentage}%` }}
+            />
+          );
+        })}
       </div>
 
       {/* 카테고리별 상세 */}

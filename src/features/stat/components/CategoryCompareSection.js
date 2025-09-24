@@ -143,7 +143,7 @@ const CategoryCompareSection = ({ travel, groupid }) => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex justify-start items-end space-x-6 h-72 overflow-x-auto pb-16 mb-32 px-6 cursor-grab"
+          className="flex justify-start items-end space-x-12 h-72 overflow-x-auto pb-16 mb-32 px-6 cursor-grab"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
@@ -175,32 +175,36 @@ const CategoryCompareSection = ({ travel, groupid }) => {
                 key={category.tcPk || index}
                 className="flex flex-col items-center min-w-[80px]"
               >
-                <div className="flex items-end space-x-0.5 mb-2">
+                <div className="flex items-end space-x-2 mb-2">
                   <div className="flex flex-col items-center">
-                    <div className="text-[13px] text-black mb-1 font-medium leading-tight text-center max-w-[80px] whitespace-nowrap">
-                      {myAmount.toLocaleString()}원
+                    <div className="relative group">
+                      <div
+                        className="bg-stat rounded min-w-[40px] px-1 cursor-pointer"
+                        style={{ height: `${myHeight}px` }}
+                      />
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+                        {myAmount.toLocaleString()}원
+                      </div>
                     </div>
-                    <div
-                      className="bg-group-3 rounded min-w-[40px] px-1"
-                      style={{ height: `${myHeight}px` }}
-                    />
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <div className="text-[12px] text-black mb-1 leading-tight text-center max-w-[80px] whitespace-nowrap">
-                      {othersAvg.toLocaleString()}원
+                    <div className="relative group">
+                      <div
+                        className={`${getCategoryColor(
+                          category.tcCode
+                        )} rounded min-w-[40px] px-1 cursor-pointer`}
+                        style={{ height: `${othersHeight}px` }}
+                      />
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+                        {othersAvg.toLocaleString()}원
+                      </div>
                     </div>
-                    <div
-                      className={`${getCategoryColor(
-                        category.tcCode
-                      )} rounded min-w-[40px] px-1`}
-                      style={{ height: `${othersHeight}px` }}
-                    />
                   </div>
                 </div>
 
                 <div className="text-center">
-                  <div className="text-sm text-gray-1 font-medium leading-tight text-center">
+                  <div className="text-xs text-gray-1 font-medium leading-tight text-center">
                     {category.tcName || '기타'}
                   </div>
                 </div>
