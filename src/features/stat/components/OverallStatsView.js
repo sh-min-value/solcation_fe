@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { statAPI } from '../../../services/StatAPI';
 import { getTransactionCategoryIconOnly } from '../../../utils/CategoryIcons';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const OverallStatsView = ({ groupid, groupInfo }) => {
   const [overallStats, setOverallStats] = useState(null);
@@ -194,11 +194,25 @@ const OverallStatsView = ({ groupid, groupInfo }) => {
                       paddingAngle={0}
                       dataKey="value"
                       stroke="none"
+                      className="focus:outline-none"
                     >
                       {getChartData().map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
+                    <Tooltip
+                      formatter={(value, name, props) => [
+                        `${props.payload.percentage}%`,
+                        props.payload.name,
+                      ]}
+                      labelStyle={{ color: '#374151' }}
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        fontSize: '14px',
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -221,9 +235,8 @@ const OverallStatsView = ({ groupid, groupInfo }) => {
                         {category.name}
                       </span>
                     </div>
-                    <span className=" text-black">
-                      {category.amount?.toLocaleString()}원 (
-                      {(category.ratio * 100).toFixed(1)}%)
+                    <span className="text-black">
+                      {category.amount?.toLocaleString()}원
                     </span>
                   </div>
                 ))}
