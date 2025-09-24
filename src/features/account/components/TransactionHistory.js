@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountAPI } from '../../../services/AccountAPI';
 import { getTransactionCategoryIcon } from '../../../utils/CategoryIcons';
 
-const TransactionHistory = ({ groupId }) => {
+const TransactionHistory = ({ groupId, shouldLoadTransactions }) => {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,9 @@ const TransactionHistory = ({ groupId }) => {
       }
     };
 
-    fetchTransactions();
+    if(shouldLoadTransactions) {
+      fetchTransactions();
+    }
   }, [groupId]);
 
   // 날짜 포맷팅

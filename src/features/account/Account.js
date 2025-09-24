@@ -55,6 +55,7 @@ const Account = () => {
   const [isExist, setIsExist] = useState(true);
   const [isGroupLeader, setIsGroupLeader] = useState(false);
   const { groupData, triggerRefresh } = useOutletContext();
+  const [shouldLoadTransactions, setShouldLoadTransactions] = useState(false);
 
   const buttonClass =
     'bg-light-blue text-main px-6 py-2 rounded-lg hover:bg-light-blue/80 transition-colors';
@@ -80,6 +81,7 @@ const Account = () => {
 
         //계좌 존재 여부 저장
         setIsExist(true);
+        setShouldLoadTransactions(true);
       } catch (error) {
         console.error('모임통장 정보 조회 실패:', error);
 
@@ -91,12 +93,14 @@ const Account = () => {
             setIsGroupLeader(true);
           }
 
+          setShouldLoadTransactions(false);
           return;
         }
 
         // 다른 에러인 경우에도 계좌가 없다고 처리
         setIsExist(false);
         setAccountInfo(null);
+        setShouldLoadTransactions(false);
       } finally {
         setIsLoading(false);
       }
@@ -147,7 +151,12 @@ const Account = () => {
         )}
       </div>
       {/* 계좌가 존재할 때만 거래내역 표시 */}
-      {isExist && <TransactionHistory groupId={groupid} />}
+      {isExist && (
+        <TransactionHistory
+          groupId={groupid}
+          shouldLoadTransactions={shouldLoadTransactions}
+        />
+      )}
     </div>
   );
 };
