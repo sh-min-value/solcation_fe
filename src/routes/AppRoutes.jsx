@@ -9,7 +9,7 @@ const LoginForm = lazy(() => import('../components/auth/LoginForm'));
 const Signup = lazy(() => import('../components/auth/Signup'));
 const Main = lazy(() => import('../features/main/Main'));
 const Alarm = lazy(() => import('../features/alarm/Alarm'));
-
+const InitScreen = lazy(() => import('../components/common/InitScreen'));
 const Group = lazy(() => import('../features/group/Group'));
 const GroupCreate = lazy(() => import('../features/group/GroupCreate'));
 const GroupList = lazy(() => import('../features/group/GroupList'));
@@ -35,13 +35,15 @@ export default function AppRoutes() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
+        {/* 웰컴 페이지  */}
+        <Route path="/" element={<InitScreen />} />
         {/* 공개 라우트 */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<LoginForm />} />
 
         {/* 보호된 라우트 */}
         <Route
-          path="/"
+          path="/main"
           element={
             <ProtectedRoute>
               <Main />

@@ -32,7 +32,7 @@ const Header = ({
     if (onHome) {
       onHome();
     } else {
-      navigate('/');
+      navigate('/main');
     }
   };
 
