@@ -1,13 +1,23 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.svg';
 
-const WelcomeScreen = ({ onFinish }) => {
+const InitScreen = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
+    const isAuthenticated = localStorage.getItem('accessToken');
+
     const timer = setTimeout(() => {
-      onFinish();
-    }, 3000);
+      if(isAuthenticated) {
+        navigate('/main');
+      } else {
+        navigate('/login');
+      }
+    }, 3000); // 3초 후 바로 이동
+
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-main via-main via-20% to-secondary">
@@ -43,4 +53,4 @@ const WelcomeScreen = ({ onFinish }) => {
   );
 };
 
-export default WelcomeScreen;
+export default InitScreen;

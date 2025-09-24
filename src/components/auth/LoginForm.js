@@ -29,7 +29,7 @@ const LoginForm = () => {
     setIsLoading(false);
   };
   const handleWelcomeFinish = () => {
-    navigate('/'); // 홈으로 이동
+    navigate('/main'); // 홈으로 이동
   };
 
   if (showWelcome) {
