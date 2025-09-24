@@ -81,10 +81,9 @@ const Account = () => {
         //계좌 존재 여부 저장
         setIsExist(true);
       } catch (error) {
-        console.error('모임통장 정보 조회 실패:', error.response.error);
-        const { code, message } = error.response.error;
+        console.error('모임통장 정보 조회 실패:', error);
 
-        if (code === 40401) {
+        if (error?.status === 40401) {
           setIsExist(false);
           setAccountInfo(null);
           //그룹 정보 저장
@@ -95,12 +94,8 @@ const Account = () => {
           return;
         }
 
-        navigate('/error', {
-          state: {
-            error: error,
-            from: location.pathname,
-          },
-        });
+        // 다른 에러인 경우에도 계좌가 없다고 처리
+        setIsExist(false);
         setAccountInfo(null);
       } finally {
         setIsLoading(false);
@@ -110,8 +105,12 @@ const Account = () => {
     fetchAccountInfo();
   }, [groupid]);
 
-  // 계좌가 없는 경우
-  if (!isExist) {
+  // 디버깅을 위한 로그 추가
+  console.log('Account 상태:', { isExist, isLoading, accountInfo });
+
+  // 계좌가 없는 경우 (isExist가 false이거나 accountInfo가 null인 경우)
+  if ((!isExist || !accountInfo) && !isLoading) {
+    console.log('EmptyBear 표시');
     return (
       <>
         <EmptyBear
@@ -148,7 +147,7 @@ const Account = () => {
         )}
       </div>
       {/* 계좌가 존재할 때만 거래내역 표시 */}
-      {isExist && <TransactionHistory groupId={groupid} accountInfo={accountInfo} />}
+      {isExist && accountInfo && <TransactionHistory groupId={groupid} accountInfo={accountInfo} />}
     </div>
   );
 };
