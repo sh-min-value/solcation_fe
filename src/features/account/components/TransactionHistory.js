@@ -40,7 +40,7 @@ const TransactionHistory = ({ groupId, shouldLoadTransactions }) => {
     if(shouldLoadTransactions) {
       fetchTransactions();
     }
-  }, [groupId]);
+  }, [groupId, shouldLoadTransactions]);
 
   // 날짜 포맷팅
   const formatDate = dateString => {
