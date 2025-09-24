@@ -35,21 +35,21 @@ export const getStateIcon = (
       return (
         <>
           <AiFillSchedule className={className} />
-          <p>여행 전</p>
+          <p className="w-11">여행 전</p>
         </>
       );
     case 'ONGOING':
       return (
         <>
           <BiSolidPlaneAlt className={className} />
-          <p>여행 중</p>
+          <p className="w-11">여행 중</p>
         </>
       );
     case 'FINISH':
       return (
         <>
           <FaCheckCircle className={className} />
-          <p className="w-11">여행 완료</p>
+          <p className="w-13">여행 완료</p>
         </>
       );
     default:
@@ -307,13 +307,13 @@ export const getGroupCategoryEmojiName = categoryCode => {
   // 하위 호환성을 위한 fallback
   switch (categoryCode) {
     case 'FRIENDS':
-      return categoryCache.getGroupCategoryEmojiName(categoryCode);
+      return categoryCache.getGroupCategoryName(categoryCode);
     case 'COUPLE':
-      return categoryCache.getGroupCategoryEmojiName(categoryCode);
+      return categoryCache.getGroupCategoryName(categoryCode);
     case 'FAMILY':
-      return categoryCache.getGroupCategoryEmojiName(categoryCode);
+      return categoryCache.getGroupCategoryName(categoryCode);
     case 'COLLEAGUE':
-      return categoryCache.getGroupCategoryEmojiName(categoryCode);
+      return categoryCache.getGroupCategoryName(categoryCode);
   }
 };
 

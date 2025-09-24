@@ -2,10 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Header from '../../components/common/Header';
 import { useState } from 'react';
 import BottomButton from '../../components/common/BottomButton';
-import { EmojiProvider, Emoji } from 'react-apple-emojis';
-import emojiData from 'react-apple-emojis/src/data.json';
 import {
-  getGroupCategoryEmojiName,
   getGroupCategoryName,
 } from '../../utils/CategoryIcons';
 import { ChevronDown, Plus } from 'lucide-react';
@@ -14,7 +11,7 @@ import HappySol from '../../assets/images/happy_sol.svg';
 import { GroupAPI } from '../../services/GroupAPI';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/common/Loading';
-
+import CategoryEmoji from '../../utils/CategoryEmoji';
 const formDataKeys = ['gcPk', 'groupName', 'profileImg'];
 const descriptions = [
   {
@@ -95,13 +92,8 @@ const SelectPurpose = ({ options, value, onChange }) => {
           aria-label="그룹 카테고리 선택"
         >
           <div className="flex ml-3 items-center gap-3">
-            <EmojiProvider data={emojiData}>
-              <Emoji
-                name={getGroupCategoryEmojiName(selectedValue)}
-                size={7}
-                className="w-7 h-7"
-              />
-            </EmojiProvider>
+          <CategoryEmoji categoryCode={selectedValue} size={8} />
+
             <div className="text-lg">{getGroupCategoryName(selectedValue)}</div>
           </div>
           <ChevronDown
@@ -126,13 +118,7 @@ const SelectPurpose = ({ options, value, onChange }) => {
                 onKeyDown={e => handleOptionKeyDown(e, option)}
                 aria-selected={selectedValue === option}
               >
-                <EmojiProvider data={emojiData}>
-                  <Emoji
-                    name={getGroupCategoryEmojiName(option)}
-                    size={7}
-                    className="w-7 h-7"
-                  />
-                </EmojiProvider>
+                <CategoryEmoji categoryCode={option} size={8} />
                 <span className="text-lg">{getGroupCategoryName(option)}</span>
               </div>
             ))}

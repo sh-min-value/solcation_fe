@@ -60,7 +60,14 @@ const PlannedVsActualSection = ({ travel, groupid }) => {
         });
       } catch (err) {
         console.error('계획 vs 실제 데이터 로드 실패:', err);
+
         setError(err);
+        navigator('/error', {
+          state: {
+            error: err,
+            from: location.pathname,
+          },
+        });
       } finally {
         setIsLoading(false);
       }
