@@ -138,14 +138,27 @@ const TotalSpentSection = ({ travel, groupid }) => {
       </h2>
 
       {/* 카테고리별 비율 바 */}
-      <div className="flex h-4 rounded-full overflow-hidden mb-6">
-        {expenseData.categories.map((category, index) => (
-          <div
-            key={index}
-            className={`${category.color}`}
-            style={{ width: `${category.percentage}%` }}
-          />
-        ))}
+      <div className="flex h-4 mb-6">
+        {expenseData.categories.map((category, index) => {
+          const isFirst = index === 0;
+          const isLast = index === expenseData.categories.length - 1;
+          const roundedClass =
+            isFirst && isLast
+              ? 'rounded-full'
+              : isFirst
+              ? 'rounded-l-full'
+              : isLast
+              ? 'rounded-r-full'
+              : '';
+
+          return (
+            <div
+              key={index}
+              className={`${category.color} ${roundedClass}`}
+              style={{ width: `${category.percentage}%` }}
+            />
+          );
+        })}
       </div>
 
       {/* 카테고리별 상세 */}

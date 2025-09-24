@@ -86,7 +86,7 @@ const ComparePerPersonSection = ({ travel, groupid }) => {
             {ourPayPerDay.toLocaleString()}원
           </div>
           <div
-            className="w-12 bg-group-3 rounded"
+            className="w-12 bg-stat rounded"
             style={{ height: `${ourHeight}px` }}
           />
           <div className="text-sm text-gray-2 mt-1">우리 그룹</div>

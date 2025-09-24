@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 // 비밀번호 설정
 const PasswordSetupForm = ({ formData, updateFormData, errors, onNext, className = `bg-light-blue` }) => {
   const [password, setPassword] = useState('');
-  
+
   // 랜덤 숫자 패드 생성
   const generateRandomKeypad = () => {
     const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
     const shuffled = [...numbers].sort(() => Math.random() - 0.5);
     return shuffled;
   };
-  
+
   const [keypadNumbers] = useState(() => generateRandomKeypad());
 
   // 숫자 입력
@@ -53,7 +53,7 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext, className
               className="absolute -top-12 left-0 right-0 text-center"
               style={{ margin: 0 }}
             >
-              <span className="text-red-300 text-xs">{errors.saPw}</span>
+              <span className="text-red-300 text-[10px]">{errors.saPw}</span>
             </div>
           )}
         </div>
@@ -63,94 +63,94 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext, className
       <div className={`${className} rounded-t-3xl flex-shrink-0`}>
         <div className="p-12 pb-20">
           <div className="grid grid-cols-3 gap-6 max-w-sm mx-auto justify-center items-center ml-3">
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[0])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[0]}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[1])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[1]}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[2])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[2]}
-          </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[0])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[0]}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[1])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[1]}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[2])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[2]}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[3])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[3]}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[4])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[4]}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[5])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[5]}
-          </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[3])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[3]}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[4])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[4]}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[5])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[5]}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[6])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[6]}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[7])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[7]}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[8])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[8]}
-          </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[6])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[6]}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[7])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[7]}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[8])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[8]}
+            </button>
 
-          {/* 네 번째 줄: ←, 6, 확인 */}
-          <button
-            type="button"
-            onClick={handleBackspace}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNumberClick(keypadNumbers[9])}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
-          >
-            {keypadNumbers[9]}
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-sm font-bold hover:bg-gray-200 transition-colors"
-          >
-            확인
-          </button>
+            {/* 네 번째 줄: ←, 6, 확인 */}
+            <button
+              type="button"
+              onClick={handleBackspace}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumberClick(keypadNumbers[9])}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-2xl font-bold hover:bg-gray-200 transition-colors"
+            >
+              {keypadNumbers[9]}
+            </button>
+            <button
+              type="button"
+              onClick={onNext}
+              className="w-16 h-16 bg-transparent rounded-lg flex items-center justify-center text-third text-sm font-bold hover:bg-gray-200 transition-colors"
+            >
+              확인
+            </button>
           </div>
         </div>
       </div>
