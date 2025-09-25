@@ -224,6 +224,7 @@ const AccountCreate = () => {
               updateFormData={updateFormData}
               errors={errors}
               onNext={handleNext}
+              className='bg-transparent'
             />
           ) : currentStep === 2 ? (
             <TermsAgreementForm

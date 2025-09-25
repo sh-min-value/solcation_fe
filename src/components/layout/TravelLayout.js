@@ -116,10 +116,10 @@ export default function TravelLayout({ children, title }) {
 
             {/* 오른쪽: 텍스트 정보 */}
             <div className="flex-1 text-white">
-              <h2 className="flex text-xl font-bold mb-1">
-                {travelInfo?.title || '여행 제목'}
-                <p className='text-sm ml-2 mt-1 text-gray-200'> |  {travelInfo?.location || '여행지'}</p>
-              </h2>
+              <div className="flex text-xl font-bold mb-1">
+                <h3 className="max-w-28 line-clamp-1 truncate">{travelInfo?.title || '여행 제목'}</h3>
+                <p className='text-sm ml-2 mt-1 text-gray-200 max-w-24 line-clamp-1 truncate'> |  {travelInfo?.location || '여행지'}</p>
+              </div>
               <p className="text-sm opacity-90 mb-1">
                 {travelInfo?.startDate ? formatDate2(travelInfo.startDate) : '시작일'} ~ {travelInfo?.endDate ? formatDate2(travelInfo.endDate) : '종료일'}
               </p>
