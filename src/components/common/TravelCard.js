@@ -33,9 +33,9 @@ const TravelCard = ({ travel, groupid, onClick, className }) => {
     console.log('travel', travel);
 
     return (
-        <div 
-        className={`bg-white backdrop-blur-sm rounded-3xl p-4 my-4 mx-1 shadow-[0_0_5px_rgba(0,0,0,0.1)] transition-all duration-200 cursor-pointer transform hover:-translate-y-1 hover:shadow-lg flex flex-row items-center space-x-4 ${className}`}
-        onClick={onClick}
+        <div
+            className={`bg-white backdrop-blur-sm rounded-3xl p-4 my-4 mx-1 shadow-[0_0_5px_rgba(0,0,0,0.1)] transition-all duration-200 cursor-pointer transform hover:-translate-y-1 hover:shadow-lg flex flex-row items-center space-x-4 ${className}`}
+            onClick={onClick}
             onKeyDown={handleKeyDown}
             role="button"
             tabIndex={0}
@@ -44,8 +44,8 @@ const TravelCard = ({ travel, groupid, onClick, className }) => {
                 <img src={imageUrl} alt={travel.title} className='w-16 h-16 m-1 object-cover rounded-lg' />
                 <div className='flex flex-col space-y-1'>
                     <div className='flex space-x-1 items-end'>
-                        <h3 className='text-md font-bold mr-1'>{travel.title}</h3>
-                        <p className='text-xs text-gray-500 mb-1'>  | {travel.location}</p>
+                        <h3 className='text-md font-bold mr-1 max-w-24 line-clamp-1 truncate'>{travel.title}</h3>
+                        <p className='text-xs text-gray-500 mb-1 max-w-24 line-clamp-1 truncate'>  | {travel.location}</p>
                     </div>
                     <div className='text-xs flex'>
                         <p>{formatDate(travel.startDate)} ~ {formatDate(travel.endDate)}</p>
@@ -64,16 +64,16 @@ const TravelCard = ({ travel, groupid, onClick, className }) => {
                     </div>
                 </div>
             </div>
-            
+
             <div className="text-black">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
             </div>
-            
-            
+
+
         </div>
     );
-};   
+};
 
 export default TravelCard;
