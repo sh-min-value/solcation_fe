@@ -117,12 +117,12 @@ const Signup = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
+    <div className="h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex flex-col">
       <Header showBackButton={true} />
 
       {/* Progress Bar */}
       {currentStep !== descriptions.length - 1 && (
-        <div className="flex justify-center mt-8 mb-12">
+        <div className="flex justify-center mt-8 mb-12 ">
           <div className="flex space-x-2">
             {descriptions.slice(0, -1).map((_, index) => (
               <div
@@ -137,7 +137,7 @@ const Signup = () => {
       )}
 
       {/* 메인 콘텐츠 영역 */}
-      <div className="flex flex-col min-h-[calc(100vh-140px)] mt-8">
+      <div className="flex-1 overflow-y-auto mb-24">
         {currentStep !== descriptions.length - 1 ? (
           <div className="flex items-start justify-between px-9 mb-8">
             <div className="text-white text-xl font-[600] leading-tight whitespace-pre-line">
@@ -153,7 +153,7 @@ const Signup = () => {
         )}
 
         {/* 폼 컴포넌트 */}
-        <div className="flex justify-center items-start py-9 px-9 flex-1">
+        <div className="flex justify-center items-start py-9 px-9">
           {currentStep === 0 ? (
             <IdAndPasswordInput
               updateFormDataFunc={updateFormData}
