@@ -104,16 +104,14 @@ const Stat = () => {
         <div className="mb-4">
           <button
             onClick={handleOverallStatsClick}
-            className="w-full bg-light-blue hover:bg-blue-200 rounded-xl p-4 shadow-lg transition-all duration-200 flex items-center justify-between group"
+            className="w-full backdrop-blur-sm rounded-2xl p-4 bg-light-blue shadow-[0_0_5px_rgba(0,0,0,0.1)] hover:bg-blue/50 cursor-pointer flex items-center justify-between group transition-colors duration-300 ease-in-out"
           >
             <div className="flex items-center space-x-3">
-              <div className="text-left">
-                <h3 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                  {groupData?.groupName || '그룹'} 전체 여행 소비 통계
-                </h3>
-                <p className="text-sm text-gray-600 group-hover:text-blue-500 transition-colors">
-                  전체 여행 통계 보기
-                </p>
+              <div className="flex flex-row items-center">
+                {/* <div className="max-w-32 truncate font-bold">
+                  {groupData?.groupName}
+                </div> */}
+                <div className="ml-2 font-semibold"> 전체 여행 소비 통계</div>
               </div>
             </div>
             <div className="text-gray-400 group-hover:text-blue-500 transition-colors">

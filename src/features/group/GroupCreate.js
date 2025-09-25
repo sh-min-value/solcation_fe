@@ -2,9 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Header from '../../components/common/Header';
 import { useState } from 'react';
 import BottomButton from '../../components/common/BottomButton';
-import {
-  getGroupCategoryName,
-} from '../../utils/CategoryIcons';
+import { getGroupCategoryName } from '../../utils/CategoryIcons';
 import { ChevronDown, Plus } from 'lucide-react';
 import people from '../../assets/images/people.svg';
 import HappySol from '../../assets/images/happy_sol.svg';
@@ -92,7 +90,7 @@ const SelectPurpose = ({ options, value, onChange }) => {
           aria-label="그룹 카테고리 선택"
         >
           <div className="flex ml-3 items-center gap-3">
-          <CategoryEmoji categoryCode={selectedValue} size={8} />
+            <CategoryEmoji categoryCode={selectedValue} size={8} />
 
             <div className="text-lg">{getGroupCategoryName(selectedValue)}</div>
           </div>
@@ -314,7 +312,6 @@ const GroupCreate = () => {
     };
   };
 
-  if (loading) return <Loading />;
   return (
     <div className="min-h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100%">
       <Header showBackButton={true} />
@@ -361,7 +358,14 @@ const GroupCreate = () => {
       {/*하단 버튼 */}
       <BottomButton
         handleNext={handleNext}
-        buttonText={`${isLastStep ? '그룹 홈으로 돌아가기' : '다음 단계로'}`}
+        buttonText={`${
+          loading
+            ? '생성 중...'
+            : isLastStep
+            ? '그룹 홈으로 돌아가기'
+            : '다음 단계로'
+        }`}
+        disabled={loading}
       />
     </div>
   );
