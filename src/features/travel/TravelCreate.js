@@ -176,8 +176,8 @@ const SelectParticipantCount = ({ value, onChange, maxCount }) => {
           onClick={handleDecrease}
           disabled={value <= 1}
           className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${value <= 1
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
+            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+            : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
             }`}
           aria-label="인원수 감소"
         >
@@ -192,8 +192,8 @@ const SelectParticipantCount = ({ value, onChange, maxCount }) => {
           onClick={handleIncrease}
           disabled={value >= maxCount}
           className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${value >= maxCount
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-              : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
+            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+            : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
             }`}
           aria-label="인원수 증가"
         >
@@ -288,7 +288,7 @@ const CompletionStep = () => {
       <div className="flex justify-center">
         <img src={HappySol} alt="happy" className="w-64 h-64 object-contain" />
       </div>
-      <div className="text-white text-2xl font-semibold text-center leading-tight">
+      <div className="text-white text-xl font-semibold text-center leading-tight">
         여행 계획 생성이 완료되었어요!
       </div>
     </div>
