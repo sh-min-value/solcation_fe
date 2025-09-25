@@ -35,14 +35,14 @@ export const getStateIcon = (
       return (
         <>
           <AiFillSchedule className={className} />
-          <p className="w-11">여행 전</p>
+          <p className="w-9">여행 전</p>
         </>
       );
     case 'ONGOING':
       return (
         <>
           <BiSolidPlaneAlt className={className} />
-          <p className="w-11">여행 중</p>
+          <p className="w-9">여행 중</p>
         </>
       );
     case 'FINISH':
@@ -303,7 +303,7 @@ export const getGroupCategoryEmojiName = categoryCode => {
   } catch (error) {
     console.warn('CategoryCache not ready, using fallback:', error);
   }
-  
+
   // 하위 호환성을 위한 fallback
   switch (categoryCode) {
     case 'FRIENDS':

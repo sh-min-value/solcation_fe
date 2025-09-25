@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TravelLayout from '../../components/layout/TravelLayout';
 import useStomp from '../../hooks/useStomp';
-import { WebsocketAPI } from '../../services/WebsocketAPI'; 
+import { WebsocketAPI } from '../../services/WebsocketAPI';
 import { GoPlusCircle } from "react-icons/go";
 import { getTransactionCategoryIcon } from '../../utils/CategoryIcons';
 import { MdCancel } from "react-icons/md";
 import SelectPurpose from '../../components/common/SelectPurpose';
+import Loading from '../../components/common/Loading';
 
 const PlanDetailEdit = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const PlanDetailEdit = () => {
         cost: '',
         tcCode: 'FOOD'
     });
-    const hasJoinedRef = useRef(false); 
+    const hasJoinedRef = useRef(false);
 
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
     const currentUserId = currentUser.userId || 'anonymous';
@@ -44,7 +45,7 @@ const PlanDetailEdit = () => {
     // STOMP 메시지 처리 함수
     function handleStompMessage(message) {
         if (!message) return;
-        
+
         console.log('STOMP 메시지 처리:', message);
 
         switch (message.type) {
@@ -56,30 +57,30 @@ const PlanDetailEdit = () => {
                 setIsSaving(false);
                 console.log('저장 완료, 데이터 새로고침 후 이동');
                 refreshPlanData();
-                if(message.clientId === currentUserId){
+                if (message.clientId === currentUserId) {
                     setTimeout(() => {
                         navigate(`/group/${groupid}/travel/${travelid}`);
-                    }, 100); 
+                    }, 100);
                 }
                 break;
             case 'presence-join':
                 console.log(`사용자 ${message.userId} 입장`);
-                    break;
+                break;
             case 'presence-leave':
                 console.log(`사용자 ${message.userId} 퇴장`);
-                    break;
+                break;
             case 'join-response':
                 console.log(`스냅샷`, message.snapshot);
                 setPlanData(message.snapshot);
                 setIsLoading(false); // 로딩 상태 해제
-                    break;
+                break;
             case 'deleted':
                 alert('여행이 삭제되었습니다.');
                 navigate(`/group/${groupid}/travel`);
                 break;
             default:
                 console.log('알 수 없는 메시지 타입:', message.type, message);
-            
+
         }
     }
 
@@ -97,13 +98,13 @@ const PlanDetailEdit = () => {
     // 스냅샷 데이터를 플랫한 배열로 변환
     const flattenSnapshotData = (snapshot) => {
         if (!snapshot) return [];
-        
+
         const allPlans = [];
         Object.keys(snapshot).forEach(day => {
             const dayData = snapshot[day];
             if (dayData && dayData.items && Array.isArray(dayData.items)) {
                 dayData.items.forEach(plan => {
-                    if(!plan.tombstone){
+                    if (!plan.tombstone) {
                         allPlans.push(plan);
                     }
                 });
@@ -118,7 +119,7 @@ const PlanDetailEdit = () => {
         if (!Array.isArray(plans) || plans.length === 0) {
             return {};
         }
-        
+
         const grouped = plans.reduce((acc, plan) => {
             const day = plan.pdDay;
             if (!acc[day]) acc[day] = [];
@@ -161,22 +162,22 @@ const PlanDetailEdit = () => {
     // 수정 저장 (백엔드 구조에 맞춤)
     const handleSaveEdit = () => {
         if (!editingPlan || !isConnected || !publishOp) return;
-        
+
         const crdtId = editingPlan.crdtId || `${editingPlan.pdPk}:${currentUserId}`;
         const op = {
             type: 'update',
-            opId: crypto.randomUUID(), 
+            opId: crypto.randomUUID(),
             clientId: currentUserId,
             opTs: Date.now(),
             day: editingPlan.pdDay,
-            tcCode: editFormData.tcCode, 
+            tcCode: editFormData.tcCode,
             payload: {
                 crdtId: crdtId,
                 pdCost: parseInt(editFormData.cost) || 0,
-                tcCode: editFormData.tcCode  
+                tcCode: editFormData.tcCode
             }
         };
-        
+
         console.log('수정 Op 전송:', op);
         const success = publishOp(op);
         if (success) {
@@ -213,11 +214,11 @@ const PlanDetailEdit = () => {
 
         // optimistic UI 업데이트
         const isSnapshotData = planData && typeof planData === 'object' && !Array.isArray(planData) && planData[1]?.items;
-        
+
         if (isSnapshotData) {
             // 스냅샷 형태인 경우
             const updatedSnapshot = { ...planData };
-            
+
             // 기존 위치에서 제거
             Object.keys(updatedSnapshot).forEach(day => {
                 if (updatedSnapshot[day]?.items) {
@@ -226,22 +227,22 @@ const PlanDetailEdit = () => {
                     );
                 }
             });
-            
+
             // 새 위치에 추가
             if (!updatedSnapshot[targetDay]) {
                 updatedSnapshot[targetDay] = { items: [], lastStreamId: "0-0" };
             }
-            
+
             const targetDayItems = updatedSnapshot[targetDay].items || [];
             const insertIndex = targetIndex !== null ? targetIndex : targetDayItems.length;
             const newItem = { ...draggedPlan, pdDay: targetDay };
-            
+
             updatedSnapshot[targetDay].items = [
                 ...targetDayItems.slice(0, insertIndex),
                 newItem,
                 ...targetDayItems.slice(insertIndex)
             ];
-            
+
             setPlanData(updatedSnapshot);
         } else {
             // 배열 형태인 경우 (기존 로직)
@@ -282,10 +283,10 @@ const PlanDetailEdit = () => {
         const prevCrdtId = targetIndex > 0 ? (dayPlansAfter[targetIndex - 1]?.crdtId ?? null) : null;
         const nextCrdtId = targetIndex < dayPlansAfter.length ? (dayPlansAfter[targetIndex]?.crdtId ?? null) : null;
 
-        console.log('prev/next 계산:', { 
-            targetIndex, 
+        console.log('prev/next 계산:', {
+            targetIndex,
             dayPlansAfterLength: dayPlansAfter.length,
-            prevCrdtId, 
+            prevCrdtId,
             nextCrdtId,
             dayPlansAfter: dayPlansAfter.map(p => ({ place: p.pdPlace, crdtId: p.crdtId }))
         });
@@ -293,35 +294,35 @@ const PlanDetailEdit = () => {
         // Op 생성 (백엔드 구조에 맞춤)
         const crdtIdToSend = draggedPlan.crdtId || `${draggedPlan.pdPk}:${currentUserId}`;
         const opCommon = {
-            opId: crypto.randomUUID(), 
+            opId: crypto.randomUUID(),
             clientId: currentUserId,
-            opTs: Date.now(),  
+            opTs: Date.now(),
             tcCode: draggedPlan.tcCode || null  // 최상위 레벨에 tcCode 추가
         };
 
         let op;
         if (draggedPlan.pdDay === targetDay) {
-            op = { 
-                ...opCommon, 
-                type: 'move', 
-                day: targetDay, 
-                payload: { 
-                    crdtId: crdtIdToSend, 
-                    prevCrdtId: prevCrdtId || '',  
-                    nextCrdtId: nextCrdtId || ''   
-                } 
+            op = {
+                ...opCommon,
+                type: 'move',
+                day: targetDay,
+                payload: {
+                    crdtId: crdtIdToSend,
+                    prevCrdtId: prevCrdtId || '',
+                    nextCrdtId: nextCrdtId || ''
+                }
             };
         } else {
-            op = { 
-                ...opCommon, 
-                type: 'moveDay', 
-                day: draggedPlan.pdDay, 
-                payload: { 
-                    crdtId: crdtIdToSend, 
-                    prevCrdtId: prevCrdtId || '',  
-                    nextCrdtId: nextCrdtId || '',  
-                    newDay: targetDay 
-                } 
+            op = {
+                ...opCommon,
+                type: 'moveDay',
+                day: draggedPlan.pdDay,
+                payload: {
+                    crdtId: crdtIdToSend,
+                    prevCrdtId: prevCrdtId || '',
+                    nextCrdtId: nextCrdtId || '',
+                    newDay: targetDay
+                }
             };
         }
 
@@ -350,7 +351,7 @@ const PlanDetailEdit = () => {
 
         const key = plan.crdtId || `${plan.pdPk}:${currentUserId}`;
         const isSnapshotData = planData && typeof planData === 'object' && !Array.isArray(planData) && planData[1]?.items;
-        
+
         if (isSnapshotData) {
             // 스냅샷 형태인 경우
             const updatedSnapshot = { ...planData };
@@ -370,16 +371,16 @@ const PlanDetailEdit = () => {
 
         const op = {
             type: 'delete',
-            opId: crypto.randomUUID(), 
+            opId: crypto.randomUUID(),
             clientId: currentUserId,
             opTs: Date.now(),
             day: plan.pdDay,
-            tcCode: plan.tcCode || null, 
-            payload: { 
-                crdtId: key 
+            tcCode: plan.tcCode || null,
+            payload: {
+                crdtId: key
             }
         };
-        
+
         console.log('삭제 Op 전송:', op);
         if (publishOp) {
             const success = publishOp(op);
@@ -409,8 +410,8 @@ const PlanDetailEdit = () => {
         });
     };
 
-    if (isLoading) return <div className="p-4">일정을 불러오는 중입니다...</div>;
-    
+    if (isLoading) return <Loading />;
+
     // planData가 스냅샷 형태인지 배열 형태인지 확인
     const isSnapshotData = planData && typeof planData === 'object' && !Array.isArray(planData) && planData[1]?.items;
     const displayData = isSnapshotData ? flattenSnapshotData(planData) : (Array.isArray(planData) ? planData : []);
@@ -421,28 +422,28 @@ const PlanDetailEdit = () => {
             {({ travelDays, formatDate, travelInfo }) => (
                 <>
                     <div className="flex items-center justify-between py-2 text-xs">
-                <div className="flex items-center space-x-2">
-                    <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                    <span className={isConnected ? 'text-green-600' : 'text-red-600'}>
-                        {isConnected ? '실시간 동기화 중' : '연결 끊김'}
-                    </span>
+                        <div className="flex items-center space-x-2">
+                            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                            <span className={isConnected ? 'text-green-600' : 'text-red-600'}>
+                                {isConnected ? '실시간 동기화 중' : '연결 끊김'}
+                            </span>
                             {isSaving && <span className="text-blue-600">저장 중...</span>}
-                </div>
+                        </div>
                         {stompError && <span className="text-red-500 text-xs">연결 오류</span>}
                         <button className="text-gray-500 text-sm text-right m-0 disabled:opacity-50" onClick={handleSave} disabled={!isConnected || isSaving}>
                             {isSaving ? '저장 중...' : '저장'}
                         </button>
-            </div>
+                    </div>
 
                     <div className='min-h-full overflow-y-scroll'>
-                    {Array.from({ length: travelDays }, (_, index) => index + 1).map((day) => (
+                        {Array.from({ length: travelDays }, (_, index) => index + 1).map((day) => (
                             <div key={day} className="space-y-3 pb-4">
-                            <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between">
                                     <div className="flex items-center">
                                         <h2 className="text-lg font-bold text-gray-800">Day {day} </h2>
                                         <span className="text-sm text-gray-600 ml-2">| {formatDate(parseInt(day))}</span>
+                                    </div>
                                 </div>
-                            </div>
 
                                 <div
                                     className={`space-y-2 min-h-[100px] p-2 transition-colors ${dragOverDay === day ? 'bg-blue-100 border-b-4 border-blue' : ''}`}
@@ -450,8 +451,8 @@ const PlanDetailEdit = () => {
                                     onDragLeave={handleDragLeave}
                                     onDrop={(e) => handleDrop(e, day)}
                                 >
-                                {groupedPlans[day] && groupedPlans[day].length > 0 ? (
-                                    groupedPlans[day].map((plan, index) => (
+                                    {groupedPlans[day] && groupedPlans[day].length > 0 ? (
+                                        groupedPlans[day].map((plan, index) => (
                                             <div key={plan.crdtId ?? plan.pdPk ?? index}>
                                                 {dragOverDay === day && dragOverIndex === index && (
                                                     <div className="h-1 bg-blue-500 rounded-full mx-2 mb-2 shadow-lg" />
@@ -469,40 +470,40 @@ const PlanDetailEdit = () => {
                                                         <div className="h-3 -mt-3 -mx-3 cursor-move" onDragOver={(e) => handleDragOverItemTop(e, day, index)} onDrop={(e) => handleDrop(e, day, index)} />
 
                                                         <div className="flex justify-between items-center">
-                                                <div className="flex-1">
-                                                    <div className="font-semibold text-gray-800">{plan.pdPlace}</div>
-                                                                            <div className="text-xs text-gray-500 mt-1 line-clamp-1">{plan.pdAddress}</div>                                                                
-                                                </div>
-                                                             <div 
-                                                                 className="text-right"
-                                                                 role="button"
-                                                                 tabIndex={0}
-                                                                 onMouseDown={() => handleLongPress(plan)}
-                                                                 onTouchStart={() => handleLongPress(plan)}
-                                                                 onKeyDown={(e) => {
-                                                                     if (e.key === 'Enter' || e.key === ' ') {
-                                                                         e.preventDefault();
-                                                                         handleLongPress(plan);
-                                                                     }
-                                                                 }}
-                                                             >
-                                                    <div className="font-semibold text-gray-800">{plan.pdCost?.toLocaleString()}원</div>
+                                                            <div className="flex-1">
+                                                                <div className="font-semibold text-gray-800">{plan.pdPlace}</div>
+                                                                <div className="text-xs text-gray-500 mt-1 line-clamp-1">{plan.pdAddress}</div>
+                                                            </div>
+                                                            <div
+                                                                className="text-right"
+                                                                role="button"
+                                                                tabIndex={0}
+                                                                onMouseDown={() => handleLongPress(plan)}
+                                                                onTouchStart={() => handleLongPress(plan)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                                        e.preventDefault();
+                                                                        handleLongPress(plan);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <div className="font-semibold text-gray-800">{plan.pdCost?.toLocaleString()}원</div>
                                                                 <div className="text-sm text-gray-500 mt-1 flex items-center justify-end">
                                                                     {getTransactionCategoryIcon(plan.tcCode)}
                                                                 </div>
                                                             </div>
-                                                             <div className="flex flex-col ml-3">
-                                                                 <button 
-                                                                     onClick={(e) => {
-                                                                         e.stopPropagation();
-                                                                         handleDeletePlan(plan);
-                                                                     }} 
-                                                                     className="text-gray-500 hover:text-red-700 hover:bg-red-50 rounded cursor-pointer" 
-                                                                     title="삭제"
-                                                                 >
-                                                                     <MdCancel className="w-5 h-5" />
-                                                                 </button>
-                                                             </div>
+                                                            <div className="flex flex-col ml-3">
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeletePlan(plan);
+                                                                    }}
+                                                                    className="text-gray-500 hover:text-red-700 hover:bg-red-50 rounded cursor-pointer"
+                                                                    title="삭제"
+                                                                >
+                                                                    <MdCancel className="w-5 h-5" />
+                                                                </button>
+                                                            </div>
                                                         </div>
 
                                                         <div className="h-3 -mb-3 -mx-3 cursor-move" onDragOver={(e) => handleDragOverItemBottom(e, day, index)} onDrop={(e) => handleDrop(e, day, index + 1)} />
@@ -529,17 +530,17 @@ const PlanDetailEdit = () => {
 
                                     {dragOverDay === day && dragOverIndex === (groupedPlans[day]?.length || 0) && (
                                         <div className="h-1 bg-blue-500 rounded-full mx-2 mt-2 shadow-lg"></div>
-                                )}
-                            </div>
+                                    )}
+                                </div>
 
                                 <div className="flex items-center justify-between bg-gray-100 rounded-lg p-2 w-full">
                                     <button className="flex items-center justify-center text-gray-500 text-sm m-0 w-full" onClick={() => onClickAddPlan(day)}>
-                                        <GoPlusCircle className="mr-2"/>
+                                        <GoPlusCircle className="mr-2" />
                                         일정 추가하기
                                     </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                     </div>
 
                     {/* 수정 모달 */}
@@ -547,13 +548,13 @@ const PlanDetailEdit = () => {
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <div className="bg-white rounded-2xl p-6 w-80 mx-4">
                                 <h3 className="text-lg font-bold text-gray-800 mb-4">일정 수정</h3>
-                                
+
                                 <div className="space-y-4">
                                     <div>
                                         <label htmlFor="pdPlace" className="block text-sm font-medium text-gray-700 mb-2">장소</label>
                                         <div id="pdPlace" className="text-gray-600">{editingPlan.pdPlace}</div>
                                     </div>
-                                    
+
                                     <div>
                                         <label htmlFor="cost" className="block text-sm font-medium text-gray-700 mb-2">비용</label>
                                         <input
@@ -565,7 +566,7 @@ const PlanDetailEdit = () => {
                                             placeholder="금액을 입력하세요"
                                         />
                                     </div>
-                                    
+
                                     <div>
                                         <label htmlFor="categoryCode" className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
                                         <SelectPurpose
@@ -576,7 +577,7 @@ const PlanDetailEdit = () => {
                                         />
                                     </div>
                                 </div>
-                                
+
                                 <div className="flex space-x-3 mt-6">
                                     <button
                                         onClick={handleCloseEditModal}
@@ -589,10 +590,10 @@ const PlanDetailEdit = () => {
                                         className="flex-1 py-3 bg-light-blue text-third rounded-lg font-medium hover:bg-blue shadow-lg"
                                     >
                                         저장
-                        </button>
+                                    </button>
                                 </div>
-                    </div>
-                </div>
+                            </div>
+                        </div>
                     )}
                 </>
             )}

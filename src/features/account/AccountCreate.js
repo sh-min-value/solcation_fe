@@ -9,6 +9,7 @@ import PasswordSetupForm from './components/PasswordSetupForm';
 import TermsAgreementForm from './components/TermsAgreementForm';
 import AccountCompletionForm from './components/AccountCompletionForm';
 import { useAuth } from '../../context/AuthContext';
+import Loading from '../../components/common/Loading';
 
 // 단계별 설명 데이터
 const descriptions = [
@@ -36,6 +37,7 @@ const AccountCreate = () => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
 
   // 서명 데이터를 파일로 변환하는 함수
@@ -106,6 +108,7 @@ const AccountCreate = () => {
       // 에러 초기화
       setErrors(prev => ({ ...prev, termsAgreed: '' }));
 
+      setIsLoading(true);
       // 계좌 생성 API 호출 - 필요한 값들만 전달
       try {
         // 서명 데이터를 파일로 변환
@@ -123,6 +126,7 @@ const AccountCreate = () => {
 
         await AccountAPI.createAccount(groupId, accountData);
         setCurrentStep(3);
+        setIsLoading(false);
       } catch (error) {
         console.error('계좌 생성 오류:', error);
         navigate('/error', {
@@ -165,6 +169,11 @@ const AccountCreate = () => {
     );
   }
 
+  if (isLoading) {
+    return (
+      <Loading />
+    );
+  }
   return (
     <div className="h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex flex-col">
       <Header showBackButton={true} />
@@ -176,9 +185,8 @@ const AccountCreate = () => {
             {descriptions.slice(0, -1).map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index <= currentStep ? 'bg-white' : 'bg-white/30'
-                }`}
+                className={`w-2 h-2 rounded-full transition-colors ${index <= currentStep ? 'bg-white' : 'bg-white/30'
+                  }`}
               />
             ))}
           </div>
@@ -186,18 +194,20 @@ const AccountCreate = () => {
       )}
 
       {/* 메인 콘텐츠 영역 */}
-      <div className="flex-1 overflow-y-auto px-6">
+      <div className="flex-1 overflow-y-auto">
         {/* 단계 설명 */}
-        <div className="flex items-start justify-between px-3 mb-8">
-          <div className="text-white text-xl font-[600] leading-tight whitespace-pre-line">
-            {descriptions[currentStep].title}
-          </div>
-          {currentStep !== descriptions.length - 1 && (
+
+
+        {currentStep !== descriptions.length - 1 && (
+          <div className="flex items-start justify-between px-9 mb-8">
+            <div className="text-white text-xl font-[600] leading-tight whitespace-pre-line">
+              {descriptions[currentStep].title}
+            </div>
             <div className="text-white text-sm font-medium">
               {currentStep + 1} / {descriptions.length - 1}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* 폼 컴포넌트 */}
         <div className="flex justify-center items-start px-0 pb-20">

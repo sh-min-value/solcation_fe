@@ -85,10 +85,9 @@ const Account = () => {
       } catch (error) {
         console.error('모임통장 정보 조회 실패:', error);
 
-        if (error?.status === 40401) {
+        if (error?.error.code === 40401) {
           setIsExist(false);
           setAccountInfo(null);
-          //그룹 정보 저장
           if (groupData?.leaderPk === user?.userPk) {
             setIsGroupLeader(true);
           }
@@ -97,7 +96,6 @@ const Account = () => {
           return;
         }
 
-        // 다른 에러인 경우에도 계좌가 없다고 처리
         setIsExist(false);
         setAccountInfo(null);
         setShouldLoadTransactions(false);
@@ -107,12 +105,10 @@ const Account = () => {
     };
 
     fetchAccountInfo();
-  }, [groupid]);
+  }, [groupid, groupData]);
 
-  // 디버깅을 위한 로그 추가
   console.log('Account 상태:', { isExist, isLoading, accountInfo });
 
-  // 계좌가 없는 경우 (isExist가 false이거나 accountInfo가 null인 경우)
   if ((!isExist || !accountInfo) && !isLoading) {
     console.log('EmptyBear 표시');
     return (
