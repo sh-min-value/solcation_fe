@@ -56,7 +56,7 @@ export const SSEProvider = ({ children }) => {
           'Cache-Control': 'no-cache',
         },
         withCredentials: false,
-        heartbeatTimeout: 20_000,
+        heartbeatTimeout: 60_000,
       });
 
       esRef.current = es;
