@@ -1,56 +1,24 @@
 import React, { useState } from 'react';
 import CategoryEmoji from '../../utils/CategoryEmoji';
-
-const transactionCategories = [
-  { id: 1, name: '식비', code: 'FOOD' },
-  { id: 2, name: '카페, 간식', code: 'CAFE_AND_SNACK' },
-  { id: 3, name: '편의점, 마트', code: 'STORE' },
-  { id: 4, name: '술, 유흥', code: 'PLEASURE' },
-  { id: 5, name: '쇼핑', code: 'SHOPPING' },
-  { id: 6, name: '의료', code: 'MEDICAL_TREATMENT' },
-  { id: 7, name: '숙박', code: 'LODGMENT' },
-  { id: 8, name: '교통', code: 'TRANSPORTATION' },
-  { id: 9, name: '이체', code: 'TRANSFER' },
-  { id: 10, name: '기타', code: 'ETC' },
-];
-
-const travelCategories = [
-  { id: 1, name: '음식 · 미식', code: 'FOOD' },
-  { id: 2, name: '카페 · 간식', code: 'CAFE_AND_SNACK' },
-  { id: 3, name: '쇼핑 · 마트', code: 'STORE' },
-  { id: 4, name: '술 · 유흥', code: 'PLEASURE' },
-  { id: 5, name: '쇼핑', code: 'SHOPPING' },
-  { id: 6, name: '의료', code: 'MEDICAL_TREATMENT' },
-  { id: 7, name: '숙박', code: 'LODGMENT' },
-  { id: 8, name: '교통', code: 'TRANSPORTATION' },
-  { id: 9, name: '이체', code: 'TRANSFER' },
-  { id: 10, name: '기타', code: 'ETC' },
-];
-
-const groupCategories = [
-  { id: 1, name: '친구', code: 'FRIENDS' },
-  { id: 2, name: '가족', code: 'FAMILY' },
-  { id: 3, name: '연인', code: 'LOVER' },
-  { id: 4, name: '기타', code: 'ETC' },
-];
+import categoryCache from '../../utils/CategoryCache';
 
 const SelectTC = ({ id, value, onChange, type }) => {
   let categories = [];
   if (type === 'transaction') {
-    categories = transactionCategories;
+    categories = categoryCache.getCategoriesByType('transaction');
   } else if (type === 'travel') {
-    categories = travelCategories;
+    categories = categoryCache.getCategoriesByType('travel');
   } else if (type === 'group') {
-    categories = groupCategories;
+    categories = categoryCache.getCategoriesByType('group');
   }
 
   const [isOpen, setIsOpen] = useState(false);
-  const selectedValue = value || categories[0].code;
+  const selectedValue = value || categories[0].tcCode;
   const selectedCategory =
-    categories.find(cat => cat.code === selectedValue) || categories[0];
+    categories.find(cat => cat.tcCode === selectedValue) || categories[0];
 
   const handleSelect = category => {
-    onChange(category.code);
+    onChange(category.tcCode);
     setIsOpen(false);
   };
 
@@ -85,9 +53,9 @@ const SelectTC = ({ id, value, onChange, type }) => {
         aria-label="카테고리 선택"
       >
         <div className="flex items-center gap-1">
-          <CategoryEmoji categoryCode={selectedCategory.code} size={6} />
+          <CategoryEmoji categoryCode={selectedCategory.tcCode} size={6} />
           <div className="text-md text-gray-2 font-medium">
-            {selectedCategory.name}
+            {selectedCategory.tcName}
           </div>
         </div>
         <svg
@@ -114,18 +82,18 @@ const SelectTC = ({ id, value, onChange, type }) => {
         >
           {categories.map(category => (
             <div
-              key={category.code}
-              id={`${id}-option-${category.code}`}
+              key={category.tcCode}
+              id={`${id}-option-${category.tcCode}`}
               role="option"
               tabIndex={0}
               className="px-4 py-2 cursor-pointer hover:bg-gray-50 flex items-center gap-1 transition-colors focus:outline-none focus:bg-blue-50"
               onClick={() => handleSelect(category)}
               onKeyDown={e => handleOptionKeyDown(e, category)}
-              aria-selected={selectedValue === category.code}
+              aria-selected={selectedValue === category.tcCode}
             >
-              <CategoryEmoji categoryCode={category.code} size={6} />
+              <CategoryEmoji categoryCode={category.tcCode} size={6} />
               <span className="text-md text-gray-2 font-medium">
-                {category.name}
+                {category.tcName}
               </span>
             </div>
           ))}
