@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // 비밀번호 설정
-const PasswordSetupForm = ({ formData, updateFormData, errors, onNext, className = `bg-light-blue` }) => {
+const PasswordSetupForm = ({
+  formData,
+  updateFormData,
+  errors,
+  onNext,
+  className = `bg-light-blue`,
+}) => {
   const [password, setPassword] = useState('');
 
   // 랜덤 숫자 패드 생성
@@ -33,29 +39,29 @@ const PasswordSetupForm = ({ formData, updateFormData, errors, onNext, className
   };
 
   return (
-    <div className="w-full min-h-[calc(100vh-200px)] flex flex-col"> 
+    <div className="w-full min-h-[calc(100vh-200px)] flex flex-col">
       {/* 상단 비밀번호 점 표시 */}
       <div className="bg-blue-500 flex-1 flex justify-center items-center px-6 relative">
-        <div className="flex justify-center space-x-3 relative">
-          {[1, 2, 3, 4, 5, 6].map(index => (
-            <div
-              key={index}
-              className={`w-4 h-4 rounded-full border-2 transition-colors ${
-                index <= password.length
-                  ? 'bg-third border-third'
-                  : 'border-third'
-              }`}
-            />
-          ))}
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex justify-center space-x-3 relative">
+            {[1, 2, 3, 4, 5, 6].map(index => (
+              <div
+                key={index}
+                className={`w-4 h-4 rounded-full border-2 transition-colors ${
+                  index <= password.length
+                    ? 'bg-third border-third'
+                    : 'border-third'
+                }`}
+              />
+            ))}
+          </div>
           {/* 에러 메시지 표시 */}
-          {errors.saPw && (
-            <div
-              className="absolute -top-12 left-0 right-0 text-center"
-              style={{ margin: 0 }}
-            >
+
+          <div className="h-6 text-center" style={{ margin: 0 }}>
+            {errors.saPw && (
               <span className="text-red-300 text-[10px]">{errors.saPw}</span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
