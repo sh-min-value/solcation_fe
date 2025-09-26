@@ -76,12 +76,17 @@ const Signup = () => {
         setLoading(true);
         await SignupAPI.signUp(formData);
       } catch (error) {
+        if (error?.error.code === 40906) {
+          alert(error?.error.message);
+          navigate('/login');
+          return;
+        }
         alert('회원가입 도중 에러가 발생했습니다.');
 
         //에러 발생 시 에러 페이지로 이동
         navigate('/error', {
           state: {
-            error: error.response.error,
+            error: error,
             from: location.pathname,
           },
         });
@@ -111,10 +116,6 @@ const Signup = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
-
-  if (loading) {
-    return <Loading />;
-  }
 
   return (
     <div className="h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex flex-col">
@@ -169,12 +170,16 @@ const Signup = () => {
               }
             />
           ) : currentStep === 2 ? (
-            <AddressInput
-              updateFormDataFunc={updateFormData}
-              updateValidation={validation =>
-                updateStepValidation(2, validation)
-              }
-            />
+            loading ? (
+              <Loading />
+            ) : (
+              <AddressInput
+                updateFormDataFunc={updateFormData}
+                updateValidation={validation =>
+                  updateStepValidation(2, validation)
+                }
+              />
+            )
           ) : (
             <SignupCompletion />
           )}
@@ -182,13 +187,15 @@ const Signup = () => {
       </div>
 
       {/* 하단 버튼 */}
-      <SignupBottomButton
-        handleNext={handleNext}
-        buttonText={
-          currentStep === descriptions.length - 1 ? '완료' : '다음 단계로'
-        }
-        disabled={isButtonDisabled}
-      />
+      {!loading && (
+        <SignupBottomButton
+          handleNext={handleNext}
+          buttonText={
+            currentStep === descriptions.length - 1 ? '완료' : '다음 단계로'
+          }
+          disabled={isButtonDisabled}
+        />
+      )}
     </div>
   );
 };
