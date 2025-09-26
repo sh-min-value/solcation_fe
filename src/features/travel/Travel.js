@@ -136,7 +136,7 @@ const Travel = () => {
 
     return (
         <div className="h-full flex flex-col">
-            {travels && travels.length > 0 && <FilterAndAddButtons />}
+            {!(travels && travels.length === 0 && selectedStatus === '0') && <FilterAndAddButtons />}
             {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
                     <Loading />
