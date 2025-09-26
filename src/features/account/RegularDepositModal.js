@@ -204,6 +204,7 @@ const RegularDepositModal = ({ isOpen, onClose, groupId, accountInfo }) => {
           <button
             onClick={closeModal}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-6 transition-colors"
+            disabled={isLoading || isResetting}
           >
             <X className="w-5 h-5 text-gray-2" />
           </button>

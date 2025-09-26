@@ -74,7 +74,7 @@ const SelectTC = ({ id, value, onChange, type }) => {
   return (
     <div className="w-full relative">
       <div
-        id={id}
+        id={`${id}-selector`}
         role="button"
         tabIndex={0}
         className="rounded min-w-40 bg-white p-2 cursor-pointer flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-5"
@@ -108,14 +108,14 @@ const SelectTC = ({ id, value, onChange, type }) => {
       </div>
       {isOpen && (
         <div
-          id={id}
+          id={`${id}-listbox`}
           role="listbox"
           className="absolute top-full left-0 right-0 mt-1 bg-white rounded shadow-lg z-50 overflow-hidden border border-gray-200 max-h-40 overflow-y-auto"
         >
           {categories.map(category => (
             <div
               key={category.code}
-              id={id}
+              id={`${id}-option-${category.code}`}
               role="option"
               tabIndex={0}
               className="px-4 py-2 cursor-pointer hover:bg-gray-50 flex items-center gap-1 transition-colors focus:outline-none focus:bg-blue-50"

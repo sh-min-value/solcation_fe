@@ -35,7 +35,7 @@ const TransactionDetail = () => {
     try {
       //저장
       const param = {
-        satPk: satPk,
+        satPk: data.satPk,
         memo: newMemo,
         tcPk: newCategory,
       };
@@ -84,10 +84,6 @@ const TransactionDetail = () => {
   useEffect(() => {
     fetchTransaction();
   }, [fetchTransaction]);
-
-  if (loading) {
-    return <Loading />;
-  }
 
   // 금액 포맷팅
   const formatAmount = amount => {
@@ -213,6 +209,7 @@ const TransactionDetail = () => {
         category={selectedCategory}
         data={data}
         onSave={handleSave}
+        loading={loading}
       />
     </div>
   );
