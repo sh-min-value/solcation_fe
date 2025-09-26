@@ -47,7 +47,7 @@ const PasswordInput = ({
         response = await AccountAPI.verifyPassword(currentGroupid, accountInfo.saPk, { saPw: password });
       } else if (cardInfo && cardInfo.sacPk) {
         // 카드 비밀번호 검증
-        response = await TransactionAPI.verifyPassword(currentGroupid, cardInfo.sacPk, { pw: password });
+        response = await TransactionAPI.verifyPassword(currentGroupid, cardInfo.sacPk, { sacPw: password });
       } else {
         // 계좌/카드 정보가 없는 경우
         setErrors({ saPw: '계좌 또는 카드 정보를 찾을 수 없습니다.' });
