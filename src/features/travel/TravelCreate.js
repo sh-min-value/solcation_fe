@@ -12,6 +12,7 @@ import { TravelAPI } from '../../services/TravelAPI';
 import { GroupAPI } from '../../services/GroupAPI';
 import SelectPurpose from '../../components/common/SelectPurpose';
 import SelectLocation from './components/SelectLocation';
+import Loading from '../../components/common/Loading';
 
 const Calendar = ({ selectedDates, onDateSelect }) => {
   return (
@@ -123,7 +124,7 @@ const SelectTravelTheme = ({ value, onChange }) => {
           <SelectPurpose
             value={selectedValue}
             onChange={handleSelect}
-            type='travel'
+            type="travel"
           />
         </div>
       </div>
@@ -175,10 +176,11 @@ const SelectParticipantCount = ({ value, onChange, maxCount }) => {
         <button
           onClick={handleDecrease}
           disabled={value <= 1}
-          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${value <= 1
-            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
-            }`}
+          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${
+            value <= 1
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+              : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
+          }`}
           aria-label="인원수 감소"
         >
           −
@@ -191,10 +193,11 @@ const SelectParticipantCount = ({ value, onChange, maxCount }) => {
         <button
           onClick={handleIncrease}
           disabled={value >= maxCount}
-          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${value >= maxCount
-            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
-            }`}
+          className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-colors ${
+            value >= maxCount
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+              : 'bg-white text-blue-500 hover:bg-gray-100 cursor-pointer'
+          }`}
           aria-label="인원수 증가"
         >
           +
@@ -253,7 +256,11 @@ const SelectTravelProfile = ({ value, onChange }) => {
                 />
               ) : (
                 <div className="flex items-center justify-center">
-                  <img src={people} alt="people" className="w-16 h-16 opacity-50" />
+                  <img
+                    src={people}
+                    alt="people"
+                    className="w-16 h-16 opacity-50"
+                  />
                 </div>
               )}
             </div>
@@ -345,7 +352,7 @@ const TravelCreate = () => {
       console.log('groupData.totalMembers:', groupData.totalMembers);
       setFormData(prev => ({
         ...prev,
-        participantCount: groupData.totalMembers
+        participantCount: groupData.totalMembers,
       }));
     }
   }, [groupData]);
@@ -360,8 +367,12 @@ const TravelCreate = () => {
       }
     } else if (currentStep === 1) {
       // 나라/도시 선택 확인
-      if (!formData.selectedCountry || formData.selectedCountry === '전체' ||
-        !formData.selectedCity || formData.selectedCity === '전체') {
+      if (
+        !formData.selectedCountry ||
+        formData.selectedCountry === '전체' ||
+        !formData.selectedCity ||
+        formData.selectedCity === '전체'
+      ) {
         alert('여행 지역을 선택해주세요.');
         return;
       }
@@ -387,13 +398,22 @@ const TravelCreate = () => {
           travelFormData.append('country', formData.selectedCountry);
           travelFormData.append('city', formData.selectedCity);
           travelFormData.append('title', formData.travelTitle);
-          travelFormData.append('startDate', selectedDates[0]?.toISOString().split('T')[0]);
-          travelFormData.append('endDate', selectedDates[selectedDates.length - 1]?.toISOString().split('T')[0]);
+          travelFormData.append(
+            'startDate',
+            selectedDates[0]?.toISOString().split('T')[0]
+          );
+          travelFormData.append(
+            'endDate',
+            selectedDates[selectedDates.length - 1]?.toISOString().split('T')[0]
+          );
           console.log('travelTheme:', formData.travelTheme);
           console.log('categoryCode:', formData.travelTheme);
           travelFormData.append('categoryCode', formData.travelTheme || 'FOOD');
           travelFormData.append('photo', profileImg);
-          travelFormData.append('participant', formData.participantCount.toString());
+          travelFormData.append(
+            'participant',
+            formData.participantCount.toString()
+          );
 
           console.log('여행 생성 데이터:', {
             groupPk: groupid,
@@ -401,9 +421,11 @@ const TravelCreate = () => {
             city: formData.selectedCity,
             title: formData.travelTitle,
             startDate: selectedDates[0]?.toISOString().split('T')[0],
-            endDate: selectedDates[selectedDates.length - 1]?.toISOString().split('T')[0],
+            endDate: selectedDates[selectedDates.length - 1]
+              ?.toISOString()
+              .split('T')[0],
             categoryCode: formData.travelTheme,
-            participant: formData.participantCount
+            participant: formData.participantCount,
           });
 
           // TravelAPI를 사용해서 여행 생성
@@ -434,7 +456,7 @@ const TravelCreate = () => {
   };
 
   //날짜 선택 핸들러
-  const handleDateSelect = (dateOrDates) => {
+  const handleDateSelect = dateOrDates => {
     // 배열인 경우 (두 번째 클릭으로 시작일과 종료일이 모두 선택됨)
     if (Array.isArray(dateOrDates)) {
       setSelectedDates(dateOrDates);
@@ -457,16 +479,15 @@ const TravelCreate = () => {
     }
   };
 
-
   //버튼 텍스트 함수
-  const getButtonText = (step) => {
+  const getButtonText = step => {
     const buttonTexts = [
       '제목 입력 완료',
       '지역 선택 완료',
       '일정 선택 완료',
       '테마 선택 완료',
       '인원수 선택 완료',
-      '여행 계획 생성하기'
+      '여행 계획 생성하기',
     ];
     return buttonTexts[step] || '다음 단계로';
   };
@@ -510,7 +531,7 @@ const TravelCreate = () => {
     if (currentStepData.type === 'location') {
       return {
         ...currentStepData.props,
-        onChange: (locationData) => {
+        onChange: locationData => {
           updateFormData('selectedCountry', locationData.country);
           updateFormData('selectedCity', locationData.city);
         },
@@ -537,7 +558,7 @@ const TravelCreate = () => {
     if (currentStepData.type === 'participant') {
       return {
         ...currentStepData.props,
-        value: formData.participantCount || (groupData?.totalMembers || 1),
+        value: formData.participantCount || groupData?.totalMembers || 1,
         maxCount: groupData?.totalMembers || 1,
         onChange: value => updateFormData('participantCount', value),
       };
@@ -554,7 +575,7 @@ const TravelCreate = () => {
     return {
       ...currentStepData.props,
       value: '',
-      onChange: () => { },
+      onChange: () => {},
     };
   };
 
@@ -568,8 +589,9 @@ const TravelCreate = () => {
             {descriptions.slice(0, -1).map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${index <= currentStep ? 'bg-white' : 'bg-white/30'
-                  }`}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index <= currentStep ? 'bg-white' : 'bg-white/30'
+                }`}
               />
             ))}
           </div>
@@ -587,9 +609,13 @@ const TravelCreate = () => {
               currentStep={currentStep}
             />
             {/* 내용 */}
-            <div className="flex min-h-[calc(100vh-500px)] justify-center items-start py-9 px-9 lex-1">
-              <StepComponent {...getStepProps()} />
-            </div>
+            {isSubmitting ? (
+              <Loading />
+            ) : (
+              <div className="flex min-h-[calc(100vh-500px)] justify-center items-start py-9 px-9 lex-1">
+                <StepComponent {...getStepProps()} />
+              </div>
+            )}
           </>
         )}
 
@@ -601,11 +627,19 @@ const TravelCreate = () => {
         )}
       </div>
       {/*하단 버튼 */}
-      <BottomButton
-        handleNext={handleNext}
-        buttonText={`${isSubmitting ? '여행 생성 중...' : (isLastStep ? '여행 계획으로 돌아가기' : getButtonText(currentStep))}`}
-        disabled={isSubmitting}
-      />
+      {!isSubmitting && (
+        <BottomButton
+          handleNext={handleNext}
+          buttonText={`${
+            isSubmitting
+              ? '여행 생성 중...'
+              : isLastStep
+              ? '여행 계획으로 돌아가기'
+              : getButtonText(currentStep)
+          }`}
+          disabled={isSubmitting}
+        />
+      )}
     </div>
   );
 };

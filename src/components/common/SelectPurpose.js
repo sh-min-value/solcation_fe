@@ -11,7 +11,7 @@ const transactionCategories = [
   { id: 7, name: '숙박', code: 'LODGMENT' },
   { id: 8, name: '교통', code: 'TRANSPORTATION' },
   { id: 9, name: '이체', code: 'TRANSFER' },
-  { id: 10, name: '기타', code: 'ETC' }
+  { id: 10, name: '기타', code: 'ETC' },
 ];
 
 const travelCategories = [
@@ -21,18 +21,17 @@ const travelCategories = [
   { id: 4, name: '문화, 역사', code: 'CULTURE' },
   { id: 5, name: '쇼핑, SNS 핫플레이스', code: 'SHOPPING' },
   { id: 6, name: '시즌 축제', code: 'FESTIVAL' },
-  { id: 7, name: '관광', code: 'SIGHTSEEING' }
+  { id: 7, name: '관광', code: 'SIGHTSEEING' },
 ];
 
 const groupCategories = [
   { id: 1, name: '친구', code: 'FRIENDS' },
   { id: 2, name: '가족', code: 'FAMILY' },
   { id: 3, name: '연인', code: 'LOVER' },
-  { id: 4, name: '기타', code: 'ETC' }
+  { id: 4, name: '기타', code: 'ETC' },
 ];
 
 const SelectPurpose = ({ id, value, onChange, type }) => {
-
   let categories = [];
   if (type === 'transaction') {
     categories = transactionCategories;
@@ -44,9 +43,10 @@ const SelectPurpose = ({ id, value, onChange, type }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const selectedValue = value || categories[0].code;
-  const selectedCategory = categories.find(cat => cat.code === selectedValue) || categories[0];
+  const selectedCategory =
+    categories.find(cat => cat.code === selectedValue) || categories[0];
 
-  const handleSelect = (category) => {
+  const handleSelect = category => {
     onChange(category.code);
     setIsOpen(false);
   };
@@ -93,7 +93,12 @@ const SelectPurpose = ({ id, value, onChange, type }) => {
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </div>
       {isOpen && (
@@ -102,7 +107,7 @@ const SelectPurpose = ({ id, value, onChange, type }) => {
           role="listbox"
           className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-lg z-50 overflow-hidden border border-gray-200 max-h-60 overflow-y-auto"
         >
-          {categories.map((category) => (
+          {categories.map(category => (
             <div
               key={category.code}
               id={id}
