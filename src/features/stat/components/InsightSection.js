@@ -94,7 +94,7 @@ const InsightSection = ({ groupid, travelId }) => {
 
   // 인사이트 모달 컴포넌트
   const Modal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000] p-4">
       <div className="bg-white rounded-2xl max-w-xs w-full mx-auto">
         {/* 모달 헤더 */}
         <div className="bg-main p-4 text-white rounded-t-2xl">
@@ -165,7 +165,7 @@ const InsightSection = ({ groupid, travelId }) => {
   return (
     <>
       {createPortal(<FloatingButton />, document.body)}
-      {showInsightModal && createPortal(<Modal />, document.body)}
+      {showInsightModal && <Modal />}
     </>
   );
 };
