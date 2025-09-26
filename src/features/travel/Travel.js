@@ -74,7 +74,7 @@ const Travel = () => {
         <div className='flex items-center justify-between mb-4 flex-shrink-0'>
             <div className="relative">
                 <div
-                    className="inline-flex items-center cursor-pointer px-2 pl-3 py-1 w-20 flex flex-row justify-between bg-white rounded-sm"
+                    className="inline-flex items-center cursor-pointer px-2 pl-3 py-1 w-20 min-w-fit flex-row justify-between bg-white rounded-sm"
                     onClick={() => setShowDropdown(!showDropdown)}
                     role="button"
                     tabIndex={0}
