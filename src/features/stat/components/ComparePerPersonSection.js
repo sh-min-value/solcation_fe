@@ -98,7 +98,7 @@ const ComparePerPersonSection = ({ travel, groupid }) => {
             {averagePayPerDay.toLocaleString()}원
           </div>
           <div
-            className="w-12 bg-group-2 rounded"
+            className="w-12 bg-gray-3 rounded"
             style={{ height: `${averageHeight}px` }}
           />
           <div className="text-sm text-gray-2 mt-1">평균</div>
