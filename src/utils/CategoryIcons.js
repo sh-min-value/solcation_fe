@@ -35,21 +35,21 @@ export const getStateIcon = (
       return (
         <>
           <AiFillSchedule className={className} />
-          <p className="max-w-11">여행 전</p>
+          <p className="line-clamp-1 min-w-9">여행 전</p>
         </>
       );
     case 'ONGOING':
       return (
         <>
           <BiSolidPlaneAlt className={className} />
-          <p className="max-w-11">여행 중</p>
+          <p className="line-clamp-1 min-w-9">여행 중</p>
         </>
       );
     case 'FINISH':
       return (
         <>
           <FaCheckCircle className={className} />
-          <p className="w-13">여행 완료</p>
+          <p className="line-clamp-1 min-w-9">여행 완료</p>
         </>
       );
     default:
