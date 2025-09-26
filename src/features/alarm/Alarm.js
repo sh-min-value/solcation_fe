@@ -449,8 +449,9 @@ const Alarm = () => {
         <Loading size="large" color="gray" />
       ) : (
         <div
-          className={`flex flex-col h-screen min-h-0 relative ${isEmpty ? 'justify-center' : 'justify-start'
-            }`}
+          className={`flex flex-col h-screen min-h-0 relative ${
+            isEmpty ? 'justify-center' : 'justify-start'
+          }`}
         >
           <div className="w-full flex-1 min-h-0 flex flex-col overflow-y-auto pb-24 scroll-pb-24">
             {/* 그룹 초대 */}
@@ -535,7 +536,7 @@ const Alarm = () => {
 
             {/* 알림이 아무것도 없는 경우 */}
             {isEmpty && (
-              <div className="text-gray-2 text-md font-md">
+              <div className="text-gray-2 text-md font-md  text-center">
                 알림이 존재하지 않습니다.
               </div>
             )}
