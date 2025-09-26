@@ -13,9 +13,9 @@ const getCategoryColor = tcCode => {
     PLEASURE: 'bg-group-4',
     SHOPPING: 'bg-group-5',
     MEDICAL_TREATMENT: 'bg-group-6',
-    LODGMENT: 'bg-main',
-    TRANSPORTATION: 'bg-blue',
-    TRANSFER: 'bg-logo-orange',
+    LODGMENT: 'bg-group-7',
+    TRANSPORTATION: 'bg-group-8',
+    TRANSFER: 'bg-group-9',
     ETC: 'bg-gray-3',
   };
   return colorMap[tcCode] || 'bg-gray-3';

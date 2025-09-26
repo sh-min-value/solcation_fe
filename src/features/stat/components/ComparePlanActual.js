@@ -11,9 +11,9 @@ const getCategoryColor = tcCode => {
     PLEASURE: 'bg-group-4',
     SHOPPING: 'bg-group-5',
     MEDICAL_TREATMENT: 'bg-group-6',
-    LODGMENT: 'bg-main',
-    TRANSPORTATION: 'bg-blue',
-    TRANSFER: 'bg-logo-orange',
+    LODGMENT: 'bg-group-7',
+    TRANSPORTATION: 'bg-group-8',
+    TRANSFER: 'bg-group-9',
     ETC: 'bg-gray-3',
   };
   return colorMap[tcCode] || 'bg-gray-3';
@@ -175,7 +175,7 @@ const PlannedVsActualSection = ({ travel, groupid }) => {
             return (
               <div
                 key={category.tcPk || index}
-                className="grid grid-cols-3 items-center gap-4"
+                className="grid grid-cols-3 items-end gap-3"
               >
                 {/* 계획 막대 (왼쪽) */}
                 <div className="flex justify-end items-center">
@@ -199,7 +199,7 @@ const PlannedVsActualSection = ({ travel, groupid }) => {
                 </div>
 
                 {/* 카테고리명 (중앙) */}
-                <div className="flex justify-center items-center">
+                <div className="flex justify-center items-end">
                   <div className="text-center">
                     <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
                       {category.tcName || '기타'}
