@@ -342,9 +342,13 @@ const GroupCreate = () => {
               currentStep={currentStep}
             />
             {/* 내용 */}
-            <div className="flex justify-center items-start py-9 px-9 flex-1">
-              <StepComponent {...getStepProps()} />
-            </div>
+            {loading ? (
+              <Loading />
+            ) : (
+              <div className="flex justify-center items-start py-9 px-9 flex-1">
+                <StepComponent {...getStepProps()} />
+              </div>
+            )}
           </>
         )}
 
@@ -356,17 +360,18 @@ const GroupCreate = () => {
         )}
       </div>
       {/*하단 버튼 */}
-      <BottomButton
-        handleNext={handleNext}
-        buttonText={`${
-          loading
-            ? '생성 중...'
-            : isLastStep
-            ? '그룹 홈으로 돌아가기'
-            : '다음 단계로'
-        }`}
-        disabled={loading}
-      />
+      {!loading && (
+        <BottomButton
+          handleNext={handleNext}
+          buttonText={`${
+            loading
+              ? '생성 중...'
+              : isLastStep
+              ? '그룹 홈으로 돌아가기'
+              : '다음 단계로'
+          }`}
+        />
+      )}
     </div>
   );
 };
