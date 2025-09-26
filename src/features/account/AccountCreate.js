@@ -169,9 +169,6 @@ const AccountCreate = () => {
     );
   }
 
-  if (isLoading) {
-    return <Loading />;
-  }
   return (
     <div className="h-screen bg-gradient-to-b from-main from-0% via-main via-20% to-secondary to-100% flex flex-col">
       <Header showBackButton={true} />
@@ -225,11 +222,15 @@ const AccountCreate = () => {
               className="bg-transparent"
             />
           ) : currentStep === 2 ? (
-            <TermsAgreementForm
-              formData={formData}
-              updateFormData={updateFormData}
-              errors={errors}
-            />
+            isLoading ? (
+              <Loading />
+            ) : (
+              <TermsAgreementForm
+                formData={formData}
+                updateFormData={updateFormData}
+                errors={errors}
+              />
+            )
           ) : (
             <AccountCompletionForm groupId={groupId} />
           )}
@@ -237,7 +238,7 @@ const AccountCreate = () => {
       </div>
 
       {/* 하단 버튼 */}
-      {currentStep !== 1 && currentStep !== 3 && (
+      {!isLoading && currentStep !== 1 && currentStep !== 3 && (
         <BottomButton
           handleNext={handleNext}
           buttonText={
