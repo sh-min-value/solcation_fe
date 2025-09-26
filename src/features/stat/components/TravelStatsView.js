@@ -86,7 +86,7 @@ const TravelStatsView = ({ travel }) => {
 
   return (
     <div
-      className="pt-0 px-4 pb-4 overflow-y-auto bg-white relative"
+      className="w-full pt-0 px-4 pb-4 overflow-y-auto bg-white"
       style={{ height: 'calc(100vh - 200px)' }}
     >
       <div className="relative text-center mb-6">
