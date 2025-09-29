@@ -52,6 +52,7 @@ const Main = () => {
     try {
       const notificationsResponse = await mainAPI.getUserNotifications();
       setNotifications(notificationsResponse);
+      console.log(notificationsResponse);
     } catch (error) {
       console.error('알림 조회 실패 :', error);
       navigate('/error', {
@@ -85,11 +86,21 @@ const Main = () => {
   // 초기 데이터 로드
   useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([
-        fetchGroups(),
-        fetchNotifications(),
-        fetchMonthlyPlans(),
-      ]);
+      await Promise.all([fetchGroups()]);
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      await Promise.all([fetchNotifications()]);
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      await Promise.all([fetchMonthlyPlans()]);
     };
 
     fetchData();
