@@ -15,6 +15,7 @@ const TravelCard = ({ travel, groupid, onClick, className }) => {
 
   useEffect(() => {
     const loadImage = async () => {
+      setImageLoading(true);
       const url = await getTravelProfileImage(travel.thumbnail);
       setImageUrl(url);
       setImageLoading(false);
@@ -40,11 +41,18 @@ const TravelCard = ({ travel, groupid, onClick, className }) => {
       tabIndex={0}
     >
       <div className="flex items-center space-x-1">
-        <img
-          src={imageUrl}
-          alt={travel.title}
-          className="w-16 h-16 m-1 object-cover rounded-lg"
-        />
+        {imageLoading ? (
+          <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-main"></div>
+          </div>
+        ) : (
+          <img
+            src={imageUrl}
+            alt={travel.title}
+            className="w-16 h-16 m-1 object-cover rounded-lg"
+          />
+        )}
+
         <div className="flex flex-col space-y-1">
           <div className="flex space-x-1 items-end">
             <h3 className="text-md font-bold mr-1 max-w-24 line-clamp-1 truncate">
