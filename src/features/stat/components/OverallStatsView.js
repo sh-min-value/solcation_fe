@@ -135,7 +135,7 @@ const OverallStatsView = ({ groupid, groupInfo }) => {
                       </div>
                       <span className="font-medium">{category.name}</span>
                     </div>
-                    <span className="font-bold text-blue">
+                    <span className="font-bold text-main">
                       {category.amount?.toLocaleString()}원
                     </span>
                   </div>
@@ -165,7 +165,7 @@ const OverallStatsView = ({ groupid, groupInfo }) => {
                       {overallStats.leastCategory?.name}
                     </span>
                   </div>
-                  <span className="font-bold text-blue">
+                  <span className="font-bold text-main">
                     {overallStats.leastCategory?.amount?.toLocaleString()}원
                   </span>
                 </div>
