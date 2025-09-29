@@ -11,6 +11,7 @@ import emptySol from '../../assets/images/empty_sol.svg';
 import TravelStatsView from './components/TravelStatsView';
 import OverallStatsView from './components/OverallStatsView';
 import EmptyBear from '../../components/common/EmptyBear';
+import categoryEmoji from '../../utils/CategoryEmoji';
 
 // 로딩 스피너
 const LoadingSpinner = () => (
@@ -104,15 +105,11 @@ const Stat = () => {
         <div className="mb-4">
           <button
             onClick={handleOverallStatsClick}
-            className="w-full backdrop-blur-sm rounded-2xl p-4 bg-light-blue shadow-[0_0_5px_rgba(0,0,0,0.1)] hover:bg-blue/50 cursor-pointer flex items-center justify-between group transition-colors duration-300 ease-in-out"
+            className="w-full backdrop-blur-sm rounded-2xl p-4 bg-light-blue shadow-[0_0_5px_rgba(0,0,0,0.1)] hover:bg-blue/50 cursor-pointer flex items-center justify-center group transition-colors duration-300 ease-in-out"
           >
-            <div className="flex items-center space-x-3">
-              <div className="flex flex-row items-center">
-                {/* <div className="max-w-32 truncate font-bold">
-                  {groupData?.groupName}
-                </div> */}
-                <div className="ml-2 font-semibold"> 전체 여행 소비 통계</div>
-              </div>
+            <div className="flex items-center flex-1 justify-start gap-2">
+              {categoryEmoji({ categoryCode: 'STATS', size: '7' })}
+              <div className="font-semibold">전체 소비 통계 보러가기</div>
             </div>
             <div className="text-gray-400 group-hover:text-blue-500 transition-colors">
               <svg

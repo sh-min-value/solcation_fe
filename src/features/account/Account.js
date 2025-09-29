@@ -135,7 +135,7 @@ const Account = () => {
   }
 
   return (
-    <div className="h-screen overflow-y-auto pb-96">
+    <div className="h-[calc(100vh-18rem)] overflow-y-auto">
       <div className="px-4 pt-4">
         {isLoading ? (
           <AccountSkeleton />

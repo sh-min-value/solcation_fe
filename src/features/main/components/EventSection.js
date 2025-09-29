@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { getGroupCategoryIcon } from '../../../utils/CategoryIcons';
 
@@ -67,6 +67,10 @@ GroupIcon.propTypes = {
 };
 
 const EventSection = ({ events = [], isLoading = false }) => {
+  const [showAll, setShowAll] = useState(false);
+
+  const hasMoreEvents = events.length > 3;
+
   return (
     <div className="bg-white rounded-xl px-[19px] py-4">
       <div className="space-y-3">
@@ -77,32 +81,90 @@ const EventSection = ({ events = [], isLoading = false }) => {
             <p className="text-gray-2">일정이 없습니다</p>
           </div>
         ) : (
-          events.map((event, index) => (
-            <div
-              key={index}
-              className="flex items-center p-3 bg-white rounded-xl"
-            >
-              <div className="w-24 text-sm font-bold text-gray-1 flex-shrink-0">
-                {formatDateRange(event.tpStart, event.tpEnd)}
-              </div>
+          <>
+            {events.slice(0, 3).map((event, index) => (
               <div
-                className={`w-1 h-8 rounded mx-3 flex-shrink-0 ${getGroupColor(
-                  event.groupPk
-                )}`}
-              ></div>
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-1 truncate">
-                  {event.tpTitle}
+                key={index}
+                className="flex items-center p-3 bg-white rounded-xl"
+              >
+                <div className="w-24 text-sm font-bold text-gray-1 flex-shrink-0">
+                  {formatDateRange(event.tpStart, event.tpEnd)}
                 </div>
-                <div className="text-sm text-gray-2 flex items-center space-x-1 min-w-0">
-                  <GroupIcon gcCode={event.gcCode} />
-                  <span className="truncate flex-1 min-w-0">
-                    {event.groupName}
-                  </span>
+                <div
+                  className={`w-1 h-8 rounded mx-3 flex-shrink-0 ${getGroupColor(
+                    event.groupPk
+                  )}`}
+                ></div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-gray-1 truncate">
+                    {event.tpTitle}
+                  </div>
+                  <div className="text-sm text-gray-2 flex items-center space-x-1 min-w-0">
+                    <GroupIcon gcCode={event.gcCode} />
+                    <span className="truncate flex-1 min-w-0">
+                      {event.groupName}
+                    </span>
+                  </div>
                 </div>
+              </div>
+            ))}
+
+            {/* 추가 일정들 */}
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                showAll ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <div className="space-y-3">
+                {events.slice(3).map((event, index) => (
+                  <div
+                    key={index + 3}
+                    className="flex items-center p-3 bg-white rounded-xl"
+                  >
+                    <div className="w-24 text-sm font-bold text-gray-1 flex-shrink-0">
+                      {formatDateRange(event.tpStart, event.tpEnd)}
+                    </div>
+                    <div
+                      className={`w-1 h-8 rounded mx-3 flex-shrink-0 ${getGroupColor(
+                        event.groupPk
+                      )}`}
+                    ></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-gray-1 truncate">
+                        {event.tpTitle}
+                      </div>
+                      <div className="text-sm text-gray-2 flex items-center space-x-1 min-w-0">
+                        <GroupIcon gcCode={event.gcCode} />
+                        <span className="truncate flex-1 min-w-0">
+                          {event.groupName}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))
+
+            {hasMoreEvents && (
+              <div
+                className="text-center pt-2 cursor-pointer hover:bg-gray-50 rounded-lg py-2 transition-colors"
+                onClick={() => setShowAll(!showAll)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowAll(!showAll);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={showAll ? '일정 접기' : '일정 더보기'}
+              >
+                <span className="text-black text-sm font-medium">
+                  {showAll ? '접기' : '더보기'}
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
