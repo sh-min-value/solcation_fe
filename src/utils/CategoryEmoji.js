@@ -27,7 +27,7 @@ const emojiMap = {
   FESTIVAL: 'christmas-tree',
   SIGHTSEEING: 'trolleybus',
 
-  STATS: 'chart-increasing',
+  STATS: 'pushpin',
 };
 
 const categoryEmoji = ({ categoryCode, size }) => {
