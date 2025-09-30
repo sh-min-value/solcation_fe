@@ -140,77 +140,107 @@ const CategoryCompareSection = ({ travel, groupid }) => {
         </h2>
       </div>
 
-      <div className="relative">
-        <div
-          ref={scrollRef}
-          className="flex justify-start items-end space-x-12 h-72 overflow-x-auto pb-16 mb-32 px-6 cursor-grab"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          role="button"
-          tabIndex={0}
-        >
-          {filteredData.map((category, index) => {
-            const myAmount = category.myAmount || 0;
-            const othersAvg = category.othersAvg || 0;
+      {/* 차트 영역 */}
+      <div className=" rounded-xl p-6 overflow-hidden mb-6">
+        <div className="relative">
+          <div
+            ref={scrollRef}
+            className="flex justify-start items-end gap-8 h-64 overflow-x-auto cursor-grab"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            role="button"
+            tabIndex={0}
+          >
+            {filteredData.map((category, index) => {
+              const myAmount = category.myAmount || 0;
+              const othersAvg = category.othersAvg || 0;
 
-            const myHeight =
-              myAmount === 0
-                ? 3
-                : globalMaxValue === 0
-                ? minHeight
-                : Math.max((myAmount / globalMaxValue) * maxHeight, minHeight);
+              const myHeight =
+                myAmount === 0
+                  ? 3
+                  : globalMaxValue === 0
+                  ? minHeight
+                  : Math.max(
+                      (myAmount / globalMaxValue) * maxHeight,
+                      minHeight
+                    );
 
-            const othersHeight =
-              othersAvg === 0
-                ? 3
-                : globalMaxValue === 0
-                ? minHeight
-                : Math.max((othersAvg / globalMaxValue) * maxHeight, minHeight);
+              const othersHeight =
+                othersAvg === 0
+                  ? 3
+                  : globalMaxValue === 0
+                  ? minHeight
+                  : Math.max(
+                      (othersAvg / globalMaxValue) * maxHeight,
+                      minHeight
+                    );
 
-            return (
-              <div
-                key={category.tcPk || index}
-                className="flex flex-col items-center min-w-[80px]"
-              >
-                <div className="flex items-end space-x-2 mb-2">
-                  <div className="flex flex-col items-center">
-                    <div className="relative group">
-                      <div
-                        className="bg-stat rounded min-w-[40px] px-1 cursor-pointer"
-                        style={{ height: `${myHeight}px` }}
-                      />
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-                        {myAmount.toLocaleString()}원
+              return (
+                <div
+                  key={category.tcPk || index}
+                  className="flex flex-col items-center min-w-[100px] flex-shrink-0"
+                >
+                  {/* 막대 그래프 */}
+                  <div className="flex items-end gap-3 mb-3">
+                    {/* 우리 그룹 막대 */}
+                    <div className="flex flex-col items-center">
+                      <div className="text-xs font-medium text-black mb-1">
+                        {myAmount > 0
+                          ? `${Math.round(myAmount / 10000)}만원`
+                          : '-'}
+                      </div>
+                      <div className="relative group">
+                        <div
+                          className="bg-gradient-to-t from-stat/80 to-stat/50 rounded-t-lg w-10 shadow-md transition-all duration-300 hover:scale-105"
+                          style={{ height: `${myHeight}px` }}
+                        />
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none shadow-lg z-10">
+                          {myAmount.toLocaleString()}원
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 다른 그룹 평균 막대 */}
+                    <div className="flex flex-col items-center">
+                      <div className="text-xs font-medium text-gray-600 mb-1">
+                        {othersAvg > 0
+                          ? `${Math.round(othersAvg / 10000)}만원`
+                          : '-'}
+                      </div>
+                      <div className="relative group">
+                        <div
+                          className={`${getCategoryColor(
+                            category.tcCode
+                          )} rounded-t-lg w-10 shadow-md transition-all duration-300 hover:scale-105 opacity-80`}
+                          style={{ height: `${othersHeight}px` }}
+                        />
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none shadow-lg z-10">
+                          {othersAvg.toLocaleString()}원
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center">
-                    <div className="relative group">
-                      <div
-                        className={`${getCategoryColor(
-                          category.tcCode
-                        )} rounded min-w-[40px] px-1 cursor-pointer`}
-                        style={{ height: `${othersHeight}px` }}
-                      />
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-                        {othersAvg.toLocaleString()}원
-                      </div>
+                  {/* 카테고리명 */}
+                  <div className="text-center px-2">
+                    <div className="text-xs text-gray-700 font-semibold leading-tight">
+                      {category.tcName || '기타'}
                     </div>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
 
-                <div className="text-center">
-                  <div className="text-xs text-gray-1 font-medium leading-tight text-center">
-                    {category.tcName || '기타'}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {/* 스크롤 힌트 */}
+        <div className="text-center mt-4  pb-20">
+          <p className="text-xs text-gray-400">← 좌우로 드래그하여 더 보기 →</p>
         </div>
       </div>
     </div>

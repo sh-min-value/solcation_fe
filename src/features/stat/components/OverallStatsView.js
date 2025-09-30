@@ -288,7 +288,6 @@ const OverallStatsView = ({ groupid, groupInfo }) => {
           </>
         ) : (
           <div className="bg-white rounded-2xl p-8 text-center shadow-md">
-            <div className="text-6xl mb-4">😔</div>
             <p className="text-gray-500 font-medium">
               전체 여행 통계 데이터를 불러올 수 없습니다
             </p>
