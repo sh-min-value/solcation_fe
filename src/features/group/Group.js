@@ -13,6 +13,14 @@ import { BiSolidBellRing } from 'react-icons/bi';
 import ProfileModal from './ProfileModal';
 import Loading from '../../components/common/Loading';
 
+// 로딩 스피너
+const LoadingSpinner = () => (
+  <div className="text-center py-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-2 mx-auto mb-2"></div>
+    <p className="text-gray-2">멤버 목록을 불러오는 중...</p>
+  </div>
+);
+
 /* 초대 검색바 컴포넌트 */
 const SearchBar = React.memo(
   ({
@@ -222,7 +230,8 @@ const Group = () => {
       await GroupAPI.inviteMember(groupId, tel);
     } catch (error) {
       console.log(
-        `초대 중 오류 발생: ${error.response?.error || error.message || 'Unknown error'
+        `초대 중 오류 발생: ${
+          error.response?.error || error.message || 'Unknown error'
         }`
       );
       throw error;
@@ -300,7 +309,6 @@ const Group = () => {
   const GroupMainContent = useMemo(
     () => (
       <div className="grid grid-rows-[auto,1fr] h-[calc(100dvh-18rem)] min-h-0 bg-white">
-        {isLoading && <Loading />}
         {/* 초대 검색바 */}
         <div className="row-start-1 row-end-2 sticky top-0 z-10 bg-white">
           <SearchBar
@@ -312,13 +320,18 @@ const Group = () => {
             isSearching={isSearching} // 검색 로딩 상태 전달
           />
         </div>
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <div
+            className="row-start-2 row-end-3 min-h-0 overflow-y-auto overscroll-y-contain pb-20"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {memberList}
+          </div>
+        )}
         {/* 멤버 리스트 */}
-        <div
-          className="row-start-2 row-end-3 min-h-0 overflow-y-auto overscroll-y-contain pb-20"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {memberList}
-        </div>
+
         {/*프로필 모달*/}
         <ProfileModal
           groupId={groupid}

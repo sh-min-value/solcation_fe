@@ -11,7 +11,7 @@ import emptySol from '../../assets/images/empty_sol.svg';
 import TravelStatsView from './components/TravelStatsView';
 import OverallStatsView from './components/OverallStatsView';
 import EmptyBear from '../../components/common/EmptyBear';
-import categoryEmoji from '../../utils/CategoryEmoji';
+import CategoryEmoji from '../../utils/CategoryEmoji';
 
 // 로딩 스피너
 const LoadingSpinner = () => (
@@ -108,7 +108,7 @@ const Stat = () => {
             className="w-full backdrop-blur-sm rounded-2xl p-4 bg-light-blue shadow-[0_0_5px_rgba(0,0,0,0.1)] hover:bg-blue/50 cursor-pointer flex items-center justify-center group transition-colors duration-300 ease-in-out"
           >
             <div className="flex items-center flex-1 justify-start gap-2">
-              {categoryEmoji({ categoryCode: 'STATS', size: '7' })}
+              <CategoryEmoji categoryCode={'STATS'} size={6} />
               <div className="font-semibold">전체 소비 통계 보러가기</div>
             </div>
             <div className="text-gray-400 group-hover:text-blue-500 transition-colors">
