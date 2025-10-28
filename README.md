@@ -1,70 +1,124 @@
-# Getting Started with Create React App
+# SOLCATION 🌴
+<img width="1984" height="1217" alt="image" src="https://github.com/user-attachments/assets/f5247bc0-39ca-4b95-8913-ed3acff5cc3c" />
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> 쏠케이션은 여행의 준비부터 정산까지 한 번에 해결할 수 있는 여행 특화 모임통장 플랫폼입니다. 일정 계획, 예산 설정, 공동 통장 관리, 실제 지출 기록, 정산 및 소비 통계 분석 기능을 하나의 서비스로 통합하여 제공합니다.
 
-## Available Scripts
 
-In the project directory, you can run:
+<br /> <br /><br /> <br />
 
-### `npm start`
+## 🛠 Project Duration
+**2025.08 ~ 2025.09**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+<br /> <br /><br /> <br />
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🌐 Deployment
+[Visit Solcation](https://solcation.shinhanacademy.co.kr/)
 
-### `npm test`
+<br /> <br /><br /> <br />
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 👥 Team
+- Subin Oh <a href="https://github.com/subin930" target="_blank">(@subin930)</a>
+- Hyesung hwang <a href="https://github.com/hwang-hyesung" target="_blank">(@hwang-hyesung)</a>
+- Sechang Choi <a href="https://github.com/Sechamm" target="_blank">(@sechamm)</a>
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<br /> <br /><br /> <br />
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Getting Started
 
-### `npm run eject`
+### Requirements
+- [List your project requirements here, e.g., Node.js version, JDK, database, etc.]
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Backend
+```bash
+# Clone the repo
+git clone https://github.com/sh-min-value/solcation_be.git
+cd solcation_be
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Check JDK version - requires JDK 17 or higher.
+java -version
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Check build tool - This project uses Gradle. Check if Gradle is installed
+gradle -v
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Configure environment
+# Use application-example.yml.sample as a reference.
+# Create a new file application-local.yml and configure your local settings (DB, ports, etc.).
 
-## Learn More
+# Run the development server
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Frontend
+```bash
+# Clone the repo
+git clone https://github.com/sh-min-value/solcation_fe.git
+cd solcation_fe
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Check Node.js version - requires Node.js 22
+node -v
+npm -v
 
-### Code Splitting
+# Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# Configure environment
+# Create a .env.local file at the root directory.
+# Set your environment variables (API endpoints, keys, etc.) according to .env.example.
 
-### Analyzing the Bundle Size
+# Run the development server
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<br /> <br /><br /> <br />
 
-### Making a Progressive Web App
+## ⚒️ Tech Stack
+<table>
+  <tr>
+    <td>Development</td>
+    <td>
+             <!-- spring boot -->
+       <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=springboot&logoColor=white" style="margin-right:8px;"/>
+                 <!-- react -->
+           <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=black" alt="React" style="margin-right:8px;"/>
+                 <!-- MariaDB -->
+           <img src="https://img.shields.io/badge/MariaDB-003545?style=flat-square&logo=mariadb&logoColor=white"  style="margin-right:8px;"/>
+           <!-- Redis -->
+           <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white"  style="margin-right:8px;"/>
+                 <!-- aws -->
+           <img src="https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=Amazon%20AWS&logoColor=white"alt="AWS" style={{ marginRight: "8px" }} />
+           <!-- docker -->
+           <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white" alt="Docker" style={{ marginRight: "8px" }} />
+    </td>
+  </tr>
+  <tr>
+    <td>Communication</td>
+    <td>
+                   <!-- Git -->
+           <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white"  style={{ marginRight: "8px" }} />
+           <!-- jira -->
+           <img src="https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=jira&logoColor=white" alt="Jira" style={{ marginRight: "8px" }} />
+      <!-- Figma -->
+      <img 
+        src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white" 
+        alt="Figma" 
+        style="margin-right:8px;" 
+      />
+        </td>
+    </td>
+  </tr>
+</table>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+<br /> <br /><br /> <br />
 
-### Advanced Configuration
+## 🌟 Main features
+<ul>
+  <li>
+    <strong>모임 생성</strong> <br /> 유형 별 모임 생성, 전화번호로 멤버 초대</li>
+  <li><strong>계좌 생성 </strong> <br /> 입/출금 내역 확인, 정기 입금일 지정, 결제 방식 별 필터링</li>
+  <li><strong>개별 카드 생성</strong> <br /> 개인 별 카드 생성, 카드 사용 및 내역 관리</li>
+  <li><strong>실시간 알림 </strong> <br /> 그룹 초대/정기 입금일 등 실시간 알림 송/수신</li>
+  <li><strong>여행 일정 생성 </strong> <br /> 테마/날짜/인원 수 지정, 세부 일정 생성 및 예산 설정 가능, 세부 일정 실시간 관리 및 공유</li>
+  <li><strong>여행 소비 통계</strong> <br /> 여행 별 소비 통계 제공, 생성형 AI를 통한 인사이트 제공, 그룹 소비 성향 레포트 제공</li>
+</ul>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
